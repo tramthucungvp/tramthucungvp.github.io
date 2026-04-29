@@ -13,7 +13,7 @@
         !function (f, b, e, v, n, t, s) {
             if (f.fbq) return; n = f.fbq = function () {
                 n.callMethod ?
-                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
             };
             if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
             n.queue = []; t = b.createElement(e); t.async = !0;
@@ -1527,15 +1527,15 @@
                 <div class="variant-options">
                     <button class="variant-btn active" onclick="selectVariant(this,'1lo')">
                         <span class="v-weight">1 Lọ</span><span class="v-price">199.000₫</span><span class="v-gift">🚚
-                            +20k ship</span>
+                            +20k phí ship</span>
                     </button>
                     <button class="variant-btn" onclick="selectVariant(this,'2lo')">
                         <span class="v-weight">2 Lọ</span><span class="v-price">369.000₫</span><span class="v-gift">🎁
-                            Tặng lược chải</span>
+                            Tặng 1 chai sữa tắm 80k</span>
                     </button>
                     <button class="variant-btn" onclick="selectVariant(this,'3lo')">
                         <span class="v-weight">3 Lọ</span><span class="v-price">499.000₫</span><span class="v-gift">🎁
-                            Tặng sữa tắm</span>
+                            Tặng 2 chai sữa tắm 160k</span>
                     </button>
                 </div>
             </div>
@@ -1833,11 +1833,11 @@
                     </button>
                     <button class="variant-btn" id="ovBtn2lo" onclick="selectOrderVariant(this,'2lo')">
                         <span class="v-weight">2 Lọ</span><span class="v-price">369.000₫</span><span class="v-gift">🎁
-                            Tặng lược chải</span>
+                            Tặng 1 chai sữa tắm 80k</span>
                     </button>
                     <button class="variant-btn" id="ovBtn3lo" onclick="selectOrderVariant(this,'3lo')">
                         <span class="v-weight">3 Lọ</span><span class="v-price">499.000₫</span><span class="v-gift">🎁
-                            Tặng sữa tắm</span>
+                            Tặng 2 chai sữa tắm 160k</span>
                     </button>
                 </div>
             </div>
@@ -1873,8 +1873,8 @@
 
         const VARIANTS = {
             '1lo': { label: '1 Lọ', displayPrice: 199000, oldPrice: 349000, ship: 20000, cod: 75000, giftLabel: '' },
-            '2lo': { label: '2 Lọ', displayPrice: 369000, oldPrice: 698000, ship: 0, cod: 160000, giftLabel: '🎁 Tặng: 1 lược chải ve rận' },
-            '3lo': { label: '3 Lọ', displayPrice: 499000, oldPrice: 1047000, ship: 0, cod: 265000, giftLabel: '🎁 Tặng: 1 chai sữa tắm' },
+            '2lo': { label: '2 Lọ', displayPrice: 369000, oldPrice: 698000, ship: 0, cod: 180000, giftLabel: '🎁 Tặng: 1 chai sữa tắm 80k' },
+            '3lo': { label: '3 Lọ', displayPrice: 499000, oldPrice: 1047000, ship: 0, cod: 285000, giftLabel: '🎁 Tặng: 2 chai sữa tắm 160k' },
         };
 
         function getVariant(k) { return VARIANTS[k]; }
@@ -1943,6 +1943,8 @@
 
         function syncOrderSummary() {
             let rows = '', total = 0;
+            const price1lo = VARIANTS['1lo'].displayPrice + VARIANTS['1lo'].ship; // 199k + 20k ship = 219k
+
             if (cart.length) {
                 cart.forEach(i => {
                     const lt = i.price * i.qty;
@@ -1959,7 +1961,21 @@
                 if (v.ship > 0) rows += `<div class="os-row" style="color:#ff6d00;font-weight:800"><span>🚚 Phí vận chuyển</span><span>${v.ship.toLocaleString('vi-VN')}₫</span></div>`;
                 else rows += `<div class="os-row" style="color:#00c853;font-weight:800"><span>🚚 Vận chuyển</span><span>Miễn phí</span></div>`;
                 total = lt + v.ship;
+
+                // ✅ THÊM DÒNG TIẾT KIỆM (chỉ hiện khi mua 2 lọ hoặc 3 lọ)
+                if (selectedVariantKey !== '1lo') {
+                    const soLo = selectedVariantKey === '2lo' ? 2 : 3;
+                    const neuMua1lo = price1lo * soLo; // nếu mua từng lọ riêng
+                    const tietKiem = neuMua1lo - total;
+                    if (tietKiem > 0) {
+                        rows += `<div class="os-row" style="color:#e91e63;font-weight:800;background:#fff0f3;border-radius:6px;padding:4px 6px;margin-top:4px">
+                    <span>🎉 Tiết kiệm so với mua lẻ</span>
+                    <span>-${tietKiem.toLocaleString('vi-VN')}₫</span>
+                </div>`;
+                    }
+                }
             }
+
             rows += `<div class="os-row total"><span>Tổng đơn hàng</span><span>${total.toLocaleString('vi-VN')}₫</span></div>`;
             document.getElementById('orderSummary').innerHTML = rows;
         }
