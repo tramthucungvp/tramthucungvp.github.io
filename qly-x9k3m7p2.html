@@ -1209,11 +1209,34 @@
                 const remote = json.orders || [];
                 if (!DATA.syncedMaDons) DATA.syncedMaDons = [];
                 const synced = new Set(DATA.syncedMaDons);
+                const localByMaDon = {};
+                DATA.orders.forEach(o => { if (o.maDon) localByMaDon[o.maDon] = o; });
 
-                let newCount = 0;
+                let newCount = 0, updateCount = 0;
                 remote.forEach(r => {
                     const maDon = String(r.maDon || '').trim();
-                    if (!maDon || synced.has(maDon)) return;
+                    if (!maDon) return;
+
+                    const existing = localByMaDon[maDon];
+
+                    // Đơn đã có → kiểm tra cờ isReturned (Sheet đỏ) để cập nhật trạng thái
+                    if (existing) {
+                        const prod = DATA.products.find(p => p.id === existing.productId);
+                        const defaultStatus = prod && prod.kind === 'promo' ? 'promo' : 'delivered';
+                        const expectedStatus = r.isReturned ? 'returned' : defaultStatus;
+
+                        if (existing.status !== expectedStatus) {
+                            // Hoàn tác stock cũ → đổi status → áp stock mới
+                            applyDeltas(negateDeltas(stockDeltaForOrder(existing)));
+                            existing.status = expectedStatus;
+                            applyDeltas(stockDeltaForOrder(existing));
+                            updateCount++;
+                        }
+                        return;
+                    }
+
+                    // Đơn mới — bỏ qua nếu đã từng sync rồi user xoá thủ công
+                    if (synced.has(maDon)) return;
 
                     const prod = inferProductFromSanPham(r.sanPham);
                     if (!prod) return;
@@ -1227,15 +1250,14 @@
                         date: parseDate(r.timestamp || r.thoiGian),
                         productId: prod.id,
                         qty,
-                        status: prod.kind === 'promo' ? 'promo' : 'delivered',
+                        status: r.isReturned ? 'returned' : (prod.kind === 'promo' ? 'promo' : 'delivered'),
                         sellPrice: +prod.sellPrice || 0,
                         cost: productCost(prod),
-                        ads: +prod.adsPerOrder || 0,
+                        ads: 0,
                         customer: [r.hoTen, r.sdt].filter(Boolean).join(' · '),
                         note: [r.diaChi, r.ghiChu].filter(Boolean).join(' · ')
                     };
 
-                    // Apply BOM stock deduction
                     applyDeltas(stockDeltaForOrder(order));
                     DATA.orders.unshift(order);
                     DATA.syncedMaDons.push(maDon);
@@ -1247,8 +1269,10 @@
                 lastSyncAt = new Date();
                 renderAll();
                 if (showToast) {
-                    if (newCount > 0) toast(`✅ Đồng bộ ${newCount} đơn mới từ web`);
-                    else toast('✅ Không có đơn mới');
+                    const msgs = [];
+                    if (newCount) msgs.push(`+${newCount} đơn mới`);
+                    if (updateCount) msgs.push(`${updateCount} đơn đổi trạng thái`);
+                    toast(msgs.length ? '✅ ' + msgs.join(' · ') : '✅ Không có gì mới');
                 }
             } catch (err) {
                 console.error('Sync error:', err);
