@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 Đặt hàng thành công — Trạm Thú Cưng</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <meta name="theme-color" content="#ff2d55">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff2d55;
+            --primary-grad: linear-gradient(135deg, #ff2d55 0%, #ff6b35 100%);
+            --accent: #00c853;
+            --bg: #f4f1ee;
+            --dark: #1a1a2e;
+            --gray: #666;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: var(--dark);
+            min-height: 100vh;
+            background:
+                radial-gradient(900px 500px at 50% -10%, #ffe3e8 0%, transparent 60%),
+                radial-gradient(700px 500px at 100% 30%, #fff1e0 0%, transparent 55%),
+                var(--bg);
+            padding: 16px;
+        }
+
+        .container { max-width: 480px; margin: 0 auto; }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex; align-items: center; gap: 10px;
+            padding: 4px 0 18px;
+        }
+        .logo-mark {
+            width: 38px; height: 38px; border-radius: 12px;
+            background: var(--primary-grad);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 16px rgba(255, 45, 85, .35);
+            position: relative;
+        }
+        .logo-mark::after {
+            content: ''; position: absolute; inset: 2px; border-radius: 10px;
+            border: 1.5px solid rgba(255, 255, 255, .35);
+        }
+        .brand-name {
+            font-family: 'Baloo 2'; font-size: 1.1rem; font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .brand-sub { font-size: .65rem; color: #888; font-weight: 700; letter-spacing: 1.2px; }
+
+        /* HERO CARD */
+        .hero {
+            background: #fff;
+            border-radius: 24px;
+            padding: 36px 24px 28px;
+            text-align: center;
+            box-shadow: 0 16px 48px rgba(20, 20, 40, .08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute; top: -80px; right: -80px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(0, 200, 83, .12), transparent 60%);
+        }
+
+        .check-anim {
+            width: 92px; height: 92px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00c853, #66bb6a);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 18px;
+            box-shadow: 0 12px 28px rgba(0, 200, 83, .35);
+            animation: scaleIn .6s cubic-bezier(.34, 1.56, .64, 1);
+            position: relative;
+        }
+
+        .check-anim svg { animation: drawCheck .6s ease-out .25s both; }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes drawCheck {
+            from { stroke-dashoffset: 60; opacity: 0; }
+            to { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        .check-anim::after {
+            content: '';
+            position: absolute; inset: -8px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 200, 83, .25);
+            animation: ring 1.4s ease-out infinite;
+        }
+        @keyframes ring {
+            0% { transform: scale(.95); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.25); opacity: 0; }
+        }
+
+        h1 {
+            font-family: 'Baloo 2';
+            font-size: 1.6rem; font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .hero-sub {
+            font-size: .9rem; color: var(--gray);
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .order-code-box {
+            background: linear-gradient(135deg, #fff5f6, #fff0e8);
+            border: 1.5px dashed rgba(255, 45, 85, .3);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: inline-block;
+            min-width: 200px;
+        }
+        .order-code-label {
+            font-size: .7rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .order-code-value {
+            font-family: 'Baloo 2';
+            font-size: 1.4rem; font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            margin-top: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* STEPS */
+        .steps-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 18px 16px;
+            margin-top: 14px;
+            box-shadow: 0 6px 22px rgba(20, 20, 40, .06);
+        }
+        .steps-title {
+            font-family: 'Baloo 2';
+            font-size: 1rem; font-weight: 800; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .steps-title::before {
+            content: ''; width: 5px; height: 18px; border-radius: 3px;
+            background: var(--primary-grad);
+        }
+
+        .step {
+            display: flex; gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .step:last-child { border-bottom: none; }
+
+        .step-num {
+            width: 32px; height: 32px; flex-shrink: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fff0f3, #ffe1e7);
+            color: var(--primary);
+            font-family: 'Baloo 2';
+            font-weight: 800; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            border: 1.5px solid rgba(255, 45, 85, .2);
+        }
+        .step-body { flex: 1; }
+        .step-title { font-weight: 800; font-size: .92rem; line-height: 1.3; }
+        .step-time {
+            font-size: .72rem; color: #888;
+            margin-top: 2px;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        /* CONTACT */
+        .contact-card {
+            background: linear-gradient(135deg, #fff7f8 0%, #fff 100%);
+            border: 1px solid rgba(255, 45, 85, .12);
+            border-radius: 18px;
+            padding: 16px;
+            margin-top: 14px;
+        }
+        .contact-title {
+            font-family: 'Baloo 2';
+            font-size: .98rem; font-weight: 800; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .contact-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 11px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800; font-size: .85rem;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .contact-btn:hover { transform: translateY(-2px); }
+        .contact-btn.zalo {
+            background: linear-gradient(135deg, #0084ff, #2979ff);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(41, 121, 255, .3);
+        }
+        .contact-btn.zalo:hover { box-shadow: 0 8px 22px rgba(41, 121, 255, .45); }
+        .contact-btn.phone {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0, 200, 83, .3);
+        }
+        .contact-btn.phone:hover { box-shadow: 0 8px 22px rgba(0, 200, 83, .45); }
+        .contact-btn .ic { font-size: 1.2rem; }
+        .contact-btn-text { line-height: 1.2; }
+        .contact-btn-sub { font-size: .65rem; opacity: .92; font-weight: 700; }
+
+        .contact-note {
+            font-size: .72rem; color: var(--gray); text-align: center;
+            margin-top: 10px; line-height: 1.5;
+        }
+
+        /* CTA */
+        .cta-row {
+            display: flex; flex-direction: column; gap: 8px;
+            margin-top: 18px;
+        }
+        .btn-primary {
+            background: var(--primary-grad);
+            color: #fff;
+            padding: 14px;
+            border-radius: 14px;
+            font-family: 'Nunito';
+            font-size: 1rem; font-weight: 800;
+            border: none; cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            box-shadow: 0 8px 22px rgba(255, 45, 85, .35);
+            transition: transform .15s, box-shadow .15s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255, 45, 85, .5); }
+
+        .footer-note {
+            text-align: center; font-size: .72rem; color: #888;
+            padding: 16px 0 0;
+            line-height: 1.6;
+        }
+
+        /* CONFETTI */
+        .confetti {
+            position: fixed; top: -20px; left: 50%; width: 0; height: 0;
+            pointer-events: none; z-index: 1000;
+        }
+        .confetti span {
+            position: absolute; display: block;
+            width: 8px; height: 14px;
+            opacity: 0;
+        }
+
+        @media (max-width: 380px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="confetti" id="confetti"></div>
+
+    <div class="container">
+        <div class="topbar">
+            <div class="logo-mark">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                    <circle cx="5.5" cy="9" r="2.2" />
+                    <circle cx="9.5" cy="5" r="2" />
+                    <circle cx="14.5" cy="5" r="2" />
+                    <circle cx="18.5" cy="9" r="2.2" />
+                    <path d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
+                </svg>
+            </div>
+            <div>
+                <div class="brand-name">Trạm Thú Cưng</div>
+                <div class="brand-sub">PET STATION VN</div>
+            </div>
+        </div>
+
+        <div class="hero">
+            <div class="check-anim">
+                <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.2"
+                    stroke-linecap="round" stroke-linejoin="round" style="stroke-dasharray:60">
+                    <path d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h1>Đặt hàng thành công!</h1>
+            <p class="hero-sub">
+                Cảm ơn bạn đã tin tưởng <strong>Trạm Thú Cưng</strong>.<br>
+                Chúng tôi sẽ liên hệ xác nhận trong ít phút.
+            </p>
+            <div class="order-code-box">
+                <div class="order-code-label">Mã đơn của bạn</div>
+                <div class="order-code-value" id="orderCode">#---</div>
+            </div>
+        </div>
+
+        <div class="steps-card">
+            <div class="steps-title">📋 Điều gì sắp diễn ra?</div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <div class="step-title">Shop xác nhận đơn hàng</div>
+                    <div class="step-time">📞 Trong vòng <strong style="color:var(--primary)">15–30 phút</strong></div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <div class="step-title">Đóng gói &amp; bàn giao đơn vị vận chuyển</div>
+                    <div class="step-time">📦 Cùng ngày làm việc</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <div class="step-title">Giao hàng đến tận nhà</div>
+                    <div class="step-time">🚚 <strong style="color:var(--primary)">1–3 ngày</strong> tuỳ khu vực</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <div class="step-title">Thanh toán khi nhận hàng (COD)</div>
+                    <div class="step-time">💵 Kiểm tra hàng trước, an tâm thanh toán sau</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-card">
+            <div class="contact-title">📞 Cần hỗ trợ ngay?</div>
+            <div class="contact-grid">
+                <a class="contact-btn phone" href="tel:0787459978">
+                    <span class="ic">📞</span>
+                    <div class="contact-btn-text">
+                        <div>Gọi Hotline</div>
+                        <div class="contact-btn-sub">0787.459.978</div>
+                    </div>
+                </a>
+                <a class="contact-btn zalo" href="https://zalo.me/0787459978" target="_blank" rel="noopener">
+                    <span class="ic">💬</span>
+                    <div class="contact-btn-text">
+                        <div>Chat Zalo</div>
+                        <div class="contact-btn-sub">0787.459.978</div>
+                    </div>
+                </a>
+            </div>
+            <div class="contact-note">
+                Lưu mã đơn <strong id="orderCodeNote">---</strong> khi liên hệ để được hỗ trợ nhanh hơn 💛
+            </div>
+        </div>
+
+        <div class="cta-row">
+            <a class="btn-primary" href="./">🏠 Quay lại trang chủ</a>
+        </div>
+
+        <div class="footer-note">
+            © 2020–2026 Trạm Thú Cưng · Pet Station VN<br>
+            Thương hiệu chăm sóc thú cưng uy tín · 348 Nguyễn Trãi &amp; 99D phố Viên, Hà Nội
+        </div>
+    </div>
+
+    <script>
+        // Lấy mã đơn từ URL ?ma=123456
+        (function () {
+            const params = new URLSearchParams(location.search);
+            const ma = params.get('ma') || '------';
+            const txt = '#' + ma;
+            document.getElementById('orderCode').textContent = txt;
+            document.getElementById('orderCodeNote').textContent = txt;
+        })();
+
+        // Confetti effect
+        (function () {
+            const colors = ['#ff2d55', '#ff6b35', '#00c853', '#fbc02d', '#2979ff', '#ec407a'];
+            const wrap = document.getElementById('confetti');
+            for (let i = 0; i < 32; i++) {
+                const s = document.createElement('span');
+                const left = (Math.random() - 0.5) * 100;
+                const drift = (Math.random() - 0.5) * 80;
+                const delay = Math.random() * 0.6;
+                const dur = 2 + Math.random() * 2;
+                const rot = Math.random() * 720;
+                s.style.background = colors[i % colors.length];
+                s.style.left = left + 'vw';
+                s.style.borderRadius = (Math.random() > 0.5 ? '50%' : '2px');
+                s.style.animation = `fall-${i} ${dur}s ${delay}s ease-out forwards`;
+                wrap.appendChild(s);
+                const sheet = document.styleSheets[0];
+                sheet.insertRule(`@keyframes fall-${i} {
+                    0% { transform: translate(0,0) rotate(0); opacity: 1; }
+                    100% { transform: translate(${drift}vw, 110vh) rotate(${rot}deg); opacity: 0; }
+                }`, sheet.cssRules.length);
+            }
+        })();
+    </script>
+</body>
+
+</html>
