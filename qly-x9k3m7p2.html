@@ -1212,6 +1212,26 @@
                 const localByMaDon = {};
                 DATA.orders.forEach(o => { if (o.maDon) localByMaDon[o.maDon] = o; });
 
+                // === DETECT DELETES: đơn còn trong admin nhưng đã bị xoá khỏi Sheet ===
+                const remoteMaDonSet = new Set(remote.map(r => String(r.maDon || '').trim()).filter(Boolean));
+                const toDelete = DATA.orders.filter(o =>
+                    o.maDon && synced.has(o.maDon) && !remoteMaDonSet.has(o.maDon)
+                );
+                let deleteCount = 0;
+                if (toDelete.length) {
+                    // Hoàn tác stock cho từng đơn xoá
+                    toDelete.forEach(o => applyDeltas(negateDeltas(stockDeltaForOrder(o))));
+                    const delIds = new Set(toDelete.map(x => x.id));
+                    const delMaDons = new Set(toDelete.map(x => x.maDon));
+                    DATA.orders = DATA.orders.filter(x => !delIds.has(x.id));
+                    DATA.syncedMaDons = DATA.syncedMaDons.filter(m => !delMaDons.has(m));
+                    // Cập nhật lại localByMaDon sau khi xoá
+                    delMaDons.forEach(m => delete localByMaDon[m]);
+                    synced.clear();
+                    DATA.syncedMaDons.forEach(m => synced.add(m));
+                    deleteCount = toDelete.length;
+                }
+
                 let newCount = 0, updateCount = 0;
                 remote.forEach(r => {
                     const maDon = String(r.maDon || '').trim();
@@ -1272,6 +1292,7 @@
                     const msgs = [];
                     if (newCount) msgs.push(`+${newCount} đơn mới`);
                     if (updateCount) msgs.push(`${updateCount} đơn đổi trạng thái`);
+                    if (deleteCount) msgs.push(`-${deleteCount} đơn (đã xoá khỏi Sheet)`);
                     toast(msgs.length ? '✅ ' + msgs.join(' · ') : '✅ Không có gì mới');
                 }
             } catch (err) {
@@ -1301,7 +1322,7 @@
             }
             if (status) {
                 if (syncing) status.innerHTML = '<span style="color:var(--info)">⏳ Đang lấy đơn từ web...</span>';
-                else if (lastSyncAt) status.innerHTML = `<span style="color:var(--gray)">⏰ Lần đồng bộ cuối: <strong>${formatTimeAgo(lastSyncAt)}</strong> · tự đồng bộ mỗi 30s</span>`;
+                else if (lastSyncAt) status.innerHTML = `<span style="color:var(--gray)">⏰ Lần đồng bộ cuối: <strong>${formatTimeAgo(lastSyncAt)}</strong> · tự đồng bộ mỗi 15s</span>`;
                 else status.innerHTML = '<span style="color:var(--gray)">Chưa đồng bộ</span>';
             }
         }
@@ -1309,7 +1330,7 @@
         function startAutoSync() {
             syncFromServer(false);
             if (syncTimer) clearInterval(syncTimer);
-            syncTimer = setInterval(() => syncFromServer(false), 30000);
+            syncTimer = setInterval(() => syncFromServer(false), 15000);
             // Also update relative time every 10s
             setInterval(updateSyncUI, 10000);
         }
