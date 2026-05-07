@@ -4,45 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIPET SHOP</title>
+    <title>Trạm Thú Cưng — Chăm sóc thú cưng mỗi ngày</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
         rel="stylesheet">
     <!-- Meta Pixel Code -->
-    <script>
-        !function (f, b, e, v, n, t, s) {
-            if (f.fbq) return; n = f.fbq = function () {
-                n.callMethod ?
-                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-            };
-            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
-            n.queue = []; t = b.createElement(e); t.async = !0;
-            t.src = v; s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s)
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '2414745909004466');
-        fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=2414745909004466&ev=PageView&noscript=1" /></noscript>
-    <!-- End Meta Pixel Code -->
-    <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=1466015285305195&ev=PageView&noscript=1" /></noscript>
-    <!-- End Meta Pixel Code -->
+    
     <style>
         :root {
             --primary: #ff2d55;
             --primary-dark: #c4002b;
             --accent: #00c853;
             --accent2: #ff6d00;
-            --bg: #f7f7f7;
+            --bg: #f4f1ee;
             --white: #ffffff;
             --dark: #1a1a1a;
             --gray: #666;
             --light: #efefef;
             --card: #ffffff;
             --teal: #00b3a6;
+            --primary-grad: linear-gradient(135deg, #ff2d55 0%, #ff6b35 100%);
+            --shadow-sm: 0 2px 8px rgba(20, 20, 40, .06);
+            --shadow-md: 0 6px 22px rgba(20, 20, 40, .08);
+            --shadow-lg: 0 10px 36px rgba(255, 45, 85, .18);
         }
 
         * {
@@ -53,8 +37,12 @@
 
         body {
             font-family: 'Nunito', sans-serif;
-            background: var(--bg);
+            background:
+                radial-gradient(1200px 600px at 50% -10%, #ffe3e8 0%, transparent 60%),
+                radial-gradient(900px 500px at 100% 30%, #fff1e0 0%, transparent 55%),
+                var(--bg);
             color: var(--dark);
+            min-height: 100vh;
         }
 
         /* TOP NAV */
@@ -62,21 +50,73 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: var(--white);
+            background: rgba(255, 255, 255, .85);
+            backdrop-filter: saturate(140%) blur(14px);
+            -webkit-backdrop-filter: saturate(140%) blur(14px);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px 14px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+            box-shadow: 0 2px 14px rgba(20, 20, 40, .06);
             gap: 10px;
+            border-bottom: 1px solid rgba(255, 45, 85, .08);
         }
 
         .topnav .logo {
-            font-family: 'Baloo 2', cursive;
-            font-size: 1.3rem;
-            color: var(--primary);
-            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             white-space: nowrap;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: var(--primary-grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.05rem;
+            box-shadow: 0 6px 16px rgba(255, 45, 85, .35);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255, 255, 255, .35);
+            pointer-events: none;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.05rem;
+            font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: .3px;
+        }
+
+        .logo-tagline {
+            font-size: .58rem;
+            color: #888;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-top: 2px;
         }
 
         .topnav .search {
@@ -99,15 +139,21 @@
 
         .topnav .cart-btn {
             position: relative;
-            background: var(--primary);
+            background: var(--primary-grad);
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            box-shadow: 0 4px 14px rgba(255, 45, 85, .4);
+            transition: transform .2s;
+        }
+
+        .topnav .cart-btn:hover {
+            transform: scale(1.06);
         }
 
         .topnav .cart-btn svg {
@@ -134,13 +180,16 @@
         .main {
             max-width: 480px;
             margin: 0 auto;
-            padding-bottom: 80px;
+            padding: 8px 8px 90px;
         }
 
         /* GALLERY */
         .gallery {
             position: relative;
             background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
         }
 
         .gallery-main {
@@ -227,9 +276,23 @@
         /* PRODUCT INFO */
         .prod-info {
             background: white;
-            padding: 14px;
-            margin-top: 8px;
-            border-radius: 12px 12px 0 0;
+            padding: 16px;
+            margin-top: 10px;
+            border-radius: 18px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prod-info::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255, 45, 85, .08), transparent 70%);
+            pointer-events: none;
         }
 
         .prod-price {
@@ -239,38 +302,45 @@
         }
 
         .price-main {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--primary);
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.85rem;
+            font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -.5px;
         }
 
         .price-old {
             font-size: .95rem;
-            color: #aaa;
+            color: #b0b0b0;
             text-decoration: line-through;
         }
 
         .price-discount {
-            background: var(--primary);
+            background: var(--primary-grad);
             color: white;
             font-size: .72rem;
             font-weight: 800;
-            padding: 2px 7px;
-            border-radius: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
             margin-left: 4px;
+            box-shadow: 0 3px 10px rgba(255, 45, 85, .35);
         }
 
         .prod-name {
-            font-size: 1.05rem;
+            font-size: 1.08rem;
             font-weight: 800;
-            margin-top: 6px;
-            line-height: 1.4;
+            margin-top: 8px;
+            line-height: 1.45;
+            color: #1a1a2e;
         }
 
         .prod-sub {
             font-size: .82rem;
             color: var(--gray);
-            margin-top: 3px;
+            margin-top: 4px;
         }
 
         .prod-stats {
@@ -289,31 +359,34 @@
         }
 
         .sold-tag {
-            background: var(--light);
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe1e7 100%);
+            color: var(--primary);
             border-radius: 20px;
-            padding: 2px 8px;
+            padding: 3px 10px;
             font-size: .75rem;
-            font-weight: 700;
+            font-weight: 800;
+            border: 1px solid rgba(255, 45, 85, .15);
         }
 
         .highlights {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 14px;
         }
 
         .hl {
             display: flex;
             align-items: center;
             gap: 6px;
-            background: #f0fff4;
-            border: 1px solid #b2dfdb;
-            border-radius: 8px;
-            padding: 5px 10px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fff4 100%);
+            border: 1px solid rgba(0, 200, 83, .25);
+            border-radius: 10px;
+            padding: 6px 11px;
             font-size: .78rem;
             font-weight: 700;
             color: #00796b;
+            box-shadow: 0 2px 6px rgba(0, 200, 83, .08);
         }
 
         .hl svg {
@@ -325,16 +398,17 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .tag {
-            background: #fff3e0;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             color: var(--accent2);
             border-radius: 20px;
-            padding: 3px 10px;
+            padding: 4px 11px;
             font-size: .72rem;
             font-weight: 700;
+            border: 1px solid rgba(255, 109, 0, .15);
         }
 
         /* VARIANTS */
@@ -364,10 +438,10 @@
         }
 
         .variant-btn {
-            border: 2px solid #ddd;
+            border: 2px solid #e6e6ec;
             background: white;
-            border-radius: 10px;
-            padding: 8px 18px;
+            border-radius: 14px;
+            padding: 10px 18px;
             font-size: .88rem;
             font-weight: 800;
             cursor: pointer;
@@ -377,8 +451,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            min-width: 80px;
+            gap: 3px;
+            min-width: 88px;
+            box-shadow: 0 2px 6px rgba(20, 20, 40, .04);
         }
 
         .variant-btn .v-weight {
@@ -393,8 +468,10 @@
 
         .variant-btn.active {
             border-color: var(--primary);
-            background: #fff0f3;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe7eb 100%);
             color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(255, 45, 85, .18);
         }
 
         .variant-btn.active .v-price {
@@ -425,16 +502,31 @@
 
         /* FLASH SALE */
         .flash-sale-banner {
-            background: linear-gradient(90deg, #ff2d55, #ff6b35);
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, .18), transparent 50%),
+                linear-gradient(95deg, #ff2d55, #ff6b35);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            box-shadow: 0 4px 14px rgba(255, 45, 85, .35);
+            box-shadow: 0 8px 22px rgba(255, 45, 85, .35);
             animation: flashPulse 1.8s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flash-sale-banner::after {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 255, 255, .15), transparent 60%);
+            border-radius: 50%;
         }
 
         @keyframes flashPulse {
@@ -575,48 +667,103 @@
         /* SECTION */
         .section {
             background: white;
-            margin-top: 8px;
-            padding: 14px;
-            border-radius: 8px;
+            margin-top: 10px;
+            padding: 16px;
+            border-radius: 18px;
+            box-shadow: var(--shadow-sm);
         }
 
         .section-title {
-            font-size: 1rem;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.08rem;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            color: #1a1a2e;
+            letter-spacing: .2px;
         }
 
         .section-title::before {
             content: '';
             display: inline-block;
-            width: 4px;
-            height: 18px;
-            background: var(--primary);
-            border-radius: 2px;
+            width: 5px;
+            height: 20px;
+            background: var(--primary-grad);
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(255, 45, 85, .35);
+        }
+
+        /* GUARANTEE */
+        .guarantee-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .guarantee-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: linear-gradient(135deg, #fff7f8 0%, #fff 100%);
+            border: 1px solid rgba(255, 45, 85, .1);
+            border-radius: 14px;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .guarantee-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 45, 85, .12);
+        }
+
+        .guarantee-icon {
+            font-size: 1.6rem;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffe1e7, #ffd0bd);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .g-title {
+            font-size: .82rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            line-height: 1.3;
+        }
+
+        .g-sub {
+            font-size: .68rem;
+            color: var(--gray);
+            margin-top: 2px;
+            line-height: 1.3;
         }
 
         /* DESCRIPTION IMAGES */
         .desc-img-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .desc-img-grid img {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 10px;
-            border: 1px solid #eee;
+            border-radius: 14px;
+            border: 1px solid #f0f0f0;
             cursor: pointer;
-            transition: box-shadow .2s;
+            transition: box-shadow .25s, transform .25s;
         }
 
         .desc-img-grid img:hover {
-            box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
+            transform: translateY(-2px);
         }
 
         /* REVIEWS */
@@ -628,10 +775,15 @@
         }
 
         .review-big {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: var(--primary);
+            font-family: 'Baloo 2', cursive;
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
             line-height: 1;
+            text-align: center;
         }
 
         .review-bars {
@@ -671,9 +823,16 @@
         }
 
         .review-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 10px 12px;
+            border: 1px solid #f0f0f0;
+            border-radius: 14px;
+            padding: 12px 14px;
+            background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+            transition: box-shadow .2s, transform .2s;
+        }
+
+        .review-card:hover {
+            box-shadow: 0 6px 18px rgba(20, 20, 40, .07);
+            transform: translateY(-1px);
         }
 
         .rc-header {
@@ -850,10 +1009,13 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 480px;
-            background: white;
-            padding: 10px 14px;
-            box-shadow: 0 -3px 12px rgba(0, 0, 0, .12);
+            background: rgba(255, 255, 255, .92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -6px 20px rgba(20, 20, 40, .1);
             z-index: 99;
+            border-top: 1px solid rgba(255, 45, 85, .08);
         }
 
         .btn-buy {
@@ -861,14 +1023,35 @@
             background: linear-gradient(90deg, var(--primary), #ff6b35);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 1.05rem;
+            border-radius: 14px;
+            padding: 15px;
+            font-size: 1.08rem;
             font-weight: 900;
             cursor: pointer;
             font-family: 'Nunito', sans-serif;
-            box-shadow: 0 4px 14px rgba(255, 45, 85, .4);
+            box-shadow: 0 6px 22px rgba(255, 45, 85, .45);
             animation: buyPulse 1.4s ease-in-out infinite;
+            letter-spacing: .5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-buy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .35), transparent);
+            transform: skewX(-20deg);
+            animation: btnShine 2.6s ease-in-out infinite;
+        }
+
+        @keyframes btnShine {
+            0% { left: -75%; }
+            60% { left: 130%; }
+            100% { left: 130%; }
         }
 
         @keyframes buyPulse {
@@ -1154,18 +1337,72 @@
 
         /* FOOTER */
         .site-footer {
-            background: #1a1a2e;
+            background:
+                radial-gradient(800px 400px at 50% 0%, rgba(255, 45, 85, .12), transparent 60%),
+                linear-gradient(180deg, #1f1b2e 0%, #15131f 100%);
             color: #ccc;
-            padding: 28px 16px 20px;
-            margin-top: 8px;
+            padding: 32px 16px 22px;
+            margin-top: 10px;
+            border-radius: 22px 22px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .site-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-grad);
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .footer-logo-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--primary-grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(255, 45, 85, .4);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .footer-logo-mark::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255, 255, 255, .35);
         }
 
         .footer-logo {
             font-family: 'Baloo 2', cursive;
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 6px;
+            background: linear-gradient(135deg, #ff6b8a, #ffb085);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .footer-logo-sub {
+            font-size: .65rem;
+            color: #888;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            margin-top: 4px;
         }
 
         .footer-tagline {
@@ -1222,14 +1459,15 @@
         }
 
         .footer-contact-row .icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: rgba(255, 45, 85, .15);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255, 45, 85, .25), rgba(255, 109, 0, .15));
+            border: 1px solid rgba(255, 45, 85, .2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: .9rem;
+            font-size: .95rem;
             flex-shrink: 0;
         }
 
@@ -1251,21 +1489,23 @@
         }
 
         .footer-social a {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, .07);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .04));
+            border: 1px solid rgba(255, 255, 255, .08);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             text-decoration: none;
-            transition: background .2s, transform .2s;
+            transition: background .2s, transform .2s, box-shadow .2s;
         }
 
         .footer-social a:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
+            background: var(--primary-grad);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(255, 45, 85, .4);
         }
 
         .footer-trust {
@@ -1276,12 +1516,12 @@
         }
 
         .trust-badge {
-            background: rgba(255, 255, 255, .06);
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: 8px;
-            padding: 6px 10px;
+            background: linear-gradient(135deg, rgba(255, 45, 85, .12), rgba(255, 109, 0, .08));
+            border: 1px solid rgba(255, 45, 85, .2);
+            border-radius: 10px;
+            padding: 7px 11px;
             font-size: .7rem;
-            color: #bbb;
+            color: #f0d0d8;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -1413,7 +1653,21 @@
 
     <!-- TOP NAV -->
     <div class="topnav">
-        <div class="logo">🛒 TIPET SHOP VN</div>
+        <div class="logo">
+            <div class="logo-mark">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="5.5" cy="9" r="2.2" />
+                    <circle cx="9.5" cy="5" r="2" />
+                    <circle cx="14.5" cy="5" r="2" />
+                    <circle cx="18.5" cy="9" r="2.2" />
+                    <path d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
+                </svg>
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Trạm Thú Cưng</span>
+                <span class="logo-tagline">Pet Station VN</span>
+            </div>
+        </div>
         <div class="search">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.5">
                 <circle cx="11" cy="11" r="8" />
@@ -1518,7 +1772,7 @@
             </div>
             <div class="tag-row">
                 <span class="tag">Hoàn tiền 7 ngày 💰</span>
-                <span class="tag">Hàng chính hãng nhà Tipet ✅</span>
+                <span class="tag">Hàng chính hãng Trạm Thú Cưng ✅</span>
                 <span class="tag">Giao hỏa tốc nội thành trong 2h ⚡</span>
             </div>
             <div class="variant-section">
@@ -1665,66 +1919,36 @@
             </div>
         </div>
 
-        <!-- RELATED -->
-        <div class="section">
-            <div class="section-title">Sản phẩm khác</div>
-            <div class="related-grid">
-                <div class="rel-card" onclick="addRelated('Súp Thưởng Mèo Gemluck 15g',1000,'./img/gemluck.webp')">
-                    <div class="rel-card-img-wrap">
-                        <img src="./img/gemluck.webp"
-                            onerror="this.src='https://placehold.co/300x300/fff5ee/ff6b35?text=🐱'" alt="">
-                        <div class="rel-card-badge">HOT</div>
-                        <div class="rel-card-voucher">🎁 Tặng voucher giảm 15K</div>
-                    </div>
-                    <div class="rel-card-body">
-                        <div class="rel-card-name">🐟 Súp Thưởng Cho Mèo Gemluck 15G</div>
-                        <div class="rel-card-prices"><span class="rel-card-price">1.000₫</span><span
-                                class="rel-card-old">5.000₫</span></div>
-                        <div class="rel-card-sold">⭐ 4.9 · 90k đã bán</div>
+        <!-- TRUST / GUARANTEE BLOCK -->
+        <div class="section guarantee-section">
+            <div class="section-title">Cam kết từ Trạm Thú Cưng</div>
+            <div class="guarantee-grid">
+                <div class="guarantee-item">
+                    <div class="guarantee-icon">🛡️</div>
+                    <div class="guarantee-text">
+                        <div class="g-title">Hàng chính hãng</div>
+                        <div class="g-sub">Cam kết 100% chính hãng</div>
                     </div>
                 </div>
-                <div class="rel-card" onclick="addRelated('Bàn Cào Móng Tròn Cho Mèo',39000,'./img/BÀN CÀO- bìa.png')">
-                    <div class="rel-card-img-wrap">
-                        <img src="./img/BÀN CÀO- bìa.png"
-                            onerror="this.src='https://placehold.co/300x300/f0f8ff/4a90d9?text=🐾'" alt="">
-                        <div class="rel-card-badge">MỚI</div>
-                        <div class="rel-card-voucher">🎁 Tặng voucher giảm 15K</div>
-                    </div>
-                    <div class="rel-card-body">
-                        <div class="rel-card-name">🐾 Bàn Cào Móng Tròn Cho Mèo Xả Stress 2026</div>
-                        <div class="rel-card-prices"><span class="rel-card-price">39.000₫</span><span
-                                class="rel-card-old">89.000₫</span></div>
-                        <div class="rel-card-sold">⭐ 4.9 · 6.7k đã bán</div>
+                <div class="guarantee-item">
+                    <div class="guarantee-icon">💰</div>
+                    <div class="guarantee-text">
+                        <div class="g-title">Hoàn tiền 7 ngày</div>
+                        <div class="g-sub">Không hài lòng đổi trả</div>
                     </div>
                 </div>
-                <div class="rel-card"
-                    onclick="addRelated('Hạt KawaiCat Túi 1,5Kg Hương Vị Cá Hồi',159000,'./img/LONG CAT- bìa (1).png')">
-                    <div class="rel-card-img-wrap">
-                        <img src="./img/LONG CAT- bìa (1).png"
-                            onerror="this.src='https://placehold.co/300x300/fff0f5/ff2d55?text=🐱'" alt="">
-                        <div class="rel-card-badge">BÁN CHẠY</div>
-                        <div class="rel-card-voucher">🎁 Tặng voucher giảm 15K</div>
-                    </div>
-                    <div class="rel-card-body">
-                        <div class="rel-card-name">🐠 Hạt KawaiCat Túi 1,5Kg Hương Vị Cá Hồi</div>
-                        <div class="rel-card-prices"><span class="rel-card-price">159.000₫</span><span
-                                class="rel-card-old">299.000₫</span></div>
-                        <div class="rel-card-sold">⭐ 4.9 · 20.1k đã bán</div>
+                <div class="guarantee-item">
+                    <div class="guarantee-icon">⚡</div>
+                    <div class="guarantee-text">
+                        <div class="g-title">Giao hỏa tốc 2H</div>
+                        <div class="g-sub">Nội thành HN &amp; HCM</div>
                     </div>
                 </div>
-                <div class="rel-card"
-                    onclick="addRelated('Bàn Cào Móng Ova Cho Mèo',39000,'./img/BÀN CÀO ova- bìa.png')">
-                    <div class="rel-card-img-wrap">
-                        <img src="./img/BÀN CÀO ova- bìa.png"
-                            onerror="this.src='https://placehold.co/300x300/f5fff0/00c853?text=🐾'" alt="">
-                        <div class="rel-card-badge">MỚI</div>
-                        <div class="rel-card-voucher">🎁 Tặng voucher giảm 15K</div>
-                    </div>
-                    <div class="rel-card-body">
-                        <div class="rel-card-name">🐾 Bàn Cào Móng Ova Cho Mèo Xả Stress 2026</div>
-                        <div class="rel-card-prices"><span class="rel-card-price">39.000₫</span><span
-                                class="rel-card-old">79.000₫</span></div>
-                        <div class="rel-card-sold">⭐ 4.8 · 11.5k đã bán</div>
+                <div class="guarantee-item">
+                    <div class="guarantee-icon">🌿</div>
+                    <div class="guarantee-text">
+                        <div class="g-title">Thảo dược an toàn</div>
+                        <div class="g-sub">Lành tính cho thú cưng</div>
                     </div>
                 </div>
             </div>
@@ -1735,7 +1959,21 @@
     <!-- FOOTER -->
     <footer class="site-footer">
         <div style="max-width:480px;margin:0 auto;">
-            <div class="footer-logo">🛒 TIPET SHOP VN</div>
+            <div class="footer-brand">
+                <div class="footer-logo-mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="5.5" cy="9" r="2.2" />
+                        <circle cx="9.5" cy="5" r="2" />
+                        <circle cx="14.5" cy="5" r="2" />
+                        <circle cx="18.5" cy="9" r="2.2" />
+                        <path d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="footer-logo">Trạm Thú Cưng</div>
+                    <div class="footer-logo-sub">PET STATION VN</div>
+                </div>
+            </div>
             <div class="footer-tagline">Thương hiệu chuyên sản phẩm chăm sóc thú cưng — An toàn · Chất lượng · Uy tín từ
                 2020.</div>
             <div class="footer-trust">
@@ -1781,8 +2019,8 @@
                 <li><a href="#">🎁 Chương trình khách hàng thân thiết</a></li>
             </ul>
             <div class="footer-bottom">
-                <p>© 2020–2026 <strong style="color:#888">TIPET SHOP VN</strong>. Bảo lưu mọi quyền.</p>
-                <p style="margin-top:4px">Thiết kế &amp; phát triển bởi <a href="#">Tipet Tech</a> · MST: 0123456789</p>
+                <p>© 2020–2026 <strong style="color:#888">Trạm Thú Cưng</strong>. Bảo lưu mọi quyền.</p>
+                <p style="margin-top:4px">Thiết kế &amp; phát triển bởi <a href="#">Pet Station Tech</a> · MST: 0123456789</p>
             </div>
         </div>
     </footer>
@@ -1852,7 +2090,7 @@
         <div class="success-msg" id="successMsg">
             <div class="check-icon">🎉</div>
             <h3>Đặt hàng thành công!</h3>
-            <p>Cảm ơn bạn đã tin tưởng TIPET SHOP VN.<br>Đơn hàng sẽ được xử lý và giao trong 2–24h.</p>
+            <p>Cảm ơn bạn đã tin tưởng Trạm Thú Cưng.<br>Đơn hàng sẽ được xử lý và giao trong 2–24h.</p>
             <p style="margin-top:8px;color:#aaa;font-size:.75rem">Mã đơn: #<span id="orderCode"></span></p>
         </div>
     </div>
