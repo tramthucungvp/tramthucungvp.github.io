@@ -1219,8 +1219,8 @@
                 );
                 let deleteCount = 0;
                 if (toDelete.length) {
-                    // Hoàn tác stock cho từng đơn xoá
-                    toDelete.forEach(o => applyDeltas(negateDeltas(stockDeltaForOrder(o))));
+                    // KHÔNG cộng lại tồn kho — xoá row chỉ là dọn dẹp data,
+                    // hàng đã giao rồi không có gì quay về. Chỉ "tô đỏ" (returned) mới cộng kho.
                     const delIds = new Set(toDelete.map(x => x.id));
                     const delMaDons = new Set(toDelete.map(x => x.maDon));
                     DATA.orders = DATA.orders.filter(x => !delIds.has(x.id));
