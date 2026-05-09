@@ -688,7 +688,7 @@
             </div>
 
             <div class="card">
-                <div class="card-title">Top sản phẩm theo lợi nhuận</div>
+                <div class="card-title">Top sản phẩm theo lãi đơn (chưa trừ Ads)</div>
                 <div class="table-wrap">
                     <table id="topProductTable">
                         <thead>
@@ -751,7 +751,7 @@
                                 <th class="num">Ads</th>
                                 <th class="num">Ship lỗ</th>
                                 <th>Trạng thái</th>
-                                <th class="num">LN</th>
+                                <th class="num" title="Lãi đơn (chưa trừ Ads)">Lãi đơn</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -1556,18 +1556,17 @@
 
         function profitOf(o) {
             const sp = +o.sellPrice || 0, c = +o.cost || 0, q = +o.qty || 1;
-            const a = getAllocatedAdsForOrder(o); // ads phân bổ theo NGÀY, không nhân qty
+            const a = getAllocatedAdsForOrder(o); // ads phân bổ theo NGÀY
             const shopShip = +DATA.settings.shipShop || 0;
-            if (o.status === 'delivered') {
-                return { revenue: sp * q, cost: c * q, ads: a, ship: 0, profit: sp * q - c * q - a };
-            }
-            if (o.status === 'returned') {
-                return { revenue: 0, cost: 0, ads: a, ship: shopShip, profit: -a - shopShip };
-            }
-            if (o.status === 'promo') {
-                return { revenue: sp * q, cost: c * q, ads: a, ship: shopShip, profit: sp * q - c * q - a - shopShip };
-            }
-            return { revenue: 0, cost: 0, ads: 0, ship: 0, profit: 0 };
+            let revenue = 0, cost = 0, ship = 0;
+            if (o.status === 'delivered') { revenue = sp * q; cost = c * q; ship = 0; }
+            else if (o.status === 'returned') { revenue = 0; cost = 0; ship = shopShip; }
+            else if (o.status === 'promo') { revenue = sp * q; cost = c * q; ship = shopShip; }
+            // profitGross = lãi đơn (CHƯA trừ Ads) — đây là số mỗi đơn show ra ban đầu
+            // profit = LN ròng (đã trừ Ads phân bổ) — dùng cho tổng dashboard
+            const profitGross = revenue - cost - ship;
+            const profit = profitGross - a;
+            return { revenue, cost, ads: a, ship, profitGross, profit };
         }
 
         // LN dự kiến/đơn (chưa trừ Ads — Ads tính riêng theo ngày)
@@ -1712,9 +1711,12 @@
             const stockValue = DATA.inventory.reduce((s, it) => s + (+it.stock || 0) * (+it.cost || 0), 0);
             const totalStockUnits = DATA.inventory.reduce((s, it) => s + (+it.stock || 0), 0);
 
+            const grossProfit = revenue - cost - shipLoss; // tổng lãi đơn (chưa trừ Ads)
+
             document.getElementById('kpiGrid').innerHTML = [
                 kpi('💰', 'Doanh thu', fmt(revenue), `${total} đơn · ${totalQty} sp`),
-                kpi('💎', 'Lợi nhuận ròng', fmt(profit), `Biên LN ${profitMargin.toFixed(1)}%`, profit >= 0 ? 'profit' : 'loss'),
+                kpi('🪙', 'Tổng lãi đơn', fmt(grossProfit), 'Chưa trừ Ads', grossProfit >= 0 ? 'profit' : 'loss'),
+                kpi('💎', 'LN ròng (sau Ads)', fmt(profit), `Biên ${profitMargin.toFixed(1)}%`, profit >= 0 ? 'profit' : 'loss'),
                 kpi('🛒', 'Vốn hàng', fmt(cost), '', 'warn'),
                 kpi('📺', 'Tổng Ads', fmt(ads), '', 'warn'),
                 kpi('🚚', 'Ship shop chịu', fmt(shipLoss), `${cntReturned + cntPromo} đơn`, 'warn'),
@@ -1805,7 +1807,7 @@
                 const p = profitOf(o);
                 byProduct[pid].qty += +o.qty || 0;
                 byProduct[pid].revenue += p.revenue;
-                byProduct[pid].profit += p.profit;
+                byProduct[pid].profit += p.profitGross;
             });
             const rows = Object.entries(byProduct)
                 .map(([pid, s]) => {
@@ -1902,17 +1904,12 @@
             // Tính profit thủ công với projectedAds
             const sp = +o.sellPrice || 0, c = +o.cost || 0, q = +o.qty || 1;
             const shopShip = +DATA.settings.shipShop || 0;
-            let r = { revenue: 0, cost: 0, ads: projectedAds, ship: 0, profit: 0 };
-            if (o.status === 'delivered') {
-                r.revenue = sp * q; r.cost = c * q; r.ship = 0;
-                r.profit = r.revenue - r.cost - projectedAds;
-            } else if (o.status === 'returned') {
-                r.revenue = 0; r.cost = 0; r.ship = shopShip;
-                r.profit = -projectedAds - shopShip;
-            } else if (o.status === 'promo') {
-                r.revenue = sp * q; r.cost = c * q; r.ship = shopShip;
-                r.profit = r.revenue - r.cost - projectedAds - shopShip;
-            }
+            let r = { revenue: 0, cost: 0, ads: projectedAds, ship: 0, profitGross: 0, profit: 0 };
+            if (o.status === 'delivered') { r.revenue = sp * q; r.cost = c * q; r.ship = 0; }
+            else if (o.status === 'returned') { r.revenue = 0; r.cost = 0; r.ship = shopShip; }
+            else if (o.status === 'promo') { r.revenue = sp * q; r.cost = c * q; r.ship = shopShip; }
+            r.profitGross = r.revenue - r.cost - r.ship;
+            r.profit = r.profitGross - projectedAds;
 
             let stockInfo = '';
             if (prod && prod.bom && prod.bom.length) {
@@ -1948,10 +1945,12 @@
 
             document.getElementById('oPreview').innerHTML =
                 `<strong>📊 Xem trước:</strong><br>
-                Doanh thu: <strong>${fmt(r.revenue)}</strong> · Vốn: ${fmt(r.cost)} · Ads: ${fmt(r.ads)} · Ship lỗ: ${fmt(r.ship)}<br>
-                <strong style="color:${r.profit >= 0 ? 'var(--accent)' : 'var(--danger)'};font-size:1.05rem">
-                    Lợi nhuận: ${fmt(r.profit)}
-                </strong>${adsHint}${stockInfo}`;
+                Doanh thu: <strong>${fmt(r.revenue)}</strong> · Vốn: ${fmt(r.cost)} · Ship lỗ: ${fmt(r.ship)}<br>
+                💰 <strong style="color:${r.profitGross >= 0 ? 'var(--accent)' : 'var(--danger)'};font-size:1.1rem">
+                    Lãi đơn: ${fmt(r.profitGross)}
+                </strong> <span style="color:#888;font-size:.78rem">(chưa trừ Ads)</span><br>
+                <span style="font-size:.8rem;color:var(--gray)">Sau khi trừ Ads ${fmt(r.ads)} → <strong style="color:${r.profit >= 0 ? 'var(--accent)' : 'var(--danger)'}">LN ròng: ${fmt(r.profit)}</strong></span>
+                ${adsHint}${stockInfo}`;
         }
 
         ['oQty', 'oSellPrice', 'oCost', 'oStatus', 'oDate', 'oProduct'].forEach(id =>
@@ -2041,10 +2040,11 @@
             prodSel.value = cur;
 
             // Sub-stats: hiện tổng cho danh sách đã filter
-            let fRev = 0, fProfit = 0;
-            sortedAll.forEach(o => { const p = profitOf(o); fRev += p.revenue; fProfit += p.profit; });
+            let fRev = 0, fGross = 0, fAds = 0;
+            sortedAll.forEach(o => { const p = profitOf(o); fRev += p.revenue; fGross += p.profitGross; fAds += p.ads; });
+            const fNet = fGross - fAds;
             document.getElementById('orderFilterStats').innerHTML = sortedAll.length
-                ? `📋 <strong>${sortedAll.length}</strong> đơn · DT <strong>${fmt(fRev)}</strong> · LN <strong style="color:${fProfit >= 0 ? 'var(--accent)' : 'var(--danger)'}">${fmt(fProfit)}</strong>`
+                ? `📋 <strong>${sortedAll.length}</strong> đơn · DT <strong>${fmt(fRev)}</strong> · Lãi đơn <strong style="color:${fGross >= 0 ? 'var(--accent)' : 'var(--danger)'}">${fmt(fGross)}</strong> · LN ròng <strong style="color:${fNet >= 0 ? 'var(--accent)' : 'var(--danger)'}">${fmt(fNet)}</strong>`
                 : '';
 
             const tbody = document.querySelector('#orderTable tbody');
@@ -2078,7 +2078,7 @@
                     <td class="num">${fmt(p.ads)}</td>
                     <td class="num">${fmt(p.ship)}</td>
                     <td>${statusBadge(o.status)}</td>
-                    <td class="num ${p.profit >= 0 ? 'pos' : 'neg'}">${fmt(p.profit)}</td>
+                    <td class="num ${p.profitGross >= 0 ? 'pos' : 'neg'}" title="Đã trừ Ads còn ${fmt(p.profit)}">${fmt(p.profitGross)}</td>
                     <td>
                         <div class="row-actions">
                             <button class="btn btn-sm btn-ghost" onclick="openOrderModal('${o.id}')">✏️</button>
