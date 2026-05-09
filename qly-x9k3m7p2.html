@@ -857,12 +857,20 @@
                         <input type="text" id="setPartnerName">
                     </div>
                     <div class="form-row">
-                        <label>% của bạn</label>
+                        <label>📊 % LỢI NHUẬN của bạn</label>
                         <input type="number" id="setMePct" min="0" max="100" step="1">
                     </div>
                     <div class="form-row">
-                        <label>% của đối tác</label>
+                        <label>📊 % LỢI NHUẬN của đối tác</label>
                         <input type="number" id="setPartnerPct" min="0" max="100" step="1" readonly>
+                    </div>
+                    <div class="form-row">
+                        <label>🛒 % VỐN nhập hàng của bạn</label>
+                        <input type="number" id="setCapitalMePct" min="0" max="100" step="1">
+                    </div>
+                    <div class="form-row">
+                        <label>🛒 % VỐN nhập hàng của đối tác</label>
+                        <input type="number" id="setCapitalPartnerPct" min="0" max="100" step="1" readonly>
                     </div>
                     <div class="form-row" style="grid-column:1/-1">
                         <label>💸 Ai ứng tiền Ads (được hoàn 100% cuối kỳ trước khi chia LN)</label>
@@ -874,10 +882,11 @@
                     </div>
                 </div>
                 <div class="info-box" style="margin-top:8px">
-                    💡 <strong>Quy tắc chia lợi nhuận:</strong><br>
-                    1️⃣ Tổng Ads trong kỳ được <strong>hoàn 100%</strong> cho người ứng trước.<br>
-                    2️⃣ Lợi nhuận còn lại (đã trừ Ads) được chia theo % đã thiết lập.<br>
-                    3️⃣ Người ứng Ads nhận = <em>% LN của họ + tiền Ads ứng</em>.
+                    💡 <strong>Quy tắc chia khi chốt sổ:</strong><br>
+                    1️⃣ <strong>Hoàn Ads 100%</strong> cho người ứng trước.<br>
+                    2️⃣ <strong>Hoàn vốn</strong> theo % vốn (VD: 70/30) — chỉ vốn của ĐƠN ĐÃ BÁN.<br>
+                    3️⃣ <strong>Lợi nhuận còn lại</strong> (sau khi trừ Ads) chia theo % LN.<br>
+                    4️⃣ Mỗi người nhận = <em>% LN + Hoàn vốn của họ + Hoàn Ads (nếu ứng)</em>.
                 </div>
             </div>
 
@@ -1203,11 +1212,13 @@
             settings: {
                 meName: 'Tôi',
                 partnerName: 'Bạn',
-                mePct: 50,
-                partnerPct: 50,
+                mePct: 50,         // % chia LN của tôi
+                partnerPct: 50,    // % chia LN của đối tác
+                capitalMePct: 70,  // % VỐN nhập hàng của tôi
+                capitalPartnerPct: 30, // % VỐN nhập hàng của đối tác
                 shipCustomer: 20000,
                 shipShop: 20000,
-                adsPayer: 'me'  // 'me' | 'partner' | 'both' — ai ứng Ads, được hoàn lại trước khi chia LN
+                adsPayer: 'me'  // 'me' | 'partner' | 'both'
             },
             inventory: [
                 { id: 'inv_xit', name: 'Chai xịt ve rận', unit: 'chai', cost: 75000, stock: 0, lowStockThreshold: 5 },
@@ -1735,34 +1746,39 @@
             }
             document.getElementById('adsRefundBox').innerHTML = refundBox;
 
-            // Partner split — Ads ứng được hoàn 100% trước khi chia
+            // Partner split: hoàn Ads + hoàn vốn + chia LN
             const meSharePct = +DATA.settings.mePct / 100;
             const partnerSharePct = +DATA.settings.partnerPct / 100;
+            const capMePct = (+DATA.settings.capitalMePct || 50) / 100;
+            const capPartnerPct = (+DATA.settings.capitalPartnerPct || 50) / 100;
+
             const meProfitShare = profit * meSharePct;
             const partnerProfitShare = profit * partnerSharePct;
             const meAdsRefund = adsPayer === 'me' ? ads : 0;
             const partnerAdsRefund = adsPayer === 'partner' ? ads : 0;
-            const meTotal = meProfitShare + meAdsRefund;
-            const partnerTotal = partnerProfitShare + partnerAdsRefund;
+            // Hoàn vốn: theo tỉ lệ % vốn × tổng vốn của các đơn ĐÃ BÁN trong kỳ
+            const meCapitalReturn = cost * capMePct;
+            const partnerCapitalReturn = cost * capPartnerPct;
+            const meTotal = meProfitShare + meAdsRefund + meCapitalReturn;
+            const partnerTotal = partnerProfitShare + partnerAdsRefund + partnerCapitalReturn;
 
-            const breakdown = (profitShare, adsRefund, pct) => {
-                if (!adsRefund) return `<div class="pc-pct">${pct}% lợi nhuận</div>`;
-                return `<div class="pc-breakdown">
-                    <div>💰 ${pct}% LN: <strong>${fmt(profitShare)}</strong></div>
-                    <div>💸 Hoàn Ads ứng: <strong>${fmt(adsRefund)}</strong></div>
-                </div>`;
+            const breakdown = (profitShare, adsRefund, capitalReturn, pctLN, pctCap) => {
+                const lines = [`<div>💰 ${pctLN}% LN: <strong>${fmt(profitShare)}</strong></div>`];
+                if (capitalReturn > 0) lines.push(`<div>🛒 Hoàn vốn ${pctCap}%: <strong>${fmt(capitalReturn)}</strong></div>`);
+                if (adsRefund > 0) lines.push(`<div>💸 Hoàn Ads ứng: <strong>${fmt(adsRefund)}</strong></div>`);
+                return `<div class="pc-breakdown">${lines.join('')}</div>`;
             };
 
             document.getElementById('partnerRow').innerHTML = `
                 <div class="partner-card me">
-                    <div class="pc-name">👤 ${DATA.settings.meName}${adsPayer === 'me' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}</div>
+                    <div class="pc-name">👤 ${DATA.settings.meName}${adsPayer === 'me' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}<span class="pc-badge">Vốn ${DATA.settings.capitalMePct || 50}%</span></div>
                     <div class="pc-amount">${fmt(meTotal)}</div>
-                    ${breakdown(meProfitShare, meAdsRefund, DATA.settings.mePct)}
+                    ${breakdown(meProfitShare, meAdsRefund, meCapitalReturn, DATA.settings.mePct, DATA.settings.capitalMePct || 50)}
                 </div>
                 <div class="partner-card partner">
-                    <div class="pc-name">🤝 ${DATA.settings.partnerName}${adsPayer === 'partner' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}</div>
+                    <div class="pc-name">🤝 ${DATA.settings.partnerName}${adsPayer === 'partner' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}<span class="pc-badge">Vốn ${DATA.settings.capitalPartnerPct || 50}%</span></div>
                     <div class="pc-amount">${fmt(partnerTotal)}</div>
-                    ${breakdown(partnerProfitShare, partnerAdsRefund, DATA.settings.partnerPct)}
+                    ${breakdown(partnerProfitShare, partnerAdsRefund, partnerCapitalReturn, DATA.settings.partnerPct, DATA.settings.capitalPartnerPct || 50)}
                 </div>`;
 
             // Daily chart - last 14 days
@@ -2371,6 +2387,8 @@
             document.getElementById('setPartnerName').value = s.partnerName;
             document.getElementById('setMePct').value = s.mePct;
             document.getElementById('setPartnerPct').value = s.partnerPct;
+            document.getElementById('setCapitalMePct').value = s.capitalMePct ?? 70;
+            document.getElementById('setCapitalPartnerPct').value = s.capitalPartnerPct ?? 30;
             document.getElementById('setShipCustomer').value = s.shipCustomer;
             document.getElementById('setShipShop').value = s.shipShop;
             document.getElementById('setAdsPayer').value = s.adsPayer || 'me';
@@ -2382,6 +2400,7 @@
                 ['setMeName', 'meName', v => v],
                 ['setPartnerName', 'partnerName', v => v],
                 ['setMePct', 'mePct', v => +v],
+                ['setCapitalMePct', 'capitalMePct', v => +v],
                 ['setShipCustomer', 'shipCustomer', v => +v],
                 ['setShipShop', 'shipShop', v => +v],
                 ['setAdsPayer', 'adsPayer', v => v]
@@ -2393,6 +2412,11 @@
                         const p = Math.max(0, 100 - (+DATA.settings.mePct || 0));
                         DATA.settings.partnerPct = p;
                         document.getElementById('setPartnerPct').value = p;
+                    }
+                    if (key === 'capitalMePct') {
+                        const p = Math.max(0, 100 - (+DATA.settings.capitalMePct || 0));
+                        DATA.settings.capitalPartnerPct = p;
+                        document.getElementById('setCapitalPartnerPct').value = p;
                     }
                     if (key === 'shipShop') {
                         document.getElementById('setShipShopPreview').textContent = fmt(+e.target.value);
