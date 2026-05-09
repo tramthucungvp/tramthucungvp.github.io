@@ -246,6 +246,14 @@
             position: relative; z-index: 1;
         }
         .pc-breakdown strong { font-weight: 800; }
+        .pc-total {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, .3);
+            font-size: .82rem;
+            font-weight: 800;
+            opacity: 1;
+        }
 
         /* CHART */
         .chart-wrap { padding: 8px 0; }
@@ -1762,23 +1770,26 @@
             const meTotal = meProfitShare + meAdsRefund + meCapitalReturn;
             const partnerTotal = partnerProfitShare + partnerAdsRefund + partnerCapitalReturn;
 
-            const breakdown = (profitShare, adsRefund, capitalReturn, pctLN, pctCap) => {
-                const lines = [`<div>💰 ${pctLN}% LN: <strong>${fmt(profitShare)}</strong></div>`];
+            const breakdown = (adsRefund, capitalReturn, total, pctCap) => {
+                const lines = [];
                 if (capitalReturn > 0) lines.push(`<div>🛒 Hoàn vốn ${pctCap}%: <strong>${fmt(capitalReturn)}</strong></div>`);
                 if (adsRefund > 0) lines.push(`<div>💸 Hoàn Ads ứng: <strong>${fmt(adsRefund)}</strong></div>`);
+                lines.push(`<div class="pc-total">Tổng nhận: <strong>${fmt(total)}</strong></div>`);
                 return `<div class="pc-breakdown">${lines.join('')}</div>`;
             };
 
             document.getElementById('partnerRow').innerHTML = `
                 <div class="partner-card me">
                     <div class="pc-name">👤 ${DATA.settings.meName}${adsPayer === 'me' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}<span class="pc-badge">Vốn ${DATA.settings.capitalMePct || 50}%</span></div>
-                    <div class="pc-amount">${fmt(meTotal)}</div>
-                    ${breakdown(meProfitShare, meAdsRefund, meCapitalReturn, DATA.settings.mePct, DATA.settings.capitalMePct || 50)}
+                    <div class="pc-amount">${fmt(meProfitShare)}</div>
+                    <div class="pc-pct">${DATA.settings.mePct}% lợi nhuận</div>
+                    ${breakdown(meAdsRefund, meCapitalReturn, meTotal, DATA.settings.capitalMePct || 50)}
                 </div>
                 <div class="partner-card partner">
                     <div class="pc-name">🤝 ${DATA.settings.partnerName}${adsPayer === 'partner' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}<span class="pc-badge">Vốn ${DATA.settings.capitalPartnerPct || 50}%</span></div>
-                    <div class="pc-amount">${fmt(partnerTotal)}</div>
-                    ${breakdown(partnerProfitShare, partnerAdsRefund, partnerCapitalReturn, DATA.settings.partnerPct, DATA.settings.capitalPartnerPct || 50)}
+                    <div class="pc-amount">${fmt(partnerProfitShare)}</div>
+                    <div class="pc-pct">${DATA.settings.partnerPct}% lợi nhuận</div>
+                    ${breakdown(partnerAdsRefund, partnerCapitalReturn, partnerTotal, DATA.settings.capitalPartnerPct || 50)}
                 </div>`;
 
             // Daily chart - last 14 days
