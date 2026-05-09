@@ -1711,11 +1711,8 @@
             const stockValue = DATA.inventory.reduce((s, it) => s + (+it.stock || 0) * (+it.cost || 0), 0);
             const totalStockUnits = DATA.inventory.reduce((s, it) => s + (+it.stock || 0), 0);
 
-            const grossProfit = revenue - cost - shipLoss; // tổng lãi đơn (chưa trừ Ads)
-
             document.getElementById('kpiGrid').innerHTML = [
                 kpi('💰', 'Doanh thu', fmt(revenue), `${total} đơn · ${totalQty} sp`),
-                kpi('🪙', 'Tổng lãi đơn', fmt(grossProfit), 'Chưa trừ Ads', grossProfit >= 0 ? 'profit' : 'loss'),
                 kpi('💎', 'LN ròng (sau Ads)', fmt(profit), `Biên ${profitMargin.toFixed(1)}%`, profit >= 0 ? 'profit' : 'loss'),
                 kpi('🛒', 'Vốn hàng', fmt(cost), '', 'warn'),
                 kpi('📺', 'Tổng Ads', fmt(ads), '', 'warn'),
