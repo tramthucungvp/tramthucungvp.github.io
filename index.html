@@ -2351,7 +2351,48 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             const address = document.getElementById('faddress').value.trim();
             const noteRaw = document.getElementById('fnote').value.trim();
             const note = noteRaw ? 'FB ' + noteRaw : 'FB';
-            if (!name || !phone || !address) { alert('⚠️ Vui lòng điền đầy đủ Họ tên, Số điện thoại và Địa chỉ!'); return; }
+
+            // ===== VALIDATION =====
+            // Họ tên: tối thiểu 2 ký tự, không được chỉ toàn số
+            if (!name || name.length < 2) {
+                alert('⚠️ Vui lòng nhập Họ và tên đầy đủ (ít nhất 2 ký tự)');
+                document.getElementById('fname').focus(); return;
+            }
+            if (/^\d+$/.test(name)) {
+                alert('⚠️ Họ tên không hợp lệ — không được chỉ là số');
+                document.getElementById('fname').focus(); return;
+            }
+
+            // SĐT: phải là 10 số bắt đầu bằng 0, đầu số mobile VN (3/5/7/8/9) hoặc landline (2)
+            if (!phone) {
+                alert('⚠️ Vui lòng nhập Số điện thoại');
+                document.getElementById('fphone').focus(); return;
+            }
+            if (!/^0[235789]\d{8}$/.test(phone)) {
+                alert('⚠️ Số điện thoại không hợp lệ!\n\nĐịnh dạng đúng: 10 chữ số, bắt đầu bằng 0\nVí dụ: 0901234567, 0387654321');
+                document.getElementById('fphone').focus(); return;
+            }
+            // Chặn số toàn ký tự giống nhau (0000000000, 0123456789...)
+            if (/^0(\d)\1{8}$/.test(phone) || phone === '0123456789' || phone === '0987654321') {
+                alert('⚠️ Số điện thoại có vẻ không hợp lệ. Vui lòng nhập đúng số bạn dùng để shop liên hệ giao hàng.');
+                document.getElementById('fphone').focus(); return;
+            }
+
+            // Địa chỉ: tối thiểu 15 ký tự + có từ khoá địa chỉ (phường/xã/quận/...) + có ít nhất 3 từ
+            if (!address || address.length < 15) {
+                alert('⚠️ Địa chỉ quá ngắn!\n\nVui lòng ghi đầy đủ:\n• Số nhà, tên đường\n• Phường/xã\n• Quận/huyện\n• Tỉnh/thành phố');
+                document.getElementById('faddress').focus(); return;
+            }
+            const addrKeyword = /(đường|phố|phường|p\.|xã|x\.|quận|q\.|huyện|h\.|thôn|ấp|tổ|khu phố|kp|kp\.|hà\s?nội|hcm|sài\s?gòn|tp\.?\s?hcm|tp\.?\s?h(à\s)?n|đà\s?nẵng|hải\s?phòng|cần\s?thơ|biên\s?hòa|nha\s?trang|huế|vinh|tỉnh|thành\s?phố|tx|tt|hẻm|ngõ|ngách|đ\.)/i;
+            if (!addrKeyword.test(address)) {
+                alert('⚠️ Địa chỉ chưa đầy đủ!\n\nCần có thông tin phường/xã, quận/huyện, tỉnh/thành phố.\nVí dụ: "123 Nguyễn Trãi, P. Trung Văn, Q. Nam Từ Liêm, Hà Nội"');
+                document.getElementById('faddress').focus(); return;
+            }
+            const wordCount = address.split(/[\s,.\-]+/).filter(Boolean).length;
+            if (wordCount < 4) {
+                alert('⚠️ Địa chỉ quá sơ sài — vui lòng ghi rõ ràng để shipper giao đúng nhà.');
+                document.getElementById('faddress').focus(); return;
+            }
 
             const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec';
 
