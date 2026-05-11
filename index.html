@@ -2406,19 +2406,19 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 document.getElementById('fphone').focus(); return;
             }
 
-            // Địa chỉ: tối thiểu 12 ký tự + có từ khoá khu vực + có ít nhất 3 từ (cho phép địa chỉ quê không có số nhà)
-            if (!address || address.length < 12) {
-                alert('⚠️ Địa chỉ quá ngắn!\n\nGhi đủ thông tin để shipper tìm được nhà:\n• Tên đường HOẶC xóm/thôn/ấp\n• Phường/xã\n• Quận/huyện (nếu có)\n• Tỉnh/thành phố');
-                document.getElementById('faddress').focus(); return;
-            }
-            const addrKeyword = /(đường|phố|phường|p\.|xã|x\.|quận|q\.|huyện|h\.|thôn|ấp|xóm|khối|khu|tổ|đội|làng|bản|khu phố|kp|kp\.|hà\s?nội|hcm|sài\s?gòn|tp\.?\s?hcm|tp\.?\s?h(à\s)?n|đà\s?nẵng|hải\s?phòng|cần\s?thơ|biên\s?hòa|nha\s?trang|huế|vinh|tỉnh|thành\s?phố|tx|tt|hẻm|ngõ|ngách|đ\.)/i;
-            if (!addrKeyword.test(address)) {
-                alert('⚠️ Địa chỉ chưa rõ ràng!\n\nCần có thông tin khu vực (xã/phường/thôn/xóm…) + tỉnh/thành phố.\nVí dụ thành phố: "12 Nguyễn Trãi, P. Trung Văn, Hà Nội"\nVí dụ ở quê: "Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"');
+            // Địa chỉ: chỉ check rất lỏng — đủ ngắn để chặn rác, không gò bó địa danh
+            if (!address || address.length < 10) {
+                alert('⚠️ Địa chỉ quá ngắn!\n\nVui lòng ghi 3 phần tối thiểu, ví dụ:\n• xã ABC, huyện XYZ, tỉnh DEF\n• 12 Nguyễn Trãi, P. Trung Văn, Hà Nội');
                 document.getElementById('faddress').focus(); return;
             }
             const wordCount = address.split(/[\s,.\-]+/).filter(Boolean).length;
             if (wordCount < 3) {
-                alert('⚠️ Địa chỉ quá sơ sài — vui lòng ghi rõ ràng để shipper giao đúng nhà.');
+                alert('⚠️ Địa chỉ chưa đủ — cần ít nhất 3 phần (khu vực + tỉnh/thành phố).\nVí dụ: "xóm 3, xã Nghi Phú, Nghệ An"');
+                document.getElementById('faddress').focus(); return;
+            }
+            // Chặn input chỉ toàn ký tự lặp / dấu chấm
+            if (/^[.\s,\-_]+$/.test(address)) {
+                alert('⚠️ Địa chỉ không hợp lệ — vui lòng nhập chữ và số.');
                 document.getElementById('faddress').focus(); return;
             }
 
