@@ -2327,6 +2327,9 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         function openOrder() {
+            // Ẩn ngay notif đang hiển thị (nếu có) để không che form
+            const bn = document.getElementById('buyer-notif');
+            if (bn) bn.classList.remove('show');
             document.getElementById('orderForm').style.display = 'block';
             document.getElementById('successMsg').style.display = 'none';
             const vg = document.getElementById('orderVariantGroup');
@@ -2466,7 +2469,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         const fd = (d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear())(new Date());
         ['rc-date', 'rc-date1', 'rc-date2', 'rc-date3', 'rc-date4'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fd; });
 
-        // Fake buyer notification
+        // Fake buyer notification (tự ẩn khi khách đang nhập form / mở popup)
         (function () {
             const names = ['Nguyễn Thị Lan', 'Trần Minh Hải', 'Lê Thu Hương', 'Phạm Văn Đức', 'Hoàng Thị Mai', 'Vũ Quang Huy', 'Đặng Thị Nga', 'Bùi Minh Tuấn', 'Đỗ Thị Linh', 'Ngô Văn Khoa', 'Trịnh Thị Hồng', 'Lý Minh Khôi', 'Phan Thị Bích', 'Cao Văn Thắng', 'Mai Thị Yến', 'Đinh Quốc Bảo'];
             const products = ['Xịt ve rận 1 Lọ', 'Xịt ve rận 2 Lọ 🎁', 'Xịt ve rận 3 Lọ 🎁'];
@@ -2475,7 +2478,17 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             const times = ['15 giây trước', '20 giây trước', '30 giây trước', '45 giây trước', '1 phút trước'];
             const notif = document.getElementById('buyer-notif');
             let t;
+            function shouldSkip() {
+                // Đang mở popup đặt hàng/giỏ hàng → KHÔNG show
+                if (document.getElementById('orderDrawer').classList.contains('open')) return true;
+                if (document.getElementById('cartDrawer').style.display === 'block') return true;
+                // Đang focus input/textarea (đang gõ địa chỉ/sđt) → KHÔNG show
+                const ae = document.activeElement;
+                if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return true;
+                return false;
+            }
             function show() {
+                if (shouldSkip()) return;
                 document.getElementById('bn-name').textContent = names[Math.floor(Math.random() * names.length)];
                 document.getElementById('bn-product').textContent = products[Math.floor(Math.random() * products.length)];
                 document.getElementById('bn-time').textContent = times[Math.floor(Math.random() * times.length)] + ' · ' + cities[Math.floor(Math.random() * cities.length)];
@@ -2483,6 +2496,13 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 notif.classList.add('show');
                 clearTimeout(t); t = setTimeout(() => notif.classList.remove('show'), 4500);
             }
+            // Khi input/textarea được focus → ẩn ngay nếu đang hiển thị
+            document.addEventListener('focusin', e => {
+                if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) {
+                    notif.classList.remove('show');
+                    clearTimeout(t);
+                }
+            });
             setTimeout(() => { show(); setInterval(show, 15000); }, 4000);
         })();
     </script>
