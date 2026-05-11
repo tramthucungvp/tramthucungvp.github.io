@@ -1296,6 +1296,39 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             height: 72px;
         }
 
+        /* ADDRESS AUTOCOMPLETE */
+        .address-wrap { position: relative; }
+        .address-suggestions {
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: #fff;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            margin-top: 4px;
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 250;
+            display: none;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
+        }
+        .address-suggestions.show { display: block; }
+        .sug-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1.4;
+            border-bottom: 1px solid #f3f3f3;
+            transition: background .15s;
+        }
+        .sug-item:last-child { border-bottom: none; }
+        .sug-item:hover, .sug-item.active {
+            background: linear-gradient(135deg, #fff0f3, #fff5f6);
+        }
+        .sug-item .sug-icon { color: var(--primary); margin-right: 6px; }
+        .sug-loading, .sug-empty {
+            padding: 12px; color: #999; font-size: 13px; text-align: center;
+        }
+
         .order-summary {
             background: #fff5f6;
             border-radius: 10px;
@@ -2169,9 +2202,13 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                     oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             </div>
             <div class="form-group">
-                <label>🏠 Địa chỉ giao hàng *</label>
-                <textarea id="faddress"
-                    placeholder="VD: Số 12 Nguyễn Trãi, P. Trung Văn, Hà Nội&#10;Hoặc: Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"></textarea>
+                <label>🏠 Địa chỉ giao hàng * <span style="font-size:.72rem;color:#888;font-weight:500">(gõ 4 ký tự để có gợi ý)</span></label>
+                <div class="address-wrap">
+                    <textarea id="faddress"
+                        autocomplete="off"
+                        placeholder="VD: Số 12 Nguyễn Trãi, P. Trung Văn, Hà Nội&#10;Hoặc: Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"></textarea>
+                    <div class="address-suggestions" id="addressSuggestions"></div>
+                </div>
             </div>
             <div class="form-group" id="orderVariantGroup">
                 <label>⚖️ Phân loại: <span id="orderSelectedVariantLabel"
@@ -2514,6 +2551,66 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 clearTimeout(t); t = setTimeout(() => notif.classList.remove('show'), 4500);
             }
             setTimeout(() => { show(); setInterval(show, 15000); }, 4000);
+        })();
+
+        // Address autocomplete (OpenStreetMap Nominatim — miễn phí, không cần API key)
+        (function () {
+            const input = document.getElementById('faddress');
+            const sug = document.getElementById('addressSuggestions');
+            if (!input || !sug) return;
+            let timer = null, lastQ = '', abortCtl = null;
+
+            function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+            async function fetchSug(q) {
+                if (abortCtl) abortCtl.abort();
+                abortCtl = new AbortController();
+                sug.classList.add('show');
+                sug.innerHTML = '<div class="sug-loading">🔍 Đang tìm địa chỉ...</div>';
+                try {
+                    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&countrycodes=vn&format=json&limit=6&accept-language=vi`;
+                    const res = await fetch(url, { signal: abortCtl.signal, headers: { 'Accept': 'application/json' } });
+                    const data = await res.json();
+                    if (!data || !data.length) {
+                        sug.innerHTML = '<div class="sug-empty">Không có gợi ý — cứ gõ tay tiếp nhé 👌</div>';
+                        return;
+                    }
+                    sug.innerHTML = data.map(d => {
+                        const safe = escapeHtml(d.display_name);
+                        return `<div class="sug-item" data-addr="${escapeHtml(d.display_name).replace(/"/g, '&quot;')}"><span class="sug-icon">📍</span>${safe}</div>`;
+                    }).join('');
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                    sug.innerHTML = '<div class="sug-empty">Lỗi mạng — cứ gõ tay nhé</div>';
+                }
+            }
+
+            input.addEventListener('input', () => {
+                const q = input.value.trim();
+                if (q.length < 4) { sug.classList.remove('show'); sug.innerHTML = ''; return; }
+                if (q === lastQ) return;
+                lastQ = q;
+                clearTimeout(timer);
+                timer = setTimeout(() => fetchSug(q), 450);
+            });
+
+            sug.addEventListener('mousedown', e => {
+                const item = e.target.closest('.sug-item');
+                if (!item) return;
+                e.preventDefault(); // tránh blur input trước khi xử lý
+                const addr = item.dataset.addr;
+                if (addr) {
+                    input.value = addr.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
+                    sug.classList.remove('show');
+                }
+            });
+
+            input.addEventListener('blur', () => {
+                setTimeout(() => sug.classList.remove('show'), 200);
+            });
+            input.addEventListener('focus', () => {
+                if (sug.innerHTML && input.value.trim().length >= 4) sug.classList.add('show');
+            });
         })();
     </script>
 
