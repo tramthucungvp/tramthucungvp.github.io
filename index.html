@@ -1655,6 +1655,26 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             transform: translateX(0);
         }
 
+        /* Khi popup đặt hàng mở: đẩy notif lên TRÊN, làm gọn, không che form */
+        #buyer-notif.in-popup {
+            bottom: auto;
+            top: 8px;
+            left: 8px;
+            max-width: 240px;
+            min-width: 180px;
+            padding: 7px 12px 7px 9px;
+            font-size: .9em;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+        }
+        #buyer-notif.in-popup .bn-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+        }
+        #buyer-notif.in-popup .bn-name { font-size: .76rem; }
+        #buyer-notif.in-popup .bn-action { font-size: .68rem; }
+        #buyer-notif.in-popup .bn-time { font-size: .62rem; }
+
         .bn-avatar {
             width: 40px;
             height: 40px;
@@ -2327,9 +2347,9 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         function openOrder() {
-            // Ẩn ngay notif đang hiển thị (nếu có) để không che form
+            // Đẩy notif lên TRÊN để không che form đang nhập
             const bn = document.getElementById('buyer-notif');
-            if (bn) bn.classList.remove('show');
+            if (bn) bn.classList.add('in-popup');
             document.getElementById('orderForm').style.display = 'block';
             document.getElementById('successMsg').style.display = 'none';
             const vg = document.getElementById('orderVariantGroup');
@@ -2346,7 +2366,12 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             document.getElementById('orderOverlay').classList.add('open');
             document.getElementById('orderDrawer').classList.add('open');
         }
-        function closeOrder() { document.getElementById('orderOverlay').classList.remove('open'); document.getElementById('orderDrawer').classList.remove('open'); }
+        function closeOrder() {
+            document.getElementById('orderOverlay').classList.remove('open');
+            document.getElementById('orderDrawer').classList.remove('open');
+            const bn = document.getElementById('buyer-notif');
+            if (bn) bn.classList.remove('in-popup'); // trả về vị trí dưới-trái
+        }
 
         function submitOrder() {
             const name = document.getElementById('fname').value.trim();
@@ -2478,17 +2503,9 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             const times = ['15 giây trước', '20 giây trước', '30 giây trước', '45 giây trước', '1 phút trước'];
             const notif = document.getElementById('buyer-notif');
             let t;
-            function shouldSkip() {
-                // Đang mở popup đặt hàng/giỏ hàng → KHÔNG show
-                if (document.getElementById('orderDrawer').classList.contains('open')) return true;
-                if (document.getElementById('cartDrawer').style.display === 'block') return true;
-                // Đang focus input/textarea (đang gõ địa chỉ/sđt) → KHÔNG show
-                const ae = document.activeElement;
-                if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return true;
-                return false;
-            }
             function show() {
-                if (shouldSkip()) return;
+                // Chỉ ẩn khi mở giỏ hàng (cart drawer chiếm hết màn)
+                if (document.getElementById('cartDrawer').style.display === 'block') return;
                 document.getElementById('bn-name').textContent = names[Math.floor(Math.random() * names.length)];
                 document.getElementById('bn-product').textContent = products[Math.floor(Math.random() * products.length)];
                 document.getElementById('bn-time').textContent = times[Math.floor(Math.random() * times.length)] + ' · ' + cities[Math.floor(Math.random() * cities.length)];
@@ -2496,13 +2513,6 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 notif.classList.add('show');
                 clearTimeout(t); t = setTimeout(() => notif.classList.remove('show'), 4500);
             }
-            // Khi input/textarea được focus → ẩn ngay nếu đang hiển thị
-            document.addEventListener('focusin', e => {
-                if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) {
-                    notif.classList.remove('show');
-                    clearTimeout(t);
-                }
-            });
             setTimeout(() => { show(); setInterval(show, 15000); }, 4000);
         })();
     </script>
