@@ -2171,7 +2171,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             <div class="form-group">
                 <label>🏠 Địa chỉ giao hàng *</label>
                 <textarea id="faddress"
-                    placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
+                    placeholder="VD: Số 12 Nguyễn Trãi, P. Trung Văn, Hà Nội&#10;Hoặc: Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"></textarea>
             </div>
             <div class="form-group" id="orderVariantGroup">
                 <label>⚖️ Phân loại: <span id="orderSelectedVariantLabel"
@@ -2406,18 +2406,18 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 document.getElementById('fphone').focus(); return;
             }
 
-            // Địa chỉ: tối thiểu 15 ký tự + có từ khoá địa chỉ (phường/xã/quận/...) + có ít nhất 3 từ
-            if (!address || address.length < 15) {
-                alert('⚠️ Địa chỉ quá ngắn!\n\nVui lòng ghi đầy đủ:\n• Số nhà, tên đường\n• Phường/xã\n• Quận/huyện\n• Tỉnh/thành phố');
+            // Địa chỉ: tối thiểu 12 ký tự + có từ khoá khu vực + có ít nhất 3 từ (cho phép địa chỉ quê không có số nhà)
+            if (!address || address.length < 12) {
+                alert('⚠️ Địa chỉ quá ngắn!\n\nGhi đủ thông tin để shipper tìm được nhà:\n• Tên đường HOẶC xóm/thôn/ấp\n• Phường/xã\n• Quận/huyện (nếu có)\n• Tỉnh/thành phố');
                 document.getElementById('faddress').focus(); return;
             }
-            const addrKeyword = /(đường|phố|phường|p\.|xã|x\.|quận|q\.|huyện|h\.|thôn|ấp|tổ|khu phố|kp|kp\.|hà\s?nội|hcm|sài\s?gòn|tp\.?\s?hcm|tp\.?\s?h(à\s)?n|đà\s?nẵng|hải\s?phòng|cần\s?thơ|biên\s?hòa|nha\s?trang|huế|vinh|tỉnh|thành\s?phố|tx|tt|hẻm|ngõ|ngách|đ\.)/i;
+            const addrKeyword = /(đường|phố|phường|p\.|xã|x\.|quận|q\.|huyện|h\.|thôn|ấp|xóm|khối|khu|tổ|đội|làng|bản|khu phố|kp|kp\.|hà\s?nội|hcm|sài\s?gòn|tp\.?\s?hcm|tp\.?\s?h(à\s)?n|đà\s?nẵng|hải\s?phòng|cần\s?thơ|biên\s?hòa|nha\s?trang|huế|vinh|tỉnh|thành\s?phố|tx|tt|hẻm|ngõ|ngách|đ\.)/i;
             if (!addrKeyword.test(address)) {
-                alert('⚠️ Địa chỉ chưa đầy đủ!\n\nCần có thông tin phường/xã, quận/huyện, tỉnh/thành phố.\nVí dụ: "123 Nguyễn Trãi, P. Trung Văn, Q. Nam Từ Liêm, Hà Nội"');
+                alert('⚠️ Địa chỉ chưa rõ ràng!\n\nCần có thông tin khu vực (xã/phường/thôn/xóm…) + tỉnh/thành phố.\nVí dụ thành phố: "12 Nguyễn Trãi, P. Trung Văn, Hà Nội"\nVí dụ ở quê: "Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"');
                 document.getElementById('faddress').focus(); return;
             }
             const wordCount = address.split(/[\s,.\-]+/).filter(Boolean).length;
-            if (wordCount < 4) {
+            if (wordCount < 3) {
                 alert('⚠️ Địa chỉ quá sơ sài — vui lòng ghi rõ ràng để shipper giao đúng nhà.');
                 document.getElementById('faddress').focus(); return;
             }
