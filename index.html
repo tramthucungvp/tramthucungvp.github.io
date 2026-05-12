@@ -1120,7 +1120,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             color: white;
             border: none;
             border-radius: 14px;
-            padding: 15px;
+            padding: 12px 14px;
             font-size: 1.08rem;
             font-weight: 900;
             cursor: pointer;
@@ -1130,7 +1130,41 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             letter-spacing: .5px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
+        .btn-buy-text {
+            flex: 1;
+            text-align: center;
+        }
+        .btn-buy-cd {
+            background: rgba(0, 0, 0, .3);
+            border-radius: 10px;
+            padding: 5px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+            min-width: 60px;
+        }
+        .bbc-label {
+            font-size: .55rem;
+            font-weight: 700;
+            opacity: .85;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+        }
+        .bbc-time {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-top: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        .btn-buy.expired .btn-buy-cd { display: none; }
+        .btn-buy.expired .btn-buy-text { text-align: center; }
 
         .btn-buy::before {
             content: '';
@@ -2242,9 +2276,15 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         </div>
     </footer>
 
-    <!-- BOTTOM BAR — chỉ 1 nút MUA NGAY -->
+    <!-- BOTTOM BAR — nút ĐẶT HÀNG NGAY + countdown -->
     <div class="bottom-bar">
-        <button class="btn-buy" onclick="openOrder()">⚡ MUA NGAY</button>
+        <button class="btn-buy" onclick="openOrder()">
+            <span class="btn-buy-text">⚡ ĐẶT HÀNG NGAY</span>
+            <span class="btn-buy-cd" id="btnBuyCd">
+                <span class="bbc-label">Còn</span>
+                <span class="bbc-time"><span id="bbcMin">25</span>:<span id="bbcSec">00</span></span>
+            </span>
+        </button>
     </div>
 
     <!-- CART OVERLAY & DRAWER -->
@@ -2623,6 +2663,10 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                   secEl = document.getElementById('cdSec'),
                   ofbMinEl = document.getElementById('ofbMin'),
                   ofbSecEl = document.getElementById('ofbSec'),
+                  bbcMinEl = document.getElementById('bbcMin'),
+                  bbcSecEl = document.getElementById('bbcSec'),
+                  bbcBox = document.getElementById('btnBuyCd'),
+                  buyBtn = document.querySelector('.btn-buy'),
                   ofbBar = document.getElementById('orderFlashBar'),
                   banner = document.getElementById('flashSaleBanner');
             function tick() {
@@ -2635,6 +2679,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                         ofbBar.querySelector('.ofb-sub').textContent = 'Bạn vẫn có thể đặt hàng nhưng giá sẽ trở về niêm yết.';
                         ofbMinEl.textContent = '00'; ofbSecEl.textContent = '00';
                     }
+                    if (buyBtn) buyBtn.classList.add('expired');
                     return;
                 }
                 const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
@@ -2642,6 +2687,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 minEl.textContent = mm; secEl.textContent = ss;
                 if (ofbMinEl) ofbMinEl.textContent = mm;
                 if (ofbSecEl) ofbSecEl.textContent = ss;
+                if (bbcMinEl) bbcMinEl.textContent = mm;
+                if (bbcSecEl) bbcSecEl.textContent = ss;
                 if (remaining <= 60) document.querySelectorAll('.cd-block').forEach(b => b.style.background = 'rgba(255,255,255,.35)');
                 remaining--;
             }
