@@ -216,6 +216,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             height: 420px;
             object-fit: cover;
             display: block;
+            position: relative;
+            user-select: none;
         }
 
         .gallery-main img {
@@ -225,10 +227,55 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             background: #fff;
             display: none;
             animation: fadeIn .3s;
+            -webkit-user-drag: none;
         }
 
         .gallery-main img.active {
             display: block;
+        }
+
+        /* ARROW BUTTONS */
+        .gal-arrow {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, .08);
+            color: #333;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+            transition: all .2s cubic-bezier(.34, 1.56, .64, 1);
+            z-index: 5;
+            padding: 0;
+        }
+        .gal-arrow:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-50%) scale(1.08);
+            box-shadow: 0 6px 18px rgba(255, 45, 85, .4);
+        }
+        .gal-arrow:active { transform: translateY(-50%) scale(.95); }
+        .gal-arrow-prev { left: 12px; }
+        .gal-arrow-next { right: 12px; }
+
+        .gal-counter {
+            position: absolute;
+            bottom: 12px; right: 12px;
+            background: rgba(0, 0, 0, .55);
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-variant-numeric: tabular-nums;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 4;
+            letter-spacing: .5px;
         }
 
         @keyframes fadeIn {
@@ -1859,6 +1906,13 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 <img src="./img/5.jpeg" alt="5">
                 <img src="./img/6.jpeg" alt="6">
                 <img src="./img/7.jpeg" alt="7">
+                <button class="gal-arrow gal-arrow-prev" onclick="prevImg()" aria-label="Ảnh trước">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="gal-arrow gal-arrow-next" onclick="nextImg()" aria-label="Ảnh sau">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <div class="gal-counter" id="galCounter">1 / 7</div>
             </div>
             <div class="scroll-dots" id="scrollDots">
                 <div class="scroll-dot active"></div>
@@ -2312,6 +2366,10 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             const imgs = document.querySelectorAll('#mainImgs img');
             const thumbs = document.querySelectorAll('#thumbRow img');
             const dots = document.querySelectorAll('.scroll-dot');
+            const total = imgs.length;
+            // Wrap-around (vòng tròn)
+            if (i < 0) i = total - 1;
+            else if (i >= total) i = 0;
             imgs[currentImg].classList.remove('active');
             thumbs[currentImg].classList.remove('active');
             dots[currentImg].classList.remove('active');
@@ -2321,7 +2379,39 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             dots[i].classList.add('active');
             const row = document.getElementById('thumbRow');
             row.scrollTo({ left: thumbs[i].offsetLeft - row.offsetWidth / 2 + thumbs[i].offsetWidth / 2, behavior: 'smooth' });
+            const counter = document.getElementById('galCounter');
+            if (counter) counter.textContent = (i + 1) + ' / ' + total;
         }
+
+        function prevImg() { setImg(currentImg - 1); }
+        function nextImg() { setImg(currentImg + 1); }
+
+        // Swipe gesture cho mobile (lướt trái/phải để chuyển ảnh)
+        (function () {
+            const gal = document.getElementById('mainImgs');
+            if (!gal) return;
+            let startX = 0, startY = 0, dx = 0, dy = 0, touching = false;
+            gal.addEventListener('touchstart', e => {
+                if (e.touches.length !== 1) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                dx = dy = 0;
+                touching = true;
+            }, { passive: true });
+            gal.addEventListener('touchmove', e => {
+                if (!touching || e.touches.length !== 1) return;
+                dx = e.touches[0].clientX - startX;
+                dy = e.touches[0].clientY - startY;
+            }, { passive: true });
+            gal.addEventListener('touchend', () => {
+                if (!touching) return;
+                touching = false;
+                // Chỉ swipe khi chiều ngang > chiều dọc và lướt đủ xa
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                    if (dx < 0) nextImg(); else prevImg();
+                }
+            });
+        })();
 
         function addRelated(name, price, img) {
             const ex = cart.find(x => x.name === name);
