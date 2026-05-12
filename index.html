@@ -356,10 +356,40 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             color: #1a1a2e;
         }
 
+        .prod-top-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 12px 5px 10px;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe0b2 50%, #ffd6a3 100%);
+            color: #b8650a;
+            border: 1px solid rgba(184, 101, 10, .25);
+            border-radius: 20px;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .2px;
+            box-shadow: 0 2px 10px rgba(255, 183, 77, .35);
+            position: relative;
+            overflow: hidden;
+        }
+        .prod-top-badge::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .6), transparent);
+            transform: skewX(-20deg);
+            animation: badgeShine 3s ease-in-out infinite;
+        }
+        @keyframes badgeShine {
+            0% { left: -100%; }
+            55% { left: 150%; }
+            100% { left: 150%; }
+        }
+
         .prod-sub {
             font-size: .82rem;
             color: var(--gray);
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .prod-stats {
@@ -1882,6 +1912,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             </div>
             <div class="prod-name">🌿 Xịt Diệt Ve Rận Bọ Chét Cho Chó Mèo – Xua Đuổi Kiến, Muỗi, Gián – Thành Phần Thảo
                 Mộc An Toàn</div>
+            <div class="prod-top-badge">🏆 TOP sản phẩm dành cho chăm sóc thú cưng</div>
             <div class="prod-sub">Chuyên dụng cho chó mèo — Chai 300ML</div>
             <div class="prod-stats">
                 <span class="stars">★★★★★</span>
