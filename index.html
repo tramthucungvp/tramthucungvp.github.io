@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Trạm Thú Cưng — Chăm sóc thú cưng mỗi ngày</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <link rel="apple-touch-icon" href="./favicon.svg">
@@ -52,6 +52,13 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         body {
@@ -62,7 +69,15 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 var(--bg);
             color: var(--dark);
             min-height: 100vh;
+            overflow-x: hidden;
+            /* Tránh lệch khi iOS Safari hide/show URL bar */
+            min-height: 100dvh;
         }
+
+        button, a {
+            touch-action: manipulation; /* Faster tap response on iOS */
+        }
+        img { max-width: 100%; height: auto; }
 
         /* TOP NAV */
         .topnav {
@@ -216,16 +231,16 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 
         .gallery-main {
             width: 100%;
-            height: 420px;
-            object-fit: cover;
+            height: min(420px, 95vw);
             display: block;
             position: relative;
             user-select: none;
+            background: #fff;
         }
 
         .gallery-main img {
             width: 100%;
-            height: 420px;
+            height: 100%;
             object-fit: contain;
             background: #fff;
             display: none;
@@ -241,7 +256,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         .gal-arrow {
             position: absolute;
             top: 50%; transform: translateY(-50%);
-            width: 40px; height: 40px;
+            width: 44px; height: 44px;
             border-radius: 50%;
             background: rgba(255, 255, 255, .9);
             backdrop-filter: blur(8px);
@@ -599,19 +614,20 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             color: var(--primary);
         }
 
-        /* FLASH SALE */
+        /* FLASH SALE — màu tím-than đậm khác với nút Đặt hàng (hồng-cam) */
         .flash-sale-banner {
             background:
-                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, .18), transparent 50%),
-                linear-gradient(95deg, #ff2d55, #ff6b35);
-            border-radius: 14px;
-            padding: 12px 14px;
-            margin-bottom: 14px;
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 64, .12), transparent 55%),
+                linear-gradient(95deg, #1f1830, #3a2c5c);
+            border: 1px solid rgba(255, 215, 64, .25);
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            box-shadow: 0 8px 22px rgba(255, 45, 85, .35);
+            box-shadow: 0 6px 18px rgba(31, 24, 48, .35);
             animation: flashPulse 1.8s ease-in-out infinite;
             position: relative;
             overflow: hidden;
@@ -620,11 +636,11 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         .flash-sale-banner::after {
             content: '';
             position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(255, 255, 255, .15), transparent 60%);
+            top: -30px;
+            right: -30px;
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, rgba(255, 215, 64, .18), transparent 60%);
             border-radius: 50%;
         }
 
@@ -632,11 +648,11 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 
             0%,
             100% {
-                box-shadow: 0 4px 14px rgba(255, 45, 85, .35)
+                box-shadow: 0 6px 18px rgba(31, 24, 48, .35), 0 0 0 0 rgba(255, 215, 64, .25)
             }
 
             50% {
-                box-shadow: 0 4px 24px rgba(255, 45, 85, .6)
+                box-shadow: 0 6px 22px rgba(31, 24, 48, .55), 0 0 0 4px rgba(255, 215, 64, .12)
             }
         }
 
@@ -648,13 +664,14 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 
         .flash-sale-title {
             font-family: 'Baloo 2', cursive;
-            font-size: 1rem;
+            font-size: .92rem;
             font-weight: 800;
-            color: white;
+            color: #ffd740;
             display: flex;
             align-items: center;
             gap: 5px;
             letter-spacing: .3px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, .25);
         }
 
         .flash-bolt {
@@ -675,8 +692,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         .flash-sale-sub {
-            font-size: .72rem;
-            color: rgba(255, 255, 255, .85);
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .82);
             font-weight: 600;
         }
 
@@ -702,40 +719,46 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         .cd-block {
-            background: rgba(0, 0, 0, .3);
+            background: rgba(255, 215, 64, .15);
+            border: 1px solid rgba(255, 215, 64, .3);
             border-radius: 6px;
-            padding: 4px 7px;
-            min-width: 34px;
+            padding: 3px 7px;
+            min-width: 30px;
             text-align: center;
         }
 
         .cd-num {
             font-family: 'Baloo 2', cursive;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 800;
-            color: white;
+            color: #ffd740;
             line-height: 1;
             display: block;
         }
 
         .cd-sep {
-            color: white;
+            color: #ffd740;
             font-weight: 900;
-            font-size: 1rem;
-            margin-top: -4px;
+            font-size: .9rem;
+            margin-top: -2px;
         }
 
         .flash-sold-bar {
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .flash-sold-label {
-            font-size: .72rem;
-            color: rgba(255, 255, 255, .9);
+            font-size: .65rem;
+            color: rgba(255, 255, 255, .85);
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             display: flex;
             justify-content: space-between;
+        }
+
+        .flash-ends-label {
+            font-size: .58rem !important;
+            color: rgba(255, 215, 64, .85) !important;
         }
 
         .flash-bar-track {
@@ -1911,6 +1934,51 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 opacity: .5;
                 transform: scale(1.4)
             }
+        }
+        /* ===== MOBILE OPTIMIZATION ===== */
+        @media (max-width: 480px) {
+            .main { padding: 6px 6px 90px; }
+            .gallery-main { height: min(380px, 90vw); }
+            .prod-info { padding: 14px; border-radius: 16px; }
+            .prod-name { font-size: 1rem; line-height: 1.4; }
+            .price-main { font-size: 1.65rem; }
+            .gal-arrow { width: 38px; height: 38px; }
+            .gal-arrow-prev { left: 8px; }
+            .gal-arrow-next { right: 8px; }
+            .variant-btn { min-width: 0; flex: 1; padding: 8px 6px; }
+            .variant-btn .v-weight { font-size: .92rem; }
+            .variant-btn .v-price { font-size: .68rem; }
+            .variant-btn .v-gift { font-size: .58rem; }
+            .review-card { padding: 10px 12px; }
+            .rc-text { font-size: .82rem; }
+            .guarantee-grid { gap: 8px; }
+            .guarantee-item { padding: 10px; }
+            .g-title { font-size: .78rem; }
+            .g-sub { font-size: .65rem; }
+            .topnav { padding: 8px 12px; }
+            .topnav .logo { gap: 6px; }
+            .logo-mark { width: 36px; height: 36px; }
+            .logo-name { font-size: .98rem; }
+            .logo-tagline { font-size: .54rem; }
+            .topnav-order-btn { font-size: .76rem; padding: 7px 12px; }
+            .btn-buy { padding: 12px; font-size: 1rem; gap: 8px; }
+            .btn-buy-cd { padding: 4px 8px; min-width: 54px; }
+            .bbc-time { font-size: .92rem; }
+            .order-drawer, .cart-drawer { border-radius: 18px 18px 0 0; padding: 14px; }
+            .order-drawer { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+        }
+
+        @media (max-width: 360px) {
+            .gallery-main { height: 75vw; }
+            .price-main { font-size: 1.5rem; }
+            .prod-name { font-size: .95rem; }
+            .variant-options { gap: 6px; }
+        }
+
+        /* Tablet và lớn hơn — giới hạn max-width đẹp hơn */
+        @media (min-width: 768px) {
+            .main { padding: 12px 12px 100px; }
+            .gallery-main { height: 480px; }
         }
     </style>
 </head>
