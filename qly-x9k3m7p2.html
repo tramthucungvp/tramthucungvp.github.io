@@ -1124,6 +1124,14 @@
                     <label>Cảnh báo khi tồn ≤</label>
                     <input type="number" id="iLowStock" step="1" min="0" placeholder="5">
                 </div>
+                <div class="form-row" style="grid-column:1/-1">
+                    <label>🛒 % VỐN của tôi (override, để trống = dùng % chung)</label>
+                    <input type="number" id="iCapitalMePct" step="1" min="0" max="100" placeholder="VD: 100 (tôi chịu hết) hoặc để trống">
+                </div>
+            </div>
+            <div class="info-box" style="margin-top:10px;font-size:.78rem">
+                💡 Mặc định vật tư dùng <strong>% vốn chung</strong> trong Cài đặt. Điền giá trị ở đây để <strong>override riêng</strong> cho vật tư này.<br>
+                VD: Sữa tắm là quà tặng → bạn chịu 100% vốn → điền <code>100</code>.
             </div>
             <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
                 <button class="btn btn-ghost" onclick="closeInventoryModal()">Huỷ</button>
@@ -1229,8 +1237,9 @@
                 adsPayer: 'me'  // 'me' | 'partner' | 'both'
             },
             inventory: [
-                { id: 'inv_xit', name: 'Chai xịt ve rận', unit: 'chai', cost: 75000, stock: 0, lowStockThreshold: 5 },
-                { id: 'inv_sua', name: 'Chai sữa tắm', unit: 'chai', cost: 30000, stock: 0, lowStockThreshold: 5 }
+                // capitalMePct: tỉ lệ vốn tôi chịu cho vật tư này (null = dùng % chung)
+                { id: 'inv_xit', name: 'Chai xịt ve rận', unit: 'chai', cost: 75000, stock: 0, lowStockThreshold: 5, capitalMePct: null },
+                { id: 'inv_sua', name: 'Chai sữa tắm', unit: 'chai', cost: 30000, stock: 0, lowStockThreshold: 5, capitalMePct: 100 }
             ],
             syncedMaDons: [],  // các maDon đã sync từ web — tránh duplicate
             adsDaily: [],      // [{id, date:'YYYY-MM-DD', amount, note}]
@@ -1250,6 +1259,16 @@
         function migrate(parsed) {
             let inventory = parsed.inventory;
             if (!inventory || !inventory.length) inventory = structuredClone(DEFAULT_DATA.inventory);
+            else {
+                // Backfill capitalMePct cho data cũ — đặc biệt sữa tắm = 100%
+                inventory = inventory.map(it => {
+                    if (it.capitalMePct === undefined) {
+                        if (it.id === 'inv_sua' || /sữa\s*tắm/i.test(it.name)) it.capitalMePct = 100;
+                        else it.capitalMePct = null;
+                    }
+                    return it;
+                });
+            }
             const defaultBomById = {};
             DEFAULT_DATA.products.forEach(p => defaultBomById[p.id] = p.bom);
             const products = (parsed.products || []).map(p => {
@@ -1764,15 +1783,33 @@
             const partnerProfitShare = profit * partnerSharePct;
             const meAdsRefund = adsPayer === 'me' ? ads : 0;
             const partnerAdsRefund = adsPayer === 'partner' ? ads : 0;
-            // Hoàn vốn: theo tỉ lệ % vốn × tổng vốn của các đơn ĐÃ BÁN trong kỳ
-            const meCapitalReturn = cost * capMePct;
-            const partnerCapitalReturn = cost * capPartnerPct;
+
+            // Hoàn vốn TỪNG VẬT TƯ: mỗi inv có thể override capitalMePct riêng
+            // VD: sữa tắm = 100% (tôi chịu hết, đối tác không phải hoàn)
+            let meCapitalReturn = 0, partnerCapitalReturn = 0;
+            orders.forEach(o => {
+                if (o.status !== 'delivered' && o.status !== 'promo') return; // returned không có vốn
+                const prod = DATA.products.find(p => p.id === o.productId);
+                if (!prod || !prod.bom) return;
+                const q = +o.qty || 1;
+                prod.bom.forEach(b => {
+                    const it = inv(b.invId);
+                    if (!it) return;
+                    const componentCost = (+it.cost || 0) * (+b.qty || 0) * q;
+                    const mePctForThis = it.capitalMePct == null
+                        ? capMePct * 100
+                        : (+it.capitalMePct || 0);
+                    meCapitalReturn += componentCost * mePctForThis / 100;
+                    partnerCapitalReturn += componentCost * (100 - mePctForThis) / 100;
+                });
+            });
+
             const meTotal = meProfitShare + meAdsRefund + meCapitalReturn;
             const partnerTotal = partnerProfitShare + partnerAdsRefund + partnerCapitalReturn;
 
-            const breakdown = (adsRefund, capitalReturn, total, pctCap) => {
+            const breakdown = (adsRefund, capitalReturn, total) => {
                 const lines = [];
-                if (capitalReturn > 0) lines.push(`<div>🛒 Hoàn vốn ${pctCap}%: <strong>${fmt(capitalReturn)}</strong></div>`);
+                if (capitalReturn > 0) lines.push(`<div>🛒 Hoàn vốn hàng: <strong>${fmt(capitalReturn)}</strong></div>`);
                 if (adsRefund > 0) lines.push(`<div>💸 Hoàn Ads ứng: <strong>${fmt(adsRefund)}</strong></div>`);
                 lines.push(`<div class="pc-total">Tổng nhận: <strong>${fmt(total)}</strong></div>`);
                 return `<div class="pc-breakdown">${lines.join('')}</div>`;
@@ -1783,13 +1820,13 @@
                     <div class="pc-name">👤 ${DATA.settings.meName}${adsPayer === 'me' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}<span class="pc-badge">Vốn ${DATA.settings.capitalMePct || 50}%</span></div>
                     <div class="pc-amount">${fmt(meProfitShare)}</div>
                     <div class="pc-pct">${DATA.settings.mePct}% lợi nhuận</div>
-                    ${breakdown(meAdsRefund, meCapitalReturn, meTotal, DATA.settings.capitalMePct || 50)}
+                    ${breakdown(meAdsRefund, meCapitalReturn, meTotal)}
                 </div>
                 <div class="partner-card partner">
                     <div class="pc-name">🤝 ${DATA.settings.partnerName}${adsPayer === 'partner' ? ' <span class="pc-badge">Ứng Ads</span>' : ''}<span class="pc-badge">Vốn ${DATA.settings.capitalPartnerPct || 50}%</span></div>
                     <div class="pc-amount">${fmt(partnerProfitShare)}</div>
                     <div class="pc-pct">${DATA.settings.partnerPct}% lợi nhuận</div>
-                    ${breakdown(partnerAdsRefund, partnerCapitalReturn, partnerTotal, DATA.settings.capitalPartnerPct || 50)}
+                    ${breakdown(partnerAdsRefund, partnerCapitalReturn, partnerTotal)}
                 </div>`;
 
             // Daily chart - last 14 days
@@ -2326,6 +2363,7 @@
                 document.getElementById('iCost').value = it.cost || 0;
                 document.getElementById('iStock').value = it.stock || 0;
                 document.getElementById('iLowStock').value = it.lowStockThreshold || 5;
+                document.getElementById('iCapitalMePct').value = it.capitalMePct == null ? '' : it.capitalMePct;
             } else {
                 document.getElementById('invModalTitle').textContent = 'Thêm vật tư';
                 document.getElementById('iName').value = '';
@@ -2333,6 +2371,7 @@
                 document.getElementById('iCost').value = '';
                 document.getElementById('iStock').value = 0;
                 document.getElementById('iLowStock').value = 5;
+                document.getElementById('iCapitalMePct').value = '';
             }
             document.getElementById('inventoryModal').classList.add('open');
         }
@@ -2340,13 +2379,15 @@
         function saveInventory() {
             const name = document.getElementById('iName').value.trim();
             if (!name) { alert('Hãy nhập tên vật tư'); return; }
+            const capRaw = document.getElementById('iCapitalMePct').value.trim();
             const item = {
                 id: editingInvId || ('inv_' + uid()),
                 name,
                 unit: document.getElementById('iUnit').value.trim() || 'cái',
                 cost: +document.getElementById('iCost').value || 0,
                 stock: +document.getElementById('iStock').value || 0,
-                lowStockThreshold: +document.getElementById('iLowStock').value || 5
+                lowStockThreshold: +document.getElementById('iLowStock').value || 5,
+                capitalMePct: capRaw === '' ? null : Math.max(0, Math.min(100, +capRaw))
             };
             if (editingInvId) {
                 const idx = DATA.inventory.findIndex(x => x.id === editingInvId);
@@ -2373,8 +2414,11 @@
             const tbody = document.querySelector('#inventoryTable tbody');
             tbody.innerHTML = DATA.inventory.length ? DATA.inventory.map(it => {
                 const value = (+it.stock || 0) * (+it.cost || 0);
+                const capInfo = it.capitalMePct == null
+                    ? '<span style="color:#aaa;font-size:.75rem">% chung</span>'
+                    : `<span class="badge b-promo">Tôi ${it.capitalMePct}%</span>`;
                 return `<tr>
-                    <td><strong>${it.name}</strong></td>
+                    <td><strong>${it.name}</strong><div style="font-size:.7rem;margin-top:2px">${capInfo}</div></td>
                     <td class="num">${stockBadge(it)}</td>
                     <td>${it.unit || ''}</td>
                     <td class="num">${fmt(it.cost)}</td>
