@@ -2669,7 +2669,7 @@
                     <select id="fDistrict" class="addr-sel" disabled><option value="">Quận/Huyện</option></select>
                     <select id="fWard" class="addr-sel" disabled><option value="">Phường/Xã</option></select>
                     <textarea id="faddress" autocomplete="off" rows="2"
-                        placeholder="Số nhà, tên đường, thôn/xóm... "></textarea>
+                        placeholder="Số nhà, tên đường, thôn/xóm (không bắt buộc)"></textarea>
                 </div>
             </div>
             <div class="form-group" id="orderVariantGroup">
@@ -2944,16 +2944,12 @@
                 document.getElementById('fphone').focus(); return;
             }
 
-            // Địa chỉ: bắt buộc chọn Tỉnh + Huyện + Xã. Detail là tuỳ chọn (có thì tốt hơn)
+            // Địa chỉ: bắt buộc chọn Tỉnh + Huyện + Xã. Số nhà/đường/thôn TUỲ CHỌN (cho khách ở quê)
             if (!provName) { alert('⚠️ Vui lòng chọn Tỉnh / Thành phố'); provSel.focus(); return; }
             if (!distName) { alert('⚠️ Vui lòng chọn Quận / Huyện'); distSel.focus(); return; }
             if (!wardName) { alert('⚠️ Vui lòng chọn Phường / Xã'); wardSel.focus(); return; }
-            if (!detail || detail.length < 3) {
-                alert('⚠️ Vui lòng nhập địa chỉ chi tiết (số nhà / tên đường / thôn xóm).');
-                document.getElementById('faddress').focus(); return;
-            }
 
-            // Gộp thành 1 chuỗi địa chỉ đầy đủ
+            // Gộp thành 1 chuỗi địa chỉ đầy đủ (detail có thì thêm, không có thì bỏ qua)
             const address = [detail, wardName, distName, provName].filter(Boolean).join(', ');
 
             const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec';
