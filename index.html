@@ -3078,10 +3078,18 @@
                     .replace(/^Xã /i, '')
                     .replace(/^Thị trấn /i, 'TT. ');
             }
+            // Bỏ tiền tố để sort theo tên gốc (Hà Nội xếp dưới H, không phải T)
+            function sortKey(name) {
+                return String(name)
+                    .replace(/^(Thành phố|Tỉnh|Quận|Huyện|Thị xã|Phường|Xã|Thị trấn)\s+/i, '');
+            }
 
             function fillSelect(sel, items, placeholder) {
+                // Sort theo bảng chữ cái Tiếng Việt
+                const sorted = [...items].sort((a, b) =>
+                    sortKey(a.name).localeCompare(sortKey(b.name), 'vi'));
                 sel.innerHTML = `<option value="">${placeholder}</option>` +
-                    items.map(it => `<option value="${it.code}" data-name="${it.name.replace(/"/g, '&quot;')}">${shorten(it.name)}</option>`).join('');
+                    sorted.map(it => `<option value="${it.code}" data-name="${it.name.replace(/"/g, '&quot;')}">${shorten(it.name)}</option>`).join('');
             }
 
             async function loadProvinces() {
