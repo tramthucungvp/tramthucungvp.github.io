@@ -1515,61 +1515,34 @@
             height: 72px;
         }
 
-        /* ADDRESS AUTOCOMPLETE */
-        .address-wrap {
-            position: relative;
+        /* ADDRESS — cascading dropdown */
+        .addr-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
-
-        .address-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #fff;
+        .addr-sel {
+            width: 100%;
             border: 1.5px solid #ddd;
             border-radius: 10px;
-            margin-top: 4px;
-            max-height: 240px;
-            overflow-y: auto;
-            z-index: 250;
-            display: none;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
-        }
-
-        .address-suggestions.show {
-            display: block;
-        }
-
-        .sug-item {
-            padding: 10px 12px;
+            padding: 11px 12px;
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+            background: #fff;
+            color: var(--dark);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23888' d='M1 1l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
             cursor: pointer;
-            font-size: 14px;
-            line-height: 1.4;
-            border-bottom: 1px solid #f3f3f3;
-            transition: background .15s;
         }
-
-        .sug-item:last-child {
-            border-bottom: none;
-        }
-
-        .sug-item:hover,
-        .sug-item.active {
-            background: linear-gradient(135deg, #fff0f3, #fff5f6);
-        }
-
-        .sug-item .sug-icon {
-            color: var(--primary);
-            margin-right: 6px;
-        }
-
-        .sug-loading,
-        .sug-empty {
-            padding: 12px;
-            color: #999;
-            font-size: 13px;
-            text-align: center;
-        }
+        .addr-sel:hover { border-color: #bbb; }
+        .addr-sel:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255, 45, 85, .12); }
+        .addr-sel:disabled { background-color: #f7f7f7; color: #999; cursor: not-allowed; }
 
         .order-summary {
             background: #fff5f6;
@@ -2636,12 +2609,13 @@
                     oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             </div>
             <div class="form-group">
-                <label>🏠 Địa chỉ giao hàng * <span style="font-size:.72rem;color:#888;font-weight:500">(gõ 4 ký tự để
-                        có gợi ý)</span></label>
-                <div class="address-wrap">
-                    <textarea id="faddress" autocomplete="off"
-                        placeholder="VD: Số 12 Nguyễn Trãi, P. Trung Văn, Hà Nội&#10;Hoặc: Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"></textarea>
-                    <div class="address-suggestions" id="addressSuggestions"></div>
+                <label>🏠 Địa chỉ giao hàng *</label>
+                <div class="addr-grid">
+                    <select id="fProvince" class="addr-sel"><option value="">— Chọn Tỉnh/Thành phố —</option></select>
+                    <select id="fDistrict" class="addr-sel" disabled><option value="">— Chọn Quận/Huyện —</option></select>
+                    <select id="fWard" class="addr-sel" disabled><option value="">— Chọn Phường/Xã —</option></select>
+                    <textarea id="faddress" autocomplete="off" rows="2"
+                        placeholder="Số nhà, tên đường, thôn/xóm... (nếu có)"></textarea>
                 </div>
             </div>
             <div class="form-group" id="orderVariantGroup">
@@ -2883,12 +2857,17 @@
         function submitOrder() {
             const name = document.getElementById('fname').value.trim();
             const phone = document.getElementById('fphone').value.trim();
-            const address = document.getElementById('faddress').value.trim();
+            const detail = document.getElementById('faddress').value.trim();
+            const provSel = document.getElementById('fProvince');
+            const distSel = document.getElementById('fDistrict');
+            const wardSel = document.getElementById('fWard');
+            const provName = provSel.selectedOptions[0]?.dataset.name || '';
+            const distName = distSel.selectedOptions[0]?.dataset.name || '';
+            const wardName = wardSel.selectedOptions[0]?.dataset.name || '';
             const noteRaw = document.getElementById('fnote').value.trim();
             const note = noteRaw ? 'FB ' + noteRaw : 'FB';
 
             // ===== VALIDATION =====
-            // Họ tên: tối thiểu 2 ký tự, không được chỉ toàn số
             if (!name || name.length < 2) {
                 alert('⚠️ Vui lòng nhập Họ và tên đầy đủ (ít nhất 2 ký tự)');
                 document.getElementById('fname').focus(); return;
@@ -2898,36 +2877,30 @@
                 document.getElementById('fname').focus(); return;
             }
 
-            // SĐT: phải là 10 số bắt đầu bằng 0, đầu số mobile VN (3/5/7/8/9) hoặc landline (2)
             if (!phone) {
                 alert('⚠️ Vui lòng nhập Số điện thoại');
                 document.getElementById('fphone').focus(); return;
             }
             if (!/^0[235789]\d{8}$/.test(phone)) {
-                alert('⚠️ Số điện thoại không hợp lệ!\n\nĐịnh dạng đúng: 10 chữ số, bắt đầu bằng 0\nVí dụ: 0901234567, 0387654321');
+                alert('⚠️ Số điện thoại không hợp lệ!\n\nĐịnh dạng đúng: 10 chữ số, bắt đầu bằng 0\nVí dụ: 0901234567');
                 document.getElementById('fphone').focus(); return;
             }
-            // Chặn số toàn ký tự giống nhau (0000000000, 0123456789...)
             if (/^0(\d)\1{8}$/.test(phone) || phone === '0123456789' || phone === '0987654321') {
                 alert('⚠️ Số điện thoại có vẻ không hợp lệ. Vui lòng nhập đúng số bạn dùng để shop liên hệ giao hàng.');
                 document.getElementById('fphone').focus(); return;
             }
 
-            // Địa chỉ: chỉ check rất lỏng — đủ ngắn để chặn rác, không gò bó địa danh
-            if (!address || address.length < 10) {
-                alert('⚠️ Địa chỉ quá ngắn!\n\nVui lòng ghi 3 phần tối thiểu, ví dụ:\n• xã ABC, huyện XYZ, tỉnh DEF\n• 12 Nguyễn Trãi, P. Trung Văn, Hà Nội');
+            // Địa chỉ: bắt buộc chọn Tỉnh + Huyện + Xã. Detail là tuỳ chọn (có thì tốt hơn)
+            if (!provName) { alert('⚠️ Vui lòng chọn Tỉnh / Thành phố'); provSel.focus(); return; }
+            if (!distName) { alert('⚠️ Vui lòng chọn Quận / Huyện'); distSel.focus(); return; }
+            if (!wardName) { alert('⚠️ Vui lòng chọn Phường / Xã'); wardSel.focus(); return; }
+            if (!detail || detail.length < 3) {
+                alert('⚠️ Vui lòng nhập địa chỉ chi tiết (số nhà / tên đường / thôn xóm).');
                 document.getElementById('faddress').focus(); return;
             }
-            const wordCount = address.split(/[\s,.\-]+/).filter(Boolean).length;
-            if (wordCount < 3) {
-                alert('⚠️ Địa chỉ chưa đủ — cần ít nhất 3 phần (khu vực + tỉnh/thành phố).\nVí dụ: "xóm 3, xã Nghi Phú, Nghệ An"');
-                document.getElementById('faddress').focus(); return;
-            }
-            // Chặn input chỉ toàn ký tự lặp / dấu chấm
-            if (/^[.\s,\-_]+$/.test(address)) {
-                alert('⚠️ Địa chỉ không hợp lệ — vui lòng nhập chữ và số.');
-                document.getElementById('faddress').focus(); return;
-            }
+
+            // Gộp thành 1 chuỗi địa chỉ đầy đủ
+            const address = [detail, wardName, distName, provName].filter(Boolean).join(', ');
 
             const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec';
 
@@ -3030,64 +3003,61 @@
             setTimeout(() => { show(); setInterval(show, 15000); }, 4000);
         })();
 
-        // Address autocomplete (OpenStreetMap Nominatim — miễn phí, không cần API key)
+        // Cascading address dropdown — Tỉnh → Huyện → Xã (provinces.open-api.vn, miễn phí)
         (function () {
-            const input = document.getElementById('faddress');
-            const sug = document.getElementById('addressSuggestions');
-            if (!input || !sug) return;
-            let timer = null, lastQ = '', abortCtl = null;
+            const provSel = document.getElementById('fProvince');
+            const distSel = document.getElementById('fDistrict');
+            const wardSel = document.getElementById('fWard');
+            if (!provSel) return;
+            const API = 'https://provinces.open-api.vn/api';
 
-            function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+            function fillSelect(sel, items, placeholder) {
+                sel.innerHTML = `<option value="">— ${placeholder} —</option>` +
+                    items.map(it => `<option value="${it.code}" data-name="${it.name.replace(/"/g, '&quot;')}">${it.name}</option>`).join('');
+            }
 
-            async function fetchSug(q) {
-                if (abortCtl) abortCtl.abort();
-                abortCtl = new AbortController();
-                sug.classList.add('show');
-                sug.innerHTML = '<div class="sug-loading">🔍 Đang tìm địa chỉ...</div>';
+            async function loadProvinces() {
                 try {
-                    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&countrycodes=vn&format=json&limit=6&accept-language=vi`;
-                    const res = await fetch(url, { signal: abortCtl.signal, headers: { 'Accept': 'application/json' } });
+                    const res = await fetch(`${API}/p/`);
                     const data = await res.json();
-                    if (!data || !data.length) {
-                        sug.innerHTML = '<div class="sug-empty">Không có gợi ý — cứ gõ tay tiếp nhé 👌</div>';
-                        return;
-                    }
-                    sug.innerHTML = data.map(d => {
-                        const safe = escapeHtml(d.display_name);
-                        return `<div class="sug-item" data-addr="${escapeHtml(d.display_name).replace(/"/g, '&quot;')}"><span class="sug-icon">📍</span>${safe}</div>`;
-                    }).join('');
+                    fillSelect(provSel, data, 'Chọn Tỉnh/Thành phố');
                 } catch (e) {
-                    if (e.name === 'AbortError') return;
-                    sug.innerHTML = '<div class="sug-empty">Lỗi mạng — cứ gõ tay nhé</div>';
+                    console.error('Load provinces failed', e);
+                    provSel.innerHTML = '<option value="">⚠️ Lỗi tải — kiểm tra mạng</option>';
                 }
             }
 
-            input.addEventListener('input', () => {
-                const q = input.value.trim();
-                if (q.length < 4) { sug.classList.remove('show'); sug.innerHTML = ''; return; }
-                if (q === lastQ) return;
-                lastQ = q;
-                clearTimeout(timer);
-                timer = setTimeout(() => fetchSug(q), 450);
-            });
-
-            sug.addEventListener('mousedown', e => {
-                const item = e.target.closest('.sug-item');
-                if (!item) return;
-                e.preventDefault(); // tránh blur input trước khi xử lý
-                const addr = item.dataset.addr;
-                if (addr) {
-                    input.value = addr.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
-                    sug.classList.remove('show');
+            provSel.addEventListener('change', async () => {
+                distSel.innerHTML = '<option value="">— Đang tải —</option>';
+                distSel.disabled = true;
+                wardSel.innerHTML = '<option value="">— Chọn Phường/Xã —</option>';
+                wardSel.disabled = true;
+                if (!provSel.value) { distSel.innerHTML = '<option value="">— Chọn Quận/Huyện —</option>'; return; }
+                try {
+                    const res = await fetch(`${API}/p/${provSel.value}?depth=2`);
+                    const data = await res.json();
+                    fillSelect(distSel, data.districts || [], 'Chọn Quận/Huyện');
+                    distSel.disabled = false;
+                } catch (e) {
+                    distSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
                 }
             });
 
-            input.addEventListener('blur', () => {
-                setTimeout(() => sug.classList.remove('show'), 200);
+            distSel.addEventListener('change', async () => {
+                wardSel.innerHTML = '<option value="">— Đang tải —</option>';
+                wardSel.disabled = true;
+                if (!distSel.value) { wardSel.innerHTML = '<option value="">— Chọn Phường/Xã —</option>'; return; }
+                try {
+                    const res = await fetch(`${API}/d/${distSel.value}?depth=2`);
+                    const data = await res.json();
+                    fillSelect(wardSel, data.wards || [], 'Chọn Phường/Xã');
+                    wardSel.disabled = false;
+                } catch (e) {
+                    wardSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
+                }
             });
-            input.addEventListener('focus', () => {
-                if (sug.innerHTML && input.value.trim().length >= 4) sug.classList.add('show');
-            });
+
+            loadProvinces();
         })();
     </script>
 
