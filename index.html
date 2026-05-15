@@ -12,21 +12,25 @@
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
         rel="stylesheet">
     <!-- Meta Pixel Code -->
+    <!-- Meta Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '997953172665451');
-    fbq('track', 'PageView');
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1365173222118358');
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=997953172665451&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=1365173222118358&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
     <!-- End Meta Pixel Code -->
 
     <style>
@@ -74,10 +78,16 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             min-height: 100dvh;
         }
 
-        button, a {
-            touch-action: manipulation; /* Faster tap response on iOS */
+        button,
+        a {
+            touch-action: manipulation;
+            /* Faster tap response on iOS */
         }
-        img { max-width: 100%; height: auto; }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
 
         /* TOP NAV */
         .topnav {
@@ -187,14 +197,26 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             letter-spacing: .2px;
             animation: orderBtnPulse 1.6s ease-in-out infinite;
         }
+
         .topnav-order-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(255, 45, 85, .55);
         }
-        .topnav-order-btn:active { transform: translateY(0); }
+
+        .topnav-order-btn:active {
+            transform: translateY(0);
+        }
+
         @keyframes orderBtnPulse {
-            0%, 100% { box-shadow: 0 4px 14px rgba(255, 45, 85, .4); }
-            50% { box-shadow: 0 6px 22px rgba(255, 45, 85, .65); }
+
+            0%,
+            100% {
+                box-shadow: 0 4px 14px rgba(255, 45, 85, .4);
+            }
+
+            50% {
+                box-shadow: 0 6px 22px rgba(255, 45, 85, .65);
+            }
         }
 
         .cart-count {
@@ -255,34 +277,49 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         /* ARROW BUTTONS */
         .gal-arrow {
             position: absolute;
-            top: 50%; transform: translateY(-50%);
-            width: 44px; height: 44px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: rgba(255, 255, 255, .9);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(0, 0, 0, .08);
             color: #333;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
             transition: all .2s cubic-bezier(.34, 1.56, .64, 1);
             z-index: 5;
             padding: 0;
         }
+
         .gal-arrow:hover {
             background: var(--primary);
             color: #fff;
             transform: translateY(-50%) scale(1.08);
             box-shadow: 0 6px 18px rgba(255, 45, 85, .4);
         }
-        .gal-arrow:active { transform: translateY(-50%) scale(.95); }
-        .gal-arrow-prev { left: 12px; }
-        .gal-arrow-next { right: 12px; }
+
+        .gal-arrow:active {
+            transform: translateY(-50%) scale(.95);
+        }
+
+        .gal-arrow-prev {
+            left: 12px;
+        }
+
+        .gal-arrow-next {
+            right: 12px;
+        }
 
         .gal-counter {
             position: absolute;
-            bottom: 12px; right: 12px;
+            bottom: 12px;
+            right: 12px;
             background: rgba(0, 0, 0, .55);
             color: #fff;
             font-size: .72rem;
@@ -436,19 +473,31 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             position: relative;
             overflow: hidden;
         }
+
         .prod-top-badge::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
             background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .6), transparent);
             transform: skewX(-20deg);
             animation: badgeShine 3s ease-in-out infinite;
         }
+
         @keyframes badgeShine {
-            0% { left: -100%; }
-            55% { left: 150%; }
-            100% { left: 150%; }
+            0% {
+                left: -100%;
+            }
+
+            55% {
+                left: 150%;
+            }
+
+            100% {
+                left: 150%;
+            }
         }
 
         .prod-sub {
@@ -1175,10 +1224,12 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             justify-content: space-between;
             gap: 10px;
         }
+
         .btn-buy-text {
             flex: 1;
             text-align: center;
         }
+
         .btn-buy-cd {
             background: rgba(0, 0, 0, .3);
             border-radius: 10px;
@@ -1189,6 +1240,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             line-height: 1;
             min-width: 60px;
         }
+
         .bbc-label {
             font-size: .55rem;
             font-weight: 700;
@@ -1196,6 +1248,7 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             letter-spacing: .6px;
             text-transform: uppercase;
         }
+
         .bbc-time {
             font-family: 'Baloo 2', cursive;
             font-size: 1.05rem;
@@ -1203,8 +1256,14 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             margin-top: 2px;
             font-variant-numeric: tabular-nums;
         }
-        .btn-buy.expired .btn-buy-cd { display: none; }
-        .btn-buy.expired .btn-buy-text { text-align: center; }
+
+        .btn-buy.expired .btn-buy-cd {
+            display: none;
+        }
+
+        .btn-buy.expired .btn-buy-text {
+            text-align: center;
+        }
 
         .btn-buy::before {
             content: '';
@@ -1219,9 +1278,17 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         @keyframes btnShine {
-            0% { left: -75%; }
-            60% { left: 130%; }
-            100% { left: 130%; }
+            0% {
+                left: -75%;
+            }
+
+            60% {
+                left: 130%;
+            }
+
+            100% {
+                left: 130%;
+            }
         }
 
         @keyframes buyPulse {
@@ -1431,7 +1498,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             border: 1.5px solid #ddd;
             border-radius: 10px;
             padding: 10px 12px;
-            font-size: 16px; /* >=16px để iOS Safari KHÔNG auto-zoom khi focus input */
+            font-size: 16px;
+            /* >=16px để iOS Safari KHÔNG auto-zoom khi focus input */
             font-family: 'Nunito', sans-serif;
             outline: none;
             transition: border-color .2s;
@@ -1448,10 +1516,15 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         /* ADDRESS AUTOCOMPLETE */
-        .address-wrap { position: relative; }
+        .address-wrap {
+            position: relative;
+        }
+
         .address-suggestions {
             position: absolute;
-            top: 100%; left: 0; right: 0;
+            top: 100%;
+            left: 0;
+            right: 0;
             background: #fff;
             border: 1.5px solid #ddd;
             border-radius: 10px;
@@ -1462,7 +1535,11 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             display: none;
             box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
         }
-        .address-suggestions.show { display: block; }
+
+        .address-suggestions.show {
+            display: block;
+        }
+
         .sug-item {
             padding: 10px 12px;
             cursor: pointer;
@@ -1471,13 +1548,27 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             border-bottom: 1px solid #f3f3f3;
             transition: background .15s;
         }
-        .sug-item:last-child { border-bottom: none; }
-        .sug-item:hover, .sug-item.active {
+
+        .sug-item:last-child {
+            border-bottom: none;
+        }
+
+        .sug-item:hover,
+        .sug-item.active {
             background: linear-gradient(135deg, #fff0f3, #fff5f6);
         }
-        .sug-item .sug-icon { color: var(--primary); margin-right: 6px; }
-        .sug-loading, .sug-empty {
-            padding: 12px; color: #999; font-size: 13px; text-align: center;
+
+        .sug-item .sug-icon {
+            color: var(--primary);
+            margin-right: 6px;
+        }
+
+        .sug-loading,
+        .sug-empty {
+            padding: 12px;
+            color: #999;
+            font-size: 13px;
+            text-align: center;
         }
 
         .order-summary {
@@ -1534,12 +1625,21 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         @keyframes ofbPulse {
-            0%, 100% { box-shadow: 0 6px 18px rgba(255, 45, 85, .35); }
-            50% { box-shadow: 0 8px 28px rgba(255, 45, 85, .65); }
+
+            0%,
+            100% {
+                box-shadow: 0 6px 18px rgba(255, 45, 85, .35);
+            }
+
+            50% {
+                box-shadow: 0 8px 28px rgba(255, 45, 85, .65);
+            }
         }
 
         .ofb-pulse {
-            width: 10px; height: 10px; border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
             background: #fff176;
             box-shadow: 0 0 0 0 rgba(255, 241, 118, .9);
             animation: ofbDotPulse 1s infinite;
@@ -1547,27 +1647,62 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         }
 
         @keyframes ofbDotPulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 241, 118, .9); }
-            70% { box-shadow: 0 0 0 12px rgba(255, 241, 118, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 241, 118, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 241, 118, .9);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(255, 241, 118, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 241, 118, 0);
+            }
         }
 
-        .ofb-text { flex: 1; min-width: 0; color: #fff; }
-        .ofb-title { font-size: .85rem; font-weight: 800; line-height: 1.2; letter-spacing: .2px; }
-        .ofb-sub { font-size: .68rem; opacity: .92; margin-top: 2px; line-height: 1.3; }
+        .ofb-text {
+            flex: 1;
+            min-width: 0;
+            color: #fff;
+        }
+
+        .ofb-title {
+            font-size: .85rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: .2px;
+        }
+
+        .ofb-sub {
+            font-size: .68rem;
+            opacity: .92;
+            margin-top: 2px;
+            line-height: 1.3;
+        }
 
         .ofb-time {
-            text-align: center; color: #fff;
+            text-align: center;
+            color: #fff;
             background: rgba(0, 0, 0, .28);
             border-radius: 10px;
             padding: 5px 9px;
             min-width: 68px;
             flex-shrink: 0;
         }
-        .ofb-time-label { font-size: .55rem; font-weight: 700; opacity: .85; letter-spacing: .8px; text-transform: uppercase; }
+
+        .ofb-time-label {
+            font-size: .55rem;
+            font-weight: 700;
+            opacity: .85;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+        }
+
         .ofb-time-num {
             font-family: 'Baloo 2', cursive;
-            font-size: 1.25rem; font-weight: 800; line-height: 1.05;
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1.05;
             font-variant-numeric: tabular-nums;
         }
 
@@ -1577,10 +1712,19 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             box-shadow: none;
             animation: none;
         }
-        .order-flash-bar.expired .ofb-pulse { display: none; }
+
+        .order-flash-bar.expired .ofb-pulse {
+            display: none;
+        }
+
         .order-flash-bar.expired .ofb-text,
-        .order-flash-bar.expired .ofb-time { color: #888; }
-        .order-flash-bar.expired .ofb-time { background: rgba(0, 0, 0, .08); }
+        .order-flash-bar.expired .ofb-time {
+            color: #888;
+        }
+
+        .order-flash-bar.expired .ofb-time {
+            background: rgba(0, 0, 0, .08);
+        }
 
         .success-msg {
             display: none;
@@ -1850,14 +1994,24 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             font-size: .9em;
             box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
         }
+
         #buyer-notif.in-popup .bn-avatar {
             width: 32px;
             height: 32px;
             font-size: 1rem;
         }
-        #buyer-notif.in-popup .bn-name { font-size: .76rem; }
-        #buyer-notif.in-popup .bn-action { font-size: .68rem; }
-        #buyer-notif.in-popup .bn-time { font-size: .62rem; }
+
+        #buyer-notif.in-popup .bn-name {
+            font-size: .76rem;
+        }
+
+        #buyer-notif.in-popup .bn-action {
+            font-size: .68rem;
+        }
+
+        #buyer-notif.in-popup .bn-time {
+            font-size: .62rem;
+        }
 
         .bn-avatar {
             width: 40px;
@@ -1935,50 +2089,165 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 transform: scale(1.4)
             }
         }
+
         /* ===== MOBILE OPTIMIZATION ===== */
         @media (max-width: 480px) {
-            .main { padding: 6px 6px 90px; }
-            .gallery-main { height: min(380px, 90vw); }
-            .prod-info { padding: 14px; border-radius: 16px; }
-            .prod-name { font-size: 1rem; line-height: 1.4; }
-            .price-main { font-size: 1.65rem; }
-            .gal-arrow { width: 38px; height: 38px; }
-            .gal-arrow-prev { left: 8px; }
-            .gal-arrow-next { right: 8px; }
-            .variant-btn { min-width: 0; flex: 1; padding: 8px 6px; }
-            .variant-btn .v-weight { font-size: .92rem; }
-            .variant-btn .v-price { font-size: .68rem; }
-            .variant-btn .v-gift { font-size: .58rem; }
-            .review-card { padding: 10px 12px; }
-            .rc-text { font-size: .82rem; }
-            .guarantee-grid { gap: 8px; }
-            .guarantee-item { padding: 10px; }
-            .g-title { font-size: .78rem; }
-            .g-sub { font-size: .65rem; }
-            .topnav { padding: 8px 12px; }
-            .topnav .logo { gap: 6px; }
-            .logo-mark { width: 36px; height: 36px; }
-            .logo-name { font-size: .98rem; }
-            .logo-tagline { font-size: .54rem; }
-            .topnav-order-btn { font-size: .76rem; padding: 7px 12px; }
-            .btn-buy { padding: 12px; font-size: 1rem; gap: 8px; }
-            .btn-buy-cd { padding: 4px 8px; min-width: 54px; }
-            .bbc-time { font-size: .92rem; }
-            .order-drawer, .cart-drawer { border-radius: 18px 18px 0 0; padding: 14px; }
-            .order-drawer { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+            .main {
+                padding: 6px 6px 90px;
+            }
+
+            .gallery-main {
+                height: min(380px, 90vw);
+            }
+
+            .prod-info {
+                padding: 14px;
+                border-radius: 16px;
+            }
+
+            .prod-name {
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+
+            .price-main {
+                font-size: 1.65rem;
+            }
+
+            .gal-arrow {
+                width: 38px;
+                height: 38px;
+            }
+
+            .gal-arrow-prev {
+                left: 8px;
+            }
+
+            .gal-arrow-next {
+                right: 8px;
+            }
+
+            .variant-btn {
+                min-width: 0;
+                flex: 1;
+                padding: 8px 6px;
+            }
+
+            .variant-btn .v-weight {
+                font-size: .92rem;
+            }
+
+            .variant-btn .v-price {
+                font-size: .68rem;
+            }
+
+            .variant-btn .v-gift {
+                font-size: .58rem;
+            }
+
+            .review-card {
+                padding: 10px 12px;
+            }
+
+            .rc-text {
+                font-size: .82rem;
+            }
+
+            .guarantee-grid {
+                gap: 8px;
+            }
+
+            .guarantee-item {
+                padding: 10px;
+            }
+
+            .g-title {
+                font-size: .78rem;
+            }
+
+            .g-sub {
+                font-size: .65rem;
+            }
+
+            .topnav {
+                padding: 8px 12px;
+            }
+
+            .topnav .logo {
+                gap: 6px;
+            }
+
+            .logo-mark {
+                width: 36px;
+                height: 36px;
+            }
+
+            .logo-name {
+                font-size: .98rem;
+            }
+
+            .logo-tagline {
+                font-size: .54rem;
+            }
+
+            .topnav-order-btn {
+                font-size: .76rem;
+                padding: 7px 12px;
+            }
+
+            .btn-buy {
+                padding: 12px;
+                font-size: 1rem;
+                gap: 8px;
+            }
+
+            .btn-buy-cd {
+                padding: 4px 8px;
+                min-width: 54px;
+            }
+
+            .bbc-time {
+                font-size: .92rem;
+            }
+
+            .order-drawer,
+            .cart-drawer {
+                border-radius: 18px 18px 0 0;
+                padding: 14px;
+            }
+
+            .order-drawer {
+                padding-bottom: calc(14px + env(safe-area-inset-bottom));
+            }
         }
 
         @media (max-width: 360px) {
-            .gallery-main { height: 75vw; }
-            .price-main { font-size: 1.5rem; }
-            .prod-name { font-size: .95rem; }
-            .variant-options { gap: 6px; }
+            .gallery-main {
+                height: 75vw;
+            }
+
+            .price-main {
+                font-size: 1.5rem;
+            }
+
+            .prod-name {
+                font-size: .95rem;
+            }
+
+            .variant-options {
+                gap: 6px;
+            }
         }
 
         /* Tablet và lớn hơn — giới hạn max-width đẹp hơn */
         @media (min-width: 768px) {
-            .main { padding: 12px 12px 100px; }
-            .gallery-main { height: 480px; }
+            .main {
+                padding: 12px 12px 100px;
+            }
+
+            .gallery-main {
+                height: 480px;
+            }
         }
     </style>
 </head>
@@ -1994,7 +2263,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                     <circle cx="9.5" cy="5" r="2" />
                     <circle cx="14.5" cy="5" r="2" />
                     <circle cx="18.5" cy="9" r="2.2" />
-                    <path d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
+                    <path
+                        d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
                 </svg>
             </div>
             <div class="logo-text">
@@ -2020,10 +2290,16 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 <img src="./img/6.jpeg" alt="6">
                 <img src="./img/7.jpeg" alt="7">
                 <button class="gal-arrow gal-arrow-prev" onclick="prevImg()" aria-label="Ảnh trước">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
                 </button>
                 <button class="gal-arrow gal-arrow-next" onclick="nextImg()" aria-label="Ảnh sau">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
                 </button>
                 <div class="gal-counter" id="galCounter">1 / 7</div>
             </div>
@@ -2159,7 +2435,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         <div class="section">
             <div class="section-title">Chọn phân loại</div>
             <div class="variant-section" style="margin-top:0">
-                <div class="variant-label">⚖️ Đang chọn: <span class="selected-variant" id="selectedVariantLabel">1 Lọ — 199.000₫</span></div>
+                <div class="variant-label">⚖️ Đang chọn: <span class="selected-variant" id="selectedVariantLabel">1 Lọ —
+                        199.000₫</span></div>
                 <div class="variant-options">
                     <button class="variant-btn active" onclick="selectVariant(this,'1lo')">
                         <span class="v-weight">1 Lọ</span><span class="v-price">199.000₫</span><span class="v-gift">🚚
@@ -2247,7 +2524,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                         <circle cx="9.5" cy="5" r="2" />
                         <circle cx="14.5" cy="5" r="2" />
                         <circle cx="18.5" cy="9" r="2.2" />
-                        <path d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
+                        <path
+                            d="M12 10c-3.2 0-5.5 2.6-5.5 5.2 0 1.7 1.3 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.7 0 3-1.1 3-2.8C17.5 12.6 15.2 10 12 10z" />
                     </svg>
                 </div>
                 <div>
@@ -2301,7 +2579,8 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
             </ul>
             <div class="footer-bottom">
                 <p>© 2020–2026 <strong style="color:#888">Trạm Thú Cưng</strong>. Bảo lưu mọi quyền.</p>
-                <p style="margin-top:4px">Thiết kế &amp; phát triển bởi <a href="#">Pet Station Tech</a> · MST: 0123456789</p>
+                <p style="margin-top:4px">Thiết kế &amp; phát triển bởi <a href="#">Pet Station Tech</a> · MST:
+                    0123456789</p>
             </div>
         </div>
     </footer>
@@ -2357,10 +2636,10 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                     oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             </div>
             <div class="form-group">
-                <label>🏠 Địa chỉ giao hàng * <span style="font-size:.72rem;color:#888;font-weight:500">(gõ 4 ký tự để có gợi ý)</span></label>
+                <label>🏠 Địa chỉ giao hàng * <span style="font-size:.72rem;color:#888;font-weight:500">(gõ 4 ký tự để
+                        có gợi ý)</span></label>
                 <div class="address-wrap">
-                    <textarea id="faddress"
-                        autocomplete="off"
+                    <textarea id="faddress" autocomplete="off"
                         placeholder="VD: Số 12 Nguyễn Trãi, P. Trung Văn, Hà Nội&#10;Hoặc: Xóm 3, xã Nghi Phú, TP Vinh, Nghệ An"></textarea>
                     <div class="address-suggestions" id="addressSuggestions"></div>
                 </div>
@@ -2690,15 +2969,15 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         (function () {
             let remaining = 25 * 60; // 25 phút
             const minEl = document.getElementById('cdMin'),
-                  secEl = document.getElementById('cdSec'),
-                  ofbMinEl = document.getElementById('ofbMin'),
-                  ofbSecEl = document.getElementById('ofbSec'),
-                  bbcMinEl = document.getElementById('bbcMin'),
-                  bbcSecEl = document.getElementById('bbcSec'),
-                  bbcBox = document.getElementById('btnBuyCd'),
-                  buyBtn = document.querySelector('.btn-buy'),
-                  ofbBar = document.getElementById('orderFlashBar'),
-                  banner = document.getElementById('flashSaleBanner');
+                secEl = document.getElementById('cdSec'),
+                ofbMinEl = document.getElementById('ofbMin'),
+                ofbSecEl = document.getElementById('ofbSec'),
+                bbcMinEl = document.getElementById('bbcMin'),
+                bbcSecEl = document.getElementById('bbcSec'),
+                bbcBox = document.getElementById('btnBuyCd'),
+                buyBtn = document.querySelector('.btn-buy'),
+                ofbBar = document.getElementById('orderFlashBar'),
+                banner = document.getElementById('flashSaleBanner');
             function tick() {
                 if (remaining <= 0) {
                     banner.innerHTML = '<div class="flash-expired">⏰ Flash Sale đã kết thúc</div>';
