@@ -664,12 +664,11 @@
             color: var(--primary);
         }
 
-        /* FLASH SALE — màu tím-than đậm khác với nút Đặt hàng (hồng-cam) */
+        /* FLASH SALE — cùng tông hồng-cam page */
         .flash-sale-banner {
             background:
-                radial-gradient(circle at 80% 20%, rgba(255, 215, 64, .12), transparent 55%),
-                linear-gradient(95deg, #1f1830, #3a2c5c);
-            border: 1px solid rgba(255, 215, 64, .25);
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, .18), transparent 55%),
+                linear-gradient(95deg, #ff2d55, #ff6b35);
             border-radius: 12px;
             padding: 8px 12px;
             margin-bottom: 10px;
@@ -677,7 +676,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            box-shadow: 0 6px 18px rgba(31, 24, 48, .35);
+            box-shadow: 0 6px 18px rgba(255, 45, 85, .3);
             animation: flashPulse 1.8s ease-in-out infinite;
             position: relative;
             overflow: hidden;
@@ -690,20 +689,13 @@
             right: -30px;
             width: 90px;
             height: 90px;
-            background: radial-gradient(circle, rgba(255, 215, 64, .18), transparent 60%);
+            background: radial-gradient(circle, rgba(255, 255, 255, .18), transparent 60%);
             border-radius: 50%;
         }
 
         @keyframes flashPulse {
-
-            0%,
-            100% {
-                box-shadow: 0 6px 18px rgba(31, 24, 48, .35), 0 0 0 0 rgba(255, 215, 64, .25)
-            }
-
-            50% {
-                box-shadow: 0 6px 22px rgba(31, 24, 48, .55), 0 0 0 4px rgba(255, 215, 64, .12)
-            }
+            0%, 100% { box-shadow: 0 6px 18px rgba(255, 45, 85, .3) }
+            50% { box-shadow: 0 8px 24px rgba(255, 45, 85, .55) }
         }
 
         .flash-sale-left {
@@ -716,12 +708,12 @@
             font-family: 'Baloo 2', cursive;
             font-size: .92rem;
             font-weight: 800;
-            color: #ffd740;
+            color: #fff;
             display: flex;
             align-items: center;
             gap: 5px;
             letter-spacing: .3px;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, .2);
         }
 
         .flash-bolt {
@@ -769,8 +761,7 @@
         }
 
         .cd-block {
-            background: rgba(255, 215, 64, .15);
-            border: 1px solid rgba(255, 215, 64, .3);
+            background: rgba(0, 0, 0, .25);
             border-radius: 6px;
             padding: 3px 7px;
             min-width: 30px;
@@ -781,13 +772,13 @@
             font-family: 'Baloo 2', cursive;
             font-size: 1rem;
             font-weight: 800;
-            color: #ffd740;
+            color: #fff;
             line-height: 1;
             display: block;
         }
 
         .cd-sep {
-            color: #ffd740;
+            color: #fff;
             font-weight: 900;
             font-size: .9rem;
             margin-top: -2px;
@@ -808,7 +799,7 @@
 
         .flash-ends-label {
             font-size: .58rem !important;
-            color: rgba(255, 215, 64, .85) !important;
+            color: rgba(255, 255, 255, .85) !important;
         }
 
         .flash-bar-track {
@@ -1354,10 +1345,17 @@
             font-family: 'Baloo 2', cursive;
             font-size: 1.1rem;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin: -16px -16px 12px;
+            padding: 14px 16px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 7;
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid #f0f0f5;
         }
 
         .close-btn {
@@ -1590,7 +1588,7 @@
             font-family: 'Nunito', sans-serif;
         }
 
-        /* COUNTDOWN BANNER TRONG POPUP ĐẶT HÀNG */
+        /* COUNTDOWN BANNER TRONG POPUP ĐẶT HÀNG — sticky để luôn hiển thị khi scroll form */
         .order-flash-bar {
             background:
                 radial-gradient(circle at 80% 20%, rgba(255, 255, 255, .2), transparent 55%),
@@ -1603,7 +1601,9 @@
             gap: 10px;
             box-shadow: 0 6px 18px rgba(255, 45, 85, .35);
             animation: ofbPulse 1.4s ease-in-out infinite;
-            position: relative;
+            position: sticky;
+            top: 52px;
+            z-index: 6;
             overflow: hidden;
         }
 
@@ -2165,14 +2165,21 @@
             .form-group textarea { padding: 9px 12px; font-size: 16px; border-radius: 10px; }
             .form-group textarea { min-height: 54px; height: auto; }
 
-            /* ADDRESS: gọn lại cho mobile */
-            .addr-grid { gap: 5px; }
+            /* ADDRESS: 3 dropdown trên 1 hàng, ô chi tiết full-width bên dưới */
+            .addr-grid {
+                gap: 5px;
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .addr-grid #faddress { grid-column: 1 / -1; }
             .addr-sel {
-                padding: 9px 32px 9px 11px;
+                padding: 9px 22px 9px 9px;
                 font-size: 16px; /* giữ 16px chống zoom iOS */
                 border-radius: 10px;
-                background-position: right 11px center;
-                background-size: 10px;
+                background-position: right 7px center;
+                background-size: 9px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
             }
             #faddress {
                 min-height: 48px !important;
@@ -2660,9 +2667,9 @@
             <div class="form-group">
                 <label>🏠 Địa chỉ giao hàng *</label>
                 <div class="addr-grid">
-                    <select id="fProvince" class="addr-sel"><option value="">— Chọn Tỉnh/Thành phố —</option></select>
-                    <select id="fDistrict" class="addr-sel" disabled><option value="">— Chọn Quận/Huyện —</option></select>
-                    <select id="fWard" class="addr-sel" disabled><option value="">— Chọn Phường/Xã —</option></select>
+                    <select id="fProvince" class="addr-sel"><option value="">Tỉnh/TP</option></select>
+                    <select id="fDistrict" class="addr-sel" disabled><option value="">Quận/Huyện</option></select>
+                    <select id="fWard" class="addr-sel" disabled><option value="">Phường/Xã</option></select>
                     <textarea id="faddress" autocomplete="off" rows="2"
                         placeholder="Số nhà, tên đường, thôn/xóm... "></textarea>
                 </div>
@@ -3060,19 +3067,33 @@
             if (!provSel) return;
             const API = 'https://provinces.open-api.vn/api';
 
+            // Rút gọn tên tỉnh/huyện/xã để fit khung hẹp
+            function shorten(name) {
+                return String(name)
+                    .replace(/^Thành phố /i, 'TP. ')
+                    .replace(/^Tỉnh /i, '')
+                    .replace(/^Quận /i, 'Q. ')
+                    .replace(/^Huyện /i, 'H. ')
+                    .replace(/^Thị xã /i, 'TX. ')
+                    .replace(/^Thành phố /i, 'TP. ')
+                    .replace(/^Phường /i, 'P. ')
+                    .replace(/^Xã /i, '')
+                    .replace(/^Thị trấn /i, 'TT. ');
+            }
+
             function fillSelect(sel, items, placeholder) {
-                sel.innerHTML = `<option value="">— ${placeholder} —</option>` +
-                    items.map(it => `<option value="${it.code}" data-name="${it.name.replace(/"/g, '&quot;')}">${it.name}</option>`).join('');
+                sel.innerHTML = `<option value="">${placeholder}</option>` +
+                    items.map(it => `<option value="${it.code}" data-name="${it.name.replace(/"/g, '&quot;')}">${shorten(it.name)}</option>`).join('');
             }
 
             async function loadProvinces() {
                 try {
                     const res = await fetch(`${API}/p/`);
                     const data = await res.json();
-                    fillSelect(provSel, data, 'Chọn Tỉnh/Thành phố');
+                    fillSelect(provSel, data, 'Tỉnh/TP');
                 } catch (e) {
                     console.error('Load provinces failed', e);
-                    provSel.innerHTML = '<option value="">⚠️ Lỗi tải — kiểm tra mạng</option>';
+                    provSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
                 }
             }
 
@@ -3081,11 +3102,11 @@
                 distSel.disabled = true;
                 wardSel.innerHTML = '<option value="">— Chọn Phường/Xã —</option>';
                 wardSel.disabled = true;
-                if (!provSel.value) { distSel.innerHTML = '<option value="">— Chọn Quận/Huyện —</option>'; return; }
+                if (!provSel.value) { distSel.innerHTML = '<option value="">Quận/Huyện</option>'; return; }
                 try {
                     const res = await fetch(`${API}/p/${provSel.value}?depth=2`);
                     const data = await res.json();
-                    fillSelect(distSel, data.districts || [], 'Chọn Quận/Huyện');
+                    fillSelect(distSel, data.districts || [], 'Quận/Huyện');
                     distSel.disabled = false;
                 } catch (e) {
                     distSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
@@ -3095,11 +3116,11 @@
             distSel.addEventListener('change', async () => {
                 wardSel.innerHTML = '<option value="">— Đang tải —</option>';
                 wardSel.disabled = true;
-                if (!distSel.value) { wardSel.innerHTML = '<option value="">— Chọn Phường/Xã —</option>'; return; }
+                if (!distSel.value) { wardSel.innerHTML = '<option value="">Phường/Xã</option>'; return; }
                 try {
                     const res = await fetch(`${API}/d/${distSel.value}?depth=2`);
                     const data = await res.json();
-                    fillSelect(wardSel, data.wards || [], 'Chọn Phường/Xã');
+                    fillSelect(wardSel, data.wards || [], 'Phường/Xã');
                     wardSel.disabled = false;
                 } catch (e) {
                     wardSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
