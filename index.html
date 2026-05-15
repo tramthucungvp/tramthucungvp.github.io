@@ -2150,10 +2150,27 @@
             .g-sub { font-size: .62rem; }
 
             /* FORM inputs trong modal */
-            .form-group label { font-size: .78rem; }
+            .form-group label { font-size: .76rem; margin-bottom: 4px; }
             .form-group input,
-            .form-group textarea { padding: 11px 12px; font-size: 16px; border-radius: 11px; }
-            .addr-sel { padding: 11px 36px 11px 12px; font-size: 16px; }
+            .form-group textarea { padding: 9px 12px; font-size: 16px; border-radius: 10px; }
+            .form-group textarea { min-height: 54px; height: auto; }
+
+            /* ADDRESS: gọn lại cho mobile */
+            .addr-grid { gap: 5px; }
+            .addr-sel {
+                padding: 9px 32px 9px 11px;
+                font-size: 16px; /* giữ 16px chống zoom iOS */
+                border-radius: 10px;
+                background-position: right 11px center;
+                background-size: 10px;
+            }
+            #faddress {
+                min-height: 48px !important;
+                height: 48px !important;
+                padding: 9px 12px !important;
+            }
+            /* Thu gọn form-group margin */
+            .order-drawer .form-group { margin-bottom: 9px; }
 
             /* ORDER DRAWER full bottom-sheet */
             .order-drawer, .cart-drawer {
@@ -2636,7 +2653,7 @@
                     <select id="fDistrict" class="addr-sel" disabled><option value="">— Chọn Quận/Huyện —</option></select>
                     <select id="fWard" class="addr-sel" disabled><option value="">— Chọn Phường/Xã —</option></select>
                     <textarea id="faddress" autocomplete="off" rows="2"
-                        placeholder="Số nhà, tên đường, thôn/xóm... (nếu có)"></textarea>
+                        placeholder="Số nhà, tên đường, thôn/xóm... "></textarea>
                 </div>
             </div>
             <div class="form-group" id="orderVariantGroup">
