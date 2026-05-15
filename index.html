@@ -451,11 +451,12 @@
         }
 
         .prod-name {
-            font-size: 1.08rem;
+            font-size: 1.22rem;
             font-weight: 800;
-            margin-top: 8px;
-            line-height: 1.45;
+            margin-top: 10px;
+            line-height: 1.4;
             color: #1a1a2e;
+            letter-spacing: -.2px;
         }
 
         .prod-top-badge {
@@ -1560,11 +1561,20 @@
 
         .os-row.total {
             font-weight: 900;
-            font-size: 1rem;
+            font-size: 1.25rem;
             color: var(--primary);
-            border-top: 1px dashed #ffc;
-            padding-top: 6px;
-            margin-top: 6px;
+            border-top: 1px dashed rgba(255, 45, 85, .25);
+            padding-top: 9px;
+            margin-top: 8px;
+            font-family: 'Baloo 2', cursive;
+            letter-spacing: -.3px;
+        }
+        .os-row.total span:last-child {
+            font-size: 1.4rem;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .btn-order {
@@ -2096,7 +2106,7 @@
             .price-main { font-size: 1.7rem; line-height: 1; }
             .price-old { font-size: .85rem; }
             .price-discount { font-size: .68rem; padding: 2px 7px; }
-            .prod-name { font-size: 1rem; line-height: 1.4; margin-top: 8px; }
+            .prod-name { font-size: 1.12rem; line-height: 1.38; margin-top: 9px; }
             .prod-top-badge { font-size: .72rem; padding: 4px 11px 4px 9px; margin-top: 7px; }
             .prod-sub { font-size: .78rem; }
             .prod-stats { font-size: .76rem; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
@@ -2182,7 +2192,8 @@
             .drawer-title { font-size: 1rem; margin-bottom: 14px; }
             .order-summary { padding: 9px 11px; border-radius: 9px; margin-bottom: 12px; font-size: .8rem; }
             .os-row { font-size: .8rem; }
-            .os-row.total { font-size: .95rem; }
+            .os-row.total { font-size: 1.15rem; padding-top: 8px; }
+            .os-row.total span:last-child { font-size: 1.3rem; }
 
             /* BOTTOM bar (nút Đặt hàng) */
             .bottom-bar {
@@ -2217,7 +2228,7 @@
         @media (max-width: 360px) {
             .gallery-main { height: 78vw; }
             .price-main { font-size: 1.5rem; }
-            .prod-name { font-size: .95rem; }
+            .prod-name { font-size: 1.05rem; }
             .variant-options { gap: 5px; }
             .variant-btn { padding: 7px 3px; min-height: 54px; }
             .variant-btn .v-weight { font-size: .85rem; }
