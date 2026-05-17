@@ -2717,6 +2717,52 @@
     </div>
 
     <script>
+        // ===== TRACK NGUỒN ĐƠN (UTM / fbclid) =====
+        // Khi khách click ads, FB tự add ?fbclid=... và UTM. Lưu vào localStorage để follow đến lúc submit.
+        (function () {
+            const p = new URLSearchParams(location.search);
+            const captured = {
+                utm_source: p.get('utm_source'),
+                utm_medium: p.get('utm_medium'),
+                utm_campaign: p.get('utm_campaign'),
+                utm_content: p.get('utm_content'),
+                utm_term: p.get('utm_term'),
+                fbclid: p.get('fbclid'),
+                ttclid: p.get('ttclid'),     // TikTok
+                gclid: p.get('gclid'),       // Google Ads
+                referrer: document.referrer || ''
+            };
+            if (Object.values(captured).some(v => v)) {
+                captured.ts = Date.now();
+                try { localStorage.setItem('_ad_source', JSON.stringify(captured)); } catch (e) {}
+            }
+        })();
+
+        function getOrderSource() {
+            let src = {};
+            try { src = JSON.parse(localStorage.getItem('_ad_source') || '{}'); } catch (e) {}
+            // Ưu tiên hiển thị tên campaign
+            if (src.utm_campaign) {
+                const platform = src.utm_source === 'tiktok' ? 'TikTok' : (src.utm_source === 'google' ? 'Google' : 'FB');
+                return `${platform} | ${src.utm_campaign}${src.utm_content ? ' | ' + src.utm_content : ''}`;
+            }
+            if (src.fbclid) return 'Facebook Ads (no UTM)';
+            if (src.ttclid) return 'TikTok Ads (no UTM)';
+            if (src.gclid) return 'Google Ads (no UTM)';
+            if (src.utm_source) return src.utm_source;
+            // Không có ad param — phân biệt Direct vs Referral
+            const ref = src.referrer || '';
+            if (!ref) return 'Direct (gõ URL / bookmark)';
+            try {
+                const refHost = new URL(ref).hostname;
+                if (refHost.includes('facebook')) return 'Facebook (organic)';
+                if (refHost.includes('tiktok')) return 'TikTok (organic)';
+                if (refHost.includes('google')) return 'Google search';
+                if (refHost.includes('zalo')) return 'Zalo';
+                return 'Referral: ' + refHost;
+            } catch (e) { return 'Direct'; }
+        }
+
         let currentImg = 0, qty = 1, cart = [];
         let selectedVariantKey = '1lo';
 
@@ -2977,7 +3023,8 @@
             const thoiGian = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0') + ' ' + now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
             const orderCode = Math.floor(100000 + Math.random() * 900000);
 
-            const payload = { thoiGian, hoTen: name, sdt: "'" + phone, diaChi: address, sanPham: sanPhamStr, gia: totalCustomer, canNang: totalWeight, cod: totalCod, phiShip: 20000, ghiChu: note, maDon: '#' + orderCode };
+            const nguon = getOrderSource();
+            const payload = { thoiGian, hoTen: name, sdt: "'" + phone, diaChi: address, sanPham: sanPhamStr, gia: totalCustomer, canNang: totalWeight, cod: totalCod, phiShip: 20000, ghiChu: note, maDon: '#' + orderCode, nguon };
             const bodyStr = JSON.stringify(payload);
             let sent = false;
             if (navigator.sendBeacon) { const blob = new Blob([bodyStr], { type: 'text/plain' }); sent = navigator.sendBeacon(SHEET_URL, blob); }
