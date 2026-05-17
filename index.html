@@ -2741,26 +2741,14 @@
         function getOrderSource() {
             let src = {};
             try { src = JSON.parse(localStorage.getItem('_ad_source') || '{}'); } catch (e) {}
-            // Ưu tiên hiển thị tên campaign
+            // CHỈ ghi nếu có utm_campaign (đến từ ads thật). Còn lại để trống.
             if (src.utm_campaign) {
-                const platform = src.utm_source === 'tiktok' ? 'TikTok' : (src.utm_source === 'google' ? 'Google' : 'FB');
-                return `${platform} | ${src.utm_campaign}${src.utm_content ? ' | ' + src.utm_content : ''}`;
+                const parts = [src.utm_campaign];
+                if (src.utm_content) parts.push(src.utm_content);
+                if (src.utm_term) parts.push(src.utm_term);
+                return parts.join(' | ');
             }
-            if (src.fbclid) return 'Facebook Ads (no UTM)';
-            if (src.ttclid) return 'TikTok Ads (no UTM)';
-            if (src.gclid) return 'Google Ads (no UTM)';
-            if (src.utm_source) return src.utm_source;
-            // Không có ad param — phân biệt Direct vs Referral
-            const ref = src.referrer || '';
-            if (!ref) return 'Direct (gõ URL / bookmark)';
-            try {
-                const refHost = new URL(ref).hostname;
-                if (refHost.includes('facebook')) return 'Facebook (organic)';
-                if (refHost.includes('tiktok')) return 'TikTok (organic)';
-                if (refHost.includes('google')) return 'Google search';
-                if (refHost.includes('zalo')) return 'Zalo';
-                return 'Referral: ' + refHost;
-            } catch (e) { return 'Direct'; }
+            return ''; // Không phải từ camp → để trống, không ghi chú gì
         }
 
         let currentImg = 0, qty = 1, cart = [];
