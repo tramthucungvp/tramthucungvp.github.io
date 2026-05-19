@@ -984,12 +984,17 @@
                 </div>
                 <input type="hidden" id="oAds" value="0">
                 <div class="form-row">
-                    <label>Khách hàng (tuỳ chọn)</label>
-                    <input type="text" id="oCustomer">
+                    <label>👤 Tên khách hàng</label>
+                    <input type="text" id="oCustomer" placeholder="VD: Nguyễn Văn A">
+                </div>
+                <div class="form-row">
+                    <label>📞 Số điện thoại</label>
+                    <input type="tel" id="oPhone" placeholder="0901234567"
+                        inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                 </div>
             </div>
             <div class="form-row">
-                <label>Ghi chú</label>
+                <label>🏠 Địa chỉ giao hàng (ghi chú)</label>
                 <input type="text" id="oNote">
             </div>
             <div class="info-box" id="oPreview"></div>
@@ -1919,7 +1924,11 @@
                 document.getElementById('oSellPrice').value = o.sellPrice;
                 document.getElementById('oCost').value = o.cost;
                 document.getElementById('oAds').value = o.ads;
-                document.getElementById('oCustomer').value = o.customer || '';
+                // Tách Tên · SĐT từ trường customer
+                const parts = String(o.customer || '').split(/\s*[·,]\s*/);
+                const phoneMatch = (o.customer || '').match(/(\d{9,11})/);
+                document.getElementById('oCustomer').value = (parts[0] || '').replace(/\d{9,11}.*$/, '').trim();
+                document.getElementById('oPhone').value = phoneMatch ? phoneMatch[1] : '';
                 document.getElementById('oNote').value = o.note || '';
             } else {
                 document.getElementById('orderModalTitle').textContent = 'Thêm đơn hàng';
@@ -1927,6 +1936,7 @@
                 document.getElementById('oQty').value = 1;
                 document.getElementById('oStatus').value = 'delivered';
                 document.getElementById('oCustomer').value = '';
+                document.getElementById('oPhone').value = '';
                 document.getElementById('oNote').value = '';
                 onSelectProduct();
             }
@@ -2025,6 +2035,9 @@
             document.getElementById(id).addEventListener('input', updateOrderPreview));
 
         function saveOrder() {
+            const custName = document.getElementById('oCustomer').value.trim();
+            const custPhone = document.getElementById('oPhone').value.trim();
+            const customerCombined = [custName, custPhone].filter(Boolean).join(' · ');
             const order = {
                 id: editingOrderId || uid(),
                 date: document.getElementById('oDate').value || todayISO(),
@@ -2034,7 +2047,7 @@
                 sellPrice: +document.getElementById('oSellPrice').value || 0,
                 cost: +document.getElementById('oCost').value || 0,
                 ads: +document.getElementById('oAds').value || 0,
-                customer: document.getElementById('oCustomer').value.trim(),
+                customer: customerCombined,
                 note: document.getElementById('oNote').value.trim()
             };
 
