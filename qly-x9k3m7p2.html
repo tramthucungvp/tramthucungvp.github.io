@@ -2064,11 +2064,54 @@
                 const idx = DATA.orders.findIndex(x => x.id === editingOrderId);
                 DATA.orders[idx] = order;
             } else {
+                // Đơn mới tạo từ admin → gán maDon ADM_* + push lên Sheet
+                order.maDon = 'ADM_' + Date.now().toString(36).toUpperCase();
+                if (!DATA.syncedMaDons) DATA.syncedMaDons = [];
+                DATA.syncedMaDons.push(order.maDon); // tránh re-sync duplicate
                 DATA.orders.unshift(order);
+                pushOrderToSheet(order);  // fire-and-forget gửi sang Sheet
             }
             save(); closeOrderModal(); renderAll();
-            toast(editingOrderId ? '✅ Đã cập nhật đơn' : '✅ Đã thêm đơn');
+            toast(editingOrderId ? '✅ Đã cập nhật đơn' : '✅ Đã thêm đơn (đẩy sang Sheet)');
             editingOrderId = null;
+        }
+
+        // Đẩy đơn từ admin → Google Sheet (fire-and-forget, dùng no-cors)
+        function pushOrderToSheet(order) {
+            try {
+                const prod = DATA.products.find(p => p.id === order.productId);
+                const sanPhamStr = (prod ? prod.name : '(?)') + ' x' + (order.qty || 1);
+                const cust = order.customer || '';
+                const phoneMatch = cust.match(/(\d{9,11})/);
+                const phone = phoneMatch ? phoneMatch[1] : '';
+                const hoTen = cust.replace(/[·\-,]?\s*\d{9,11}.*$/, '').trim() || 'Admin tạo';
+                const total = (order.sellPrice || 0) * (order.qty || 1);
+                const now = new Date();
+                const thoiGian = String(now.getHours()).padStart(2, '0') + ':' +
+                    String(now.getMinutes()).padStart(2, '0') + ':' +
+                    String(now.getSeconds()).padStart(2, '0') + ' ' +
+                    now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+                const payload = {
+                    thoiGian,
+                    hoTen,
+                    sdt: phone ? "'" + phone : '',
+                    diaChi: order.note || '',
+                    sanPham: sanPhamStr,
+                    gia: total,
+                    canNang: 0,
+                    cod: total,
+                    phiShip: 0,
+                    ghiChu: 'Tạo từ Admin',
+                    maDon: order.maDon,
+                    nguon: 'Admin (tay)'
+                };
+                const body = JSON.stringify(payload);
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(API_URL, new Blob([body], { type: 'text/plain' }));
+                } else {
+                    fetch(API_URL, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain' }, body }).catch(() => {});
+                }
+            } catch (e) { console.warn('Push order to Sheet failed', e); }
         }
 
         function deleteOrder(id) {
