@@ -1444,8 +1444,15 @@
 
                 let newCount = 0, updateCount = 0;
                 remote.forEach(r => {
-                    const maDon = String(r.maDon || '').trim();
-                    if (!maDon) return;
+                    let maDon = String(r.maDon || '').trim();
+                    // Đơn add tay vào Sheet không có MaDon → tự sinh từ timestamp + SĐT cho unique
+                    if (!maDon) {
+                        const tsKey = r.timestamp ? new Date(r.timestamp).getTime() : 0;
+                        const phoneKey = String(r.sdt || '').replace(/\D/g, '').slice(-4);
+                        // Cần ít nhất 1 thông tin để khỏi tạo maDon trùng cho row trống
+                        if (!tsKey && !phoneKey && !r.hoTen && !r.sanPham) return;
+                        maDon = 'MAN_' + (tsKey || phoneKey || Math.floor(Math.random() * 1e9));
+                    }
 
                     const existing = localByMaDon[maDon];
 
