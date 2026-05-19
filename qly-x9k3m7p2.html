@@ -994,8 +994,12 @@
                 </div>
             </div>
             <div class="form-row">
-                <label>🏠 Địa chỉ giao hàng (ghi chú)</label>
-                <input type="text" id="oNote">
+                <label>🏠 Địa chỉ giao hàng</label>
+                <textarea id="oAddress" rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
+            </div>
+            <div class="form-row">
+                <label>📝 Ghi chú thêm</label>
+                <input type="text" id="oNote" placeholder="VD: Giao buổi sáng, gọi trước khi giao...">
             </div>
             <div class="info-box" id="oPreview"></div>
             <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
@@ -1497,7 +1501,8 @@
                         cost: productCost(prod),
                         ads: 0,
                         customer: [r.hoTen, r.sdt].filter(Boolean).join(' · '),
-                        note: [r.diaChi, r.ghiChu].filter(Boolean).join(' · ')
+                        address: r.diaChi || '',
+                        note: r.ghiChu || ''
                     };
 
                     applyDeltas(stockDeltaForOrder(order));
@@ -1929,7 +1934,19 @@
                 const phoneMatch = (o.customer || '').match(/(\d{9,11})/);
                 document.getElementById('oCustomer').value = (parts[0] || '').replace(/\d{9,11}.*$/, '').trim();
                 document.getElementById('oPhone').value = phoneMatch ? phoneMatch[1] : '';
-                document.getElementById('oNote').value = o.note || '';
+                // Đơn cũ có note kiểu "DiaChi · GhiChu" → tách lại
+                let addr = o.address || '';
+                let nt = o.note || '';
+                if (!addr && nt.includes(' · ')) {
+                    const np = nt.split(' · ');
+                    addr = np[0] || '';
+                    nt = np.slice(1).join(' · ');
+                } else if (!addr && nt) {
+                    // Heuristic: nếu note dài > 15 và có dấu phẩy → coi là địa chỉ
+                    if (nt.length > 15 && nt.includes(',')) { addr = nt; nt = ''; }
+                }
+                document.getElementById('oAddress').value = addr;
+                document.getElementById('oNote').value = nt;
             } else {
                 document.getElementById('orderModalTitle').textContent = 'Thêm đơn hàng';
                 document.getElementById('oDate').value = todayISO();
@@ -1937,6 +1954,7 @@
                 document.getElementById('oStatus').value = 'delivered';
                 document.getElementById('oCustomer').value = '';
                 document.getElementById('oPhone').value = '';
+                document.getElementById('oAddress').value = '';
                 document.getElementById('oNote').value = '';
                 onSelectProduct();
             }
@@ -2048,6 +2066,7 @@
                 cost: +document.getElementById('oCost').value || 0,
                 ads: +document.getElementById('oAds').value || 0,
                 customer: customerCombined,
+                address: document.getElementById('oAddress').value.trim(),
                 note: document.getElementById('oNote').value.trim()
             };
 
@@ -2108,13 +2127,13 @@
                     thoiGian,
                     hoTen,
                     sdt: phone ? "'" + phone : '',
-                    diaChi: order.note || '',
+                    diaChi: order.address || '',
                     sanPham: sanPhamStr,
                     gia: total,
                     canNang: 0,
                     cod: total,
                     phiShip: 0,
-                    ghiChu: 'Tạo từ Admin',
+                    ghiChu: order.note ? 'Admin: ' + order.note : 'Tạo từ Admin',
                     maDon: order.maDon,
                     nguon: 'Admin (tay)'
                 };
@@ -2148,7 +2167,7 @@
                 if (from && o.date < from) return false;
                 if (to && o.date > to) return false;
                 if (search) {
-                    const hay = [o.customer, o.note, o.maDon, o.id]
+                    const hay = [o.customer, o.address, o.note, o.maDon, o.id]
                         .filter(Boolean).join(' ').toLowerCase();
                     if (!hay.includes(search)) return false;
                 }
@@ -2184,7 +2203,8 @@
                 const customerHtml = o.customer
                     ? `<div style="font-size:.78rem;color:#222;margin-top:4px;font-weight:700">👤 ${o.customer}${custPhone ? ` <a href="tel:${custPhone}" style="color:var(--accent);text-decoration:none;margin-left:4px" title="Gọi">📞</a><a href="https://zalo.me/${custPhone}" target="_blank" style="color:var(--info);text-decoration:none;margin-left:2px" title="Zalo">💬</a>` : ''}</div>`
                     : '';
-                const noteHtml = o.note ? `<div style="font-size:.7rem;color:#666;margin-top:2px;line-height:1.4">📍 ${o.note}</div>` : '';
+                const addrHtml = o.address ? `<div style="font-size:.7rem;color:#666;margin-top:2px;line-height:1.4">📍 ${o.address}</div>` : '';
+                const noteHtml = o.note ? `<div style="font-size:.68rem;color:#888;margin-top:1px;line-height:1.4;font-style:italic">📝 ${o.note}</div>` : '';
                 const maDonHtml = o.maDon
                     ? `<span style="font-size:.65rem;color:var(--primary);font-weight:800;background:#fff0f3;padding:1px 6px;border-radius:6px;margin-left:6px;letter-spacing:.3px">${o.maDon}</span>`
                     : '';
@@ -2194,6 +2214,7 @@
                     <td>
                         <strong>${prod ? prod.name : '(đã xoá)'}</strong>${maDonHtml}
                         ${customerHtml}
+                        ${addrHtml}
                         ${noteHtml}
                     </td>
                     <td class="num">${o.qty}</td>
