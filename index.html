@@ -2832,8 +2832,37 @@
 
         function getVariant(k) { return VARIANTS[k]; }
 
+        function money(n) {
+            return (+n || 0).toLocaleString('vi-VN') + '₫';
+        }
+
+        function variantLabel(v) {
+            return v.label + ' — ' + money(v.displayPrice);
+        }
+
+        function renderVariantPrices() {
+            Object.keys(VARIANTS).forEach(key => {
+                const v = VARIANTS[key];
+                document.querySelectorAll(`.variant-btn[onclick*="'${key}'"] .v-price`).forEach(el => {
+                    el.textContent = money(v.displayPrice);
+                });
+            });
+            const selected = getVariant(selectedVariantKey);
+            syncInstantOffer(selected);
+            const selectedLabel = document.getElementById('selectedVariantLabel');
+            const orderSelectedLabel = document.getElementById('orderSelectedVariantLabel');
+            if (selectedLabel) selectedLabel.textContent = variantLabel(selected);
+            if (orderSelectedLabel) orderSelectedLabel.textContent = variantLabel(selected);
+            const priceMain = document.getElementById('priceMain');
+            const priceOld = document.getElementById('priceOld');
+            const priceDiscount = document.getElementById('priceDiscount');
+            if (priceMain) priceMain.textContent = money(selected.displayPrice);
+            if (priceOld) priceOld.textContent = money(selected.oldPrice);
+            if (priceDiscount) priceDiscount.textContent = '-' + Math.round((1 - selected.displayPrice / selected.oldPrice) * 100) + '%';
+        }
+
         function syncInstantOffer(v) {
-            const priceText = v.displayPrice.toLocaleString('vi-VN') + '₫';
+            const priceText = money(v.displayPrice);
             const topPrice = document.getElementById('instantOfferPrice');
             const bottomText = document.getElementById('bottomBuyText');
             if (topPrice) topPrice.textContent = priceText;
@@ -2846,9 +2875,9 @@
             selectedVariantKey = key;
             const v = getVariant(key);
             syncInstantOffer(v);
-            document.getElementById('selectedVariantLabel').textContent = v.label + ' — ' + v.displayPrice.toLocaleString('vi-VN') + '₫';
-            document.getElementById('priceMain').textContent = v.displayPrice.toLocaleString('vi-VN') + '₫';
-            document.getElementById('priceOld').textContent = v.oldPrice.toLocaleString('vi-VN') + '₫';
+            document.getElementById('selectedVariantLabel').textContent = variantLabel(v);
+            document.getElementById('priceMain').textContent = money(v.displayPrice);
+            document.getElementById('priceOld').textContent = money(v.oldPrice);
             document.getElementById('priceDiscount').textContent = '-' + Math.round((1 - v.displayPrice / v.oldPrice) * 100) + '%';
         }
 
@@ -2987,11 +3016,11 @@
             document.querySelectorAll('.variant-section .variant-btn').forEach(b => {
                 b.classList.toggle('active', b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + key + "'"));
             });
-            document.getElementById('selectedVariantLabel').textContent = v.label + ' — ' + v.displayPrice.toLocaleString('vi-VN') + '₫';
-            document.getElementById('priceMain').textContent = v.displayPrice.toLocaleString('vi-VN') + '₫';
-            document.getElementById('priceOld').textContent = v.oldPrice.toLocaleString('vi-VN') + '₫';
+            document.getElementById('selectedVariantLabel').textContent = variantLabel(v);
+            document.getElementById('priceMain').textContent = money(v.displayPrice);
+            document.getElementById('priceOld').textContent = money(v.oldPrice);
             document.getElementById('priceDiscount').textContent = '-' + Math.round((1 - v.displayPrice / v.oldPrice) * 100) + '%';
-            document.getElementById('orderSelectedVariantLabel').textContent = v.label + ' — ' + v.displayPrice.toLocaleString('vi-VN') + '₫';
+            document.getElementById('orderSelectedVariantLabel').textContent = variantLabel(v);
             syncOrderSummary();
         }
 
@@ -3009,7 +3038,7 @@
                 const ab = document.getElementById('ovBtn' + selectedVariantKey);
                 if (ab) ab.classList.add('active');
                 const v = getVariant(selectedVariantKey);
-                document.getElementById('orderSelectedVariantLabel').textContent = v.label + ' — ' + v.displayPrice.toLocaleString('vi-VN') + '₫';
+                document.getElementById('orderSelectedVariantLabel').textContent = variantLabel(v);
             }
             syncOrderSummary();
             document.getElementById('orderOverlay').classList.add('open');
@@ -3246,6 +3275,8 @@
 
             loadProvinces();
         })();
+
+        renderVariantPrices();
     </script>
 
 </body>
