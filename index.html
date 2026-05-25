@@ -236,6 +236,57 @@
             justify-content: center;
         }
 
+        .instant-offer {
+            position: sticky;
+            top: 57px;
+            z-index: 98;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 8px 10px;
+            background: linear-gradient(90deg, #fff7f0 0%, #fff0f3 55%, #eefaf4 100%);
+            border-bottom: 1px solid rgba(255, 45, 85, .12);
+            box-shadow: 0 6px 18px rgba(20, 20, 40, .06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .instant-offer-main {
+            display: flex;
+            align-items: baseline;
+            gap: 7px;
+            min-width: 0;
+        }
+
+        .instant-offer-label {
+            color: #555;
+            font-size: .74rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .instant-offer-price {
+            color: var(--primary);
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.42rem;
+            font-weight: 800;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .instant-offer-ship {
+            background: #e8f8ef;
+            color: #007a3d;
+            border: 1px solid rgba(0, 200, 83, .28);
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: .76rem;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
         /* MAIN */
         .main {
             max-width: 480px;
@@ -2090,6 +2141,10 @@
             .logo-name { font-size: 1rem; }
             .logo-tagline { font-size: .55rem; letter-spacing: 1px; }
             .topnav-order-btn { font-size: .78rem; padding: 8px 13px; border-radius: 18px; }
+            .instant-offer { top: 53px; padding: 7px 9px; }
+            .instant-offer-price { font-size: 1.28rem; }
+            .instant-offer-label, .instant-offer-ship { font-size: .68rem; }
+            .instant-offer-ship { padding: 4px 8px; }
 
             /* GALLERY */
             .gallery { border-radius: 0 0 16px 16px; }
@@ -2247,6 +2302,10 @@
             .topnav-order-btn { font-size: .72rem; padding: 7px 10px; }
             .logo-name { font-size: .9rem; }
             .logo-tagline { display: none; }
+            .instant-offer { top: 52px; gap: 5px; padding: 6px 7px; }
+            .instant-offer-label { display: none; }
+            .instant-offer-price { font-size: 1.18rem; }
+            .instant-offer-ship { font-size: .64rem; padding: 4px 7px; }
         }
 
         /* ===== TABLET 481-767px ===== */
@@ -2305,6 +2364,14 @@
         <div style="flex:1"></div>
         <button class="topnav-order-btn" onclick="openOrder()">⚡ Đặt hàng ngay</button>
         <span id="cartCount" style="display:none">0</span>
+    </div>
+
+    <div class="instant-offer" onclick="openOrder()">
+        <div class="instant-offer-main">
+            <span class="instant-offer-label">Giá chỉ</span>
+            <span class="instant-offer-price" id="instantOfferPrice">168.000₫</span>
+        </div>
+        <div class="instant-offer-ship">FREESHIP toàn quốc</div>
     </div>
 
     <div class="main">
@@ -2618,7 +2685,7 @@
     <!-- BOTTOM BAR — nút ĐẶT HÀNG NGAY + countdown -->
     <div class="bottom-bar">
         <button class="btn-buy" onclick="openOrder()">
-            <span class="btn-buy-text">⚡ ĐẶT HÀNG NGAY</span>
+            <span class="btn-buy-text" id="bottomBuyText">⚡ MUA 168.000₫ - FREESHIP</span>
             <span class="btn-buy-cd" id="btnBuyCd">
                 <span class="bbc-label">Còn</span>
                 <span class="bbc-time"><span id="bbcMin">25</span>:<span id="bbcSec">00</span></span>
@@ -2765,11 +2832,20 @@
 
         function getVariant(k) { return VARIANTS[k]; }
 
+        function syncInstantOffer(v) {
+            const priceText = v.displayPrice.toLocaleString('vi-VN') + '₫';
+            const topPrice = document.getElementById('instantOfferPrice');
+            const bottomText = document.getElementById('bottomBuyText');
+            if (topPrice) topPrice.textContent = priceText;
+            if (bottomText) bottomText.textContent = '⚡ MUA ' + priceText + ' - FREESHIP';
+        }
+
         function selectVariant(btn, key) {
             document.querySelectorAll('.variant-section .variant-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedVariantKey = key;
             const v = getVariant(key);
+            syncInstantOffer(v);
             document.getElementById('selectedVariantLabel').textContent = v.label + ' — ' + v.displayPrice.toLocaleString('vi-VN') + '₫';
             document.getElementById('priceMain').textContent = v.displayPrice.toLocaleString('vi-VN') + '₫';
             document.getElementById('priceOld').textContent = v.oldPrice.toLocaleString('vi-VN') + '₫';
@@ -2907,6 +2983,7 @@
             btn.classList.add('active');
             selectedVariantKey = key;
             const v = getVariant(key);
+            syncInstantOffer(v);
             document.querySelectorAll('.variant-section .variant-btn').forEach(b => {
                 b.classList.toggle('active', b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + key + "'"));
             });
