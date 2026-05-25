@@ -906,14 +906,14 @@
                         <input type="number" id="setShipCustomer" step="1">
                     </div>
                     <div class="form-row">
-                        <label>Phí ship shop chịu (đơn mới)</label>
+                        <label>Phí ship shop chịu (mọi đơn)</label>
                         <input type="number" id="setShipShop" step="1">
                     </div>
                 </div>
                 <div class="info-box" style="margin-top:8px">
-                    💡 Đơn mới từ bây giờ tính phí ship shop chịu = <strong id="setShipShopPreview">20.000₫</strong>.<br>
+                    💡 Mọi đơn đều tính phí ship shop chịu = <strong id="setShipShopPreview">14.000₫</strong>.<br>
                     Đơn <code>Hoàn</code>: shop vẫn mất phí ship + tiền Ads.<br>
-                    Đơn <code>Khuyến mãi</code>: dùng cùng mức phí ship shop chịu = <strong id="setShipShopPreview2">20.000₫</strong>.
+                    Đơn <code>Khuyến mãi</code>: dùng cùng mức phí ship shop chịu = <strong id="setShipShopPreview2">14.000₫</strong>.
                 </div>
             </div>
 
@@ -1241,8 +1241,8 @@
                 partnerPct: 50,    // % chia LN của đối tác
                 capitalMePct: 70,  // % VỐN nhập hàng của tôi
                 capitalPartnerPct: 30, // % VỐN nhập hàng của đối tác
-                shipCustomer: 20000,
-                shipShop: 20000,
+                shipCustomer: 14000,
+                shipShop: 14000,
                 adsPayer: 'me'  // 'me' | 'partner' | 'both'
             },
             inventory: [
@@ -1289,13 +1289,16 @@
                 if (out.id === 'p3' && +out.sellPrice === 499000) out.sellPrice = 429000;
                 return out;
             });
+            const settings = { ...DEFAULT_DATA.settings, ...parsed.settings };
+            settings.shipCustomer = 14000;
+            settings.shipShop = 14000;
             return {
-                settings: { ...DEFAULT_DATA.settings, ...parsed.settings },
+                settings,
                 inventory,
                 products,
                 orders: (parsed.orders || []).map(o => ({
                     ...o,
-                    shipShop: o.shipShop !== undefined ? o.shipShop : (o.status === 'promo' || o.status === 'returned' ? +(parsed.settings?.shipShop || DEFAULT_DATA.settings.shipShop) : 0)
+                    shipShop: +(settings.shipShop || DEFAULT_DATA.settings.shipShop)
                 })),
                 syncedMaDons: parsed.syncedMaDons || [],
                 adsDaily: parsed.adsDaily || []
@@ -1499,9 +1502,7 @@
                     const qty = m ? Math.max(1, +m[1]) : 1;
                     const sheetTotal = parseMoney(fieldValue(r, ['gia', 'giá', 'tong tien', 'tổng tiền', 'tongDonHang', 'total']));
                     const sheetSellPrice = sheetTotal > 0 ? Math.round(sheetTotal / qty) : (+prod.sellPrice || 0);
-                    const rawShip = fieldValue(r, ['phiShip', 'phí ship', 'phi ship', 'ship', 'shipping']);
-                    const hasSheetShip = rawShip !== '';
-                    const sheetShipShop = hasSheetShip ? parseMoney(rawShip) : (r.isReturned || prod.kind === 'promo' ? (+DATA.settings.shipShop || 20000) : 0);
+                    const sheetShipShop = +DATA.settings.shipShop || 14000;
                     if (sheetSellPrice > 0 && +prod.sellPrice !== sheetSellPrice) {
                         prod.sellPrice = sheetSellPrice;
                     }
@@ -1526,7 +1527,7 @@
                             existing.sellPrice = sheetSellPrice;
                             changed = true;
                         }
-                        if (hasSheetShip && +existing.shipShop !== sheetShipShop) {
+                        if (+existing.shipShop !== sheetShipShop) {
                             existing.shipShop = sheetShipShop;
                             changed = true;
                         }
@@ -2042,7 +2043,7 @@
                 cost: +document.getElementById('oCost').value || 0,
                 status: document.getElementById('oStatus').value,
                 productId: pid,
-                shipShop: +DATA.settings.shipShop || 20000
+                shipShop: +DATA.settings.shipShop || 14000
             };
 
             // Tính ads phân bổ DỰ KIẾN (giả lập đơn này được thêm vào → +1 vào count)
@@ -2120,7 +2121,7 @@
                 qty: +document.getElementById('oQty').value || 1,
                 status: document.getElementById('oStatus').value,
                 sellPrice: +document.getElementById('oSellPrice').value || 0,
-                shipShop: +DATA.settings.shipShop || 20000,
+                shipShop: +DATA.settings.shipShop || 14000,
                 cost: +document.getElementById('oCost').value || 0,
                 ads: +document.getElementById('oAds').value || 0,
                 customer: customerCombined,
@@ -2190,7 +2191,7 @@
                     gia: total,
                     canNang: 0,
                     cod: total,
-                    phiShip: +order.shipShop || +DATA.settings.shipShop || 20000,
+                    phiShip: +order.shipShop || +DATA.settings.shipShop || 14000,
                     ghiChu: order.note ? 'Admin: ' + order.note : 'Tạo từ Admin',
                     maDon: order.maDon,
                     nguon: 'Admin (tay)'
