@@ -2824,6 +2824,8 @@
         let currentImg = 0, qty = 1, cart = [];
         let selectedVariantKey = '1lo';
 
+        const SHOP_SHIP_FEE = 20000;
+
         const VARIANTS = {
             '1lo': { label: '1 Lọ', displayPrice: 168000, oldPrice: 349000, ship: 0, cod: 75000, giftLabel: '' },
             '2lo': { label: '2 Lọ', displayPrice: 299000, oldPrice: 698000, ship: 0, cod: 180000, giftLabel: '🎁 Tặng: 1 chai sữa tắm 80k' },
@@ -3121,7 +3123,7 @@
             const orderCode = Math.floor(100000 + Math.random() * 900000);
 
             const nguon = getOrderSource();
-            const payload = { thoiGian, hoTen: name, sdt: "'" + phone, diaChi: address, sanPham: sanPhamStr, gia: totalCustomer, canNang: totalWeight, cod: totalCod, phiShip: 0, ghiChu: note, maDon: '#' + orderCode, nguon };
+            const payload = { thoiGian, hoTen: name, sdt: "'" + phone, diaChi: address, sanPham: sanPhamStr, gia: totalCustomer, canNang: totalWeight, cod: totalCod, phiShip: SHOP_SHIP_FEE, ghiChu: note, maDon: '#' + orderCode, nguon };
             const bodyStr = JSON.stringify(payload);
             let sent = false;
             if (navigator.sendBeacon) { const blob = new Blob([bodyStr], { type: 'text/plain' }); sent = navigator.sendBeacon(SHEET_URL, blob); }
