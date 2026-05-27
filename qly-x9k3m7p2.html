@@ -704,7 +704,7 @@
                                 <th>Sản phẩm</th>
                                 <th class="num">Đã bán</th>
                                 <th class="num">Doanh thu</th>
-                                <th class="num">Lợi nhuận</th>
+                                <th class="num">Lãi/đơn</th>
                                 <th class="num">% LN/DT</th>
                             </tr>
                         </thead>
@@ -1686,6 +1686,17 @@
             return (+p.sellPrice || 0) - productCost(p) - ship;
         }
 
+        function primarySoldUnitsForOrder(o) {
+            const q = +o.qty || 0;
+            const prod = DATA.products.find(p => p.id === o.productId);
+            if (!prod || !(prod.bom || []).length) return q;
+            const main = (prod.bom || []).find(b => {
+                const it = inv(b.invId);
+                return it && /xịt|xit|chai/i.test(it.name || '');
+            }) || prod.bom[0];
+            return q * (+main.qty || 1);
+        }
+
         // Trả về list { invId, delta } cần áp lên kho khi đơn ở trạng thái này
         function stockDeltaForOrder(order) {
             if (!order) return [];
@@ -1784,10 +1795,15 @@
             orders.forEach(o => {
                 const p = profitOf(o);
                 revenue += p.revenue; cost += p.cost; shipLoss += p.ship;
-                if (o.status === 'delivered') cntDelivered++;
+                if (o.status === 'delivered') {
+                    cntDelivered++;
+                    totalQty += primarySoldUnitsForOrder(o);
+                }
                 else if (o.status === 'returned') cntReturned++;
-                else if (o.status === 'promo') cntPromo++;
-                totalQty += +o.qty || 0;
+                else if (o.status === 'promo') {
+                    cntPromo++;
+                    totalQty += primarySoldUnitsForOrder(o);
+                }
             });
 
             // Tổng Ads = sum của adsDaily trong range (KHÔNG dùng phần phân bổ trên đơn)
@@ -1803,9 +1819,10 @@
                 .reduce((s, a) => s + (+a.amount || 0), 0);
 
             const profit = revenue - cost - shipLoss - ads;
-            const total = orders.length;
+            const saleTotal = cntDelivered + cntPromo;
+            const total = saleTotal + cntReturned;
             const returnRate = total ? (cntReturned / total * 100) : 0;
-            const avgProfit = total ? profit / total : 0;
+            const avgProfit = saleTotal ? profit / saleTotal : 0;
             const profitMargin = revenue ? profit / revenue * 100 : 0;
 
             const kpi = (icon, label, value, sub, cls = '') =>
@@ -1823,7 +1840,7 @@
             const totalStockUnits = DATA.inventory.reduce((s, it) => s + (+it.stock || 0), 0);
 
             document.getElementById('kpiGrid').innerHTML = [
-                kpi('💰', 'Doanh thu', fmt(revenue), `${total} đơn · ${totalQty} sp`),
+                kpi('💰', 'Doanh thu', fmt(revenue), `${saleTotal} đơn · ${totalQty} lọ`),
                 kpi('💎', 'LN ròng (sau Ads)', fmt(profit), `Biên ${profitMargin.toFixed(1)}%`, profit >= 0 ? 'profit' : 'loss'),
                 kpi('🛒', 'Vốn hàng', fmt(cost), '', 'warn'),
                 kpi('📺', 'Tổng Ads', fmt(ads), '', 'warn'),
@@ -1936,26 +1953,33 @@
             // Top product table
             const byProduct = {};
             orders.forEach(o => {
+                if (o.status !== 'delivered' && o.status !== 'promo') return;
                 const pid = o.productId;
-                if (!byProduct[pid]) byProduct[pid] = { qty: 0, revenue: 0, profit: 0 };
+                if (!byProduct[pid]) byProduct[pid] = { qty: 0, orderCount: 0, revenue: 0, profit: 0 };
                 const p = profitOf(o);
-                byProduct[pid].qty += +o.qty || 0;
+                byProduct[pid].qty += primarySoldUnitsForOrder(o);
+                byProduct[pid].orderCount += +o.qty || 0;
                 byProduct[pid].revenue += p.revenue;
                 byProduct[pid].profit += p.profitGross;
             });
             const rows = Object.entries(byProduct)
                 .map(([pid, s]) => {
                     const prod = DATA.products.find(x => x.id === pid);
-                    return { name: prod ? prod.name : '(đã xoá)', ...s, margin: s.revenue ? s.profit / s.revenue * 100 : 0 };
+                    return {
+                        name: prod ? prod.name : '(đã xoá)',
+                        ...s,
+                        unitProfit: s.orderCount ? s.profit / s.orderCount : 0,
+                        margin: s.revenue ? s.profit / s.revenue * 100 : 0
+                    };
                 })
-                .sort((a, b) => b.profit - a.profit);
+                .sort((a, b) => b.unitProfit - a.unitProfit || b.profit - a.profit);
             const tbody = document.querySelector('#topProductTable tbody');
             tbody.innerHTML = rows.length ? rows.map(r => `
                 <tr>
                     <td>${r.name}</td>
-                    <td class="num">${r.qty}</td>
+                    <td class="num">${r.qty} lọ <span style="color:var(--gray);font-size:.72rem">(${r.orderCount} đơn)</span></td>
                     <td class="num">${fmt(r.revenue)}</td>
-                    <td class="num ${r.profit >= 0 ? 'pos' : 'neg'}">${fmt(r.profit)}</td>
+                    <td class="num ${r.unitProfit >= 0 ? 'pos' : 'neg'}" title="Tổng lãi: ${fmt(r.profit)}">${fmt(r.unitProfit)}</td>
                     <td class="num">${r.margin.toFixed(1)}%</td>
                 </tr>`).join('')
                 : `<tr><td colspan="5" class="empty-state"><div class="ic">📦</div>Chưa có dữ liệu</td></tr>`;
