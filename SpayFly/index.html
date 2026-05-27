@@ -1273,6 +1273,21 @@
         .btn-buy-text {
             flex: 1;
             text-align: center;
+            position: relative;
+            z-index: 1;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(80, 0, 20, .28);
+            white-space: nowrap;
+        }
+
+        .btn-buy-text::before {
+            content: '⚡';
+            margin-right: 7px;
         }
 
         .btn-buy-cd {
@@ -1284,6 +1299,8 @@
             align-items: center;
             line-height: 1;
             min-width: 60px;
+            position: relative;
+            z-index: 1;
         }
 
         .bbc-label {
@@ -2299,7 +2316,7 @@
             .variant-btn .v-price { font-size: .64rem; }
             .variant-btn .v-gift { font-size: .54rem; }
             .guarantee-grid { grid-template-columns: 1fr; }
-            .btn-buy-text { font-size: .92rem; }
+            .btn-buy-text { font-size: 1.04rem; }
             .topnav-order-btn { font-size: .72rem; padding: 7px 10px; }
             .logo-name { font-size: .9rem; }
             .logo-tagline { display: none; }
