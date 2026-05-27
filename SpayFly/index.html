@@ -2686,7 +2686,7 @@
     <!-- BOTTOM BAR — nút ĐẶT HÀNG NGAY + countdown -->
     <div class="bottom-bar">
         <button class="btn-buy" onclick="openOrder()">
-            <span class="btn-buy-text" id="bottomBuyText">⚡ MUA 199.000₫ - FREESHIP</span>
+            <span class="btn-buy-text" id="bottomBuyText">Đặt hàng ngay</span>
             <span class="btn-buy-cd" id="btnBuyCd">
                 <span class="bbc-label">Còn</span>
                 <span class="bbc-time"><span id="bbcMin">25</span>:<span id="bbcSec">00</span></span>
@@ -2869,7 +2869,7 @@
             const topPrice = document.getElementById('instantOfferPrice');
             const bottomText = document.getElementById('bottomBuyText');
             if (topPrice) topPrice.textContent = priceText;
-            if (bottomText) bottomText.textContent = '⚡ MUA ' + priceText + ' - FREESHIP';
+            if (bottomText) bottomText.textContent = 'Đặt hàng ngay';
         }
 
         function selectVariant(btn, key) {
