@@ -2370,7 +2370,7 @@
     <div class="instant-offer" onclick="openOrder()">
         <div class="instant-offer-main">
             <span class="instant-offer-label">Giá chỉ</span>
-            <span class="instant-offer-price" id="instantOfferPrice">168.000₫</span>
+            <span class="instant-offer-price" id="instantOfferPrice">199.000₫</span>
         </div>
         <div class="instant-offer-ship">FREESHIP toàn quốc</div>
     </div>
@@ -2447,7 +2447,7 @@
             </div>
 
             <div class="prod-price">
-                <span class="price-main" id="priceMain">168.000₫</span>
+                <span class="price-main" id="priceMain">199.000₫</span>
                 <span class="price-old" id="priceOld">349.000₫</span>
                 <span class="price-discount" id="priceDiscount">-52%</span>
             </div>
@@ -2534,18 +2534,18 @@
             <div class="section-title">Chọn phân loại</div>
             <div class="variant-section" style="margin-top:0">
                 <div class="variant-label">⚖️ Đang chọn: <span class="selected-variant" id="selectedVariantLabel">1 Lọ —
-                        168.000₫</span></div>
+                        199.000₫</span></div>
                 <div class="variant-options">
                     <button class="variant-btn active" onclick="selectVariant(this,'1lo')">
-                        <span class="v-weight">1 Lọ</span><span class="v-price">168.000₫</span><span class="v-gift">🚚
+                        <span class="v-weight">1 Lọ</span><span class="v-price">199.000₫</span><span class="v-gift">🚚
                             Miễn phí ship</span>
                     </button>
                     <button class="variant-btn" onclick="selectVariant(this,'2lo')">
-                        <span class="v-weight">2 Lọ</span><span class="v-price">299.000₫</span><span class="v-gift">🎁
+                        <span class="v-weight">2 Lọ</span><span class="v-price">369.000₫</span><span class="v-gift">🎁
                             Tặng 1 chai sữa tắm 80k</span>
                     </button>
                     <button class="variant-btn" onclick="selectVariant(this,'3lo')">
-                        <span class="v-weight">3 Lọ</span><span class="v-price">429.000₫</span><span class="v-gift">🎁
+                        <span class="v-weight">3 Lọ</span><span class="v-price">499.000₫</span><span class="v-gift">🎁
                             Tặng 2 chai sữa tắm 80k/chai</span>
                     </button>
                 </div>
@@ -2686,7 +2686,7 @@
     <!-- BOTTOM BAR — nút ĐẶT HÀNG NGAY + countdown -->
     <div class="bottom-bar">
         <button class="btn-buy" onclick="openOrder()">
-            <span class="btn-buy-text" id="bottomBuyText">⚡ MUA 168.000₫ - FREESHIP</span>
+            <span class="btn-buy-text" id="bottomBuyText">⚡ MUA 199.000₫ - FREESHIP</span>
             <span class="btn-buy-cd" id="btnBuyCd">
                 <span class="bbc-label">Còn</span>
                 <span class="bbc-time"><span id="bbcMin">25</span>:<span id="bbcSec">00</span></span>
@@ -2748,15 +2748,15 @@
                         style="color:var(--primary);font-weight:800"></span></label>
                 <div class="variant-options" style="margin-top:8px">
                     <button class="variant-btn" id="ovBtn1lo" onclick="selectOrderVariant(this,'1lo')">
-                        <span class="v-weight">1 Lọ</span><span class="v-price">168.000₫</span><span class="v-gift">🚚
+                        <span class="v-weight">1 Lọ</span><span class="v-price">199.000₫</span><span class="v-gift">🚚
                             Miễn phí ship</span>
                     </button>
                     <button class="variant-btn" id="ovBtn2lo" onclick="selectOrderVariant(this,'2lo')">
-                        <span class="v-weight">2 Lọ</span><span class="v-price">299.000₫</span><span class="v-gift">🎁
+                        <span class="v-weight">2 Lọ</span><span class="v-price">369.000₫</span><span class="v-gift">🎁
                             Tặng 1 chai sữa tắm 80k</span>
                     </button>
                     <button class="variant-btn" id="ovBtn3lo" onclick="selectOrderVariant(this,'3lo')">
-                        <span class="v-weight">3 Lọ</span><span class="v-price">429.000₫</span><span class="v-gift">🎁
+                        <span class="v-weight">3 Lọ</span><span class="v-price">499.000₫</span><span class="v-gift">🎁
                             Tặng 2 chai sữa tắm 80k/chai</span>
                     </button>
                 </div>
@@ -2828,9 +2828,9 @@
         const SHOP_SHIP_FEE = 14000;
 
         const VARIANTS = {
-            '1lo': { label: '1 Lọ', displayPrice: 168000, oldPrice: 349000, ship: 0, cod: 75000, giftLabel: '' },
-            '2lo': { label: '2 Lọ', displayPrice: 299000, oldPrice: 698000, ship: 0, cod: 180000, giftLabel: '🎁 Tặng: 1 chai sữa tắm 80k' },
-            '3lo': { label: '3 Lọ', displayPrice: 429000, oldPrice: 1047000, ship: 0, cod: 285000, giftLabel: '🎁 Tặng: 2 chai sữa tắm 80k/chai' },
+            '1lo': { label: '1 Lọ', displayPrice: 199000, oldPrice: 349000, ship: 0, cod: 75000, giftLabel: '' },
+            '2lo': { label: '2 Lọ', displayPrice: 369000, oldPrice: 698000, ship: 0, cod: 180000, giftLabel: '🎁 Tặng: 1 chai sữa tắm 80k' },
+            '3lo': { label: '3 Lọ', displayPrice: 499000, oldPrice: 1047000, ship: 0, cod: 285000, giftLabel: '🎁 Tặng: 2 chai sữa tắm 80k/chai' },
         };
 
         function getVariant(k) { return VARIANTS[k]; }
