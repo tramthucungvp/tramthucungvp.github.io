@@ -3148,7 +3148,7 @@
             if (!sent) { fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain' }, body: bodyStr }).catch(() => { }); }
 
             cart = []; updateCartUI();
-            setTimeout(() => { window.location.href = './cam-on.html?ma=' + encodeURIComponent(orderCode); }, 1200);
+            setTimeout(() => { window.location.href = './SpayFly/cam-on.html?ma=' + encodeURIComponent(orderCode); }, 1200);
         }
 
         // Flash Sale countdown — đồng hồ duy nhất chạy chung cho banner trang chính
