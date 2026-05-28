@@ -794,6 +794,9 @@
         .chart-bars {
             min-width: 720px;
         }
+        #dailyProfitTable {
+            min-width: 760px;
+        }
         .bar-fill {
             background: #ff2d55;
             box-shadow: none;
@@ -822,6 +825,55 @@
                 width: 100%;
                 border-radius: 8px;
             }
+        }
+
+        /* FONT AND COLOR CLEANUP */
+        html,
+        body,
+        button,
+        input,
+        select,
+        textarea,
+        table {
+            font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .brand-name,
+        .login-title,
+        .modal-title,
+        .card-title,
+        .kpi-value,
+        .pc-amount,
+        .footer-logo,
+        .order-code-value {
+            font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            letter-spacing: 0;
+        }
+        .login-title,
+        .modal-title {
+            background: none;
+            -webkit-text-fill-color: #111827;
+            color: #111827;
+        }
+        .logo-mark,
+        .login-logo {
+            background: #ff2d55;
+            box-shadow: 0 8px 18px rgba(255, 45, 85, .22);
+        }
+        .partner-card.me {
+            background: #e11d48;
+        }
+        .partner-card.partner {
+            background: #0f766e;
+        }
+        .pc-badge {
+            background: rgba(255, 255, 255, .18);
+            border: 1px solid rgba(255, 255, 255, .22);
+        }
+        .badge,
+        .stock-badge,
+        .trust-badge,
+        .pill {
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -926,6 +978,22 @@
                 <div class="card-title">Lợi nhuận theo ngày</div>
                 <div class="chart-wrap">
                     <div class="chart-bars" id="chartBars"></div>
+                </div>
+                <div class="table-wrap" style="margin-top:14px">
+                    <table id="dailyProfitTable">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th class="num">Đơn bán</th>
+                                <th class="num">Doanh thu</th>
+                                <th class="num">Vốn</th>
+                                <th class="num">Ship</th>
+                                <th class="num">Ads</th>
+                                <th class="num">LN ròng</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -2232,6 +2300,33 @@
                     <div class="bar-label">${x.label}</div>
                 </div>`;
             }).join('');
+            const dailyRows = arr.slice().reverse().map(x => {
+                let dayRev = 0, dayCost = 0, dayShip = 0, daySaleCount = 0;
+                DATA.orders.forEach(o => {
+                    if (o.date !== x.ds) return;
+                    const p = profitOf(o);
+                    dayRev += p.revenue;
+                    dayCost += p.cost;
+                    dayShip += p.ship;
+                    if (o.status === 'delivered' || o.status === 'promo') daySaleCount++;
+                });
+                const dayAds = (DATA.adsDaily || [])
+                    .filter(a => a.date === x.ds)
+                    .reduce((s, a) => s + (+a.amount || 0), 0);
+                const dayProfit = dayRev - dayCost - dayShip - dayAds;
+                return { ...x, revenue: dayRev, cost: dayCost, ship: dayShip, ads: dayAds, saleCount: daySaleCount, profit: dayProfit };
+            });
+            document.querySelector('#dailyProfitTable tbody').innerHTML = dailyRows.length ? dailyRows.map(r => `
+                <tr>
+                    <td><strong>${r.ds}</strong></td>
+                    <td class="num">${r.saleCount}</td>
+                    <td class="num">${fmt(r.revenue)}</td>
+                    <td class="num">${fmt(r.cost)}</td>
+                    <td class="num">${fmt(r.ship)}</td>
+                    <td class="num">${fmt(r.ads)}</td>
+                    <td class="num ${r.profit >= 0 ? 'pos' : 'neg'}"><strong>${fmt(r.profit)}</strong></td>
+                </tr>`).join('')
+                : `<tr><td colspan="7" class="empty-state"><div class="ic">📊</div>Chưa có dữ liệu lợi nhuận</td></tr>`;
 
             // Top product table
             const byProduct = {};
