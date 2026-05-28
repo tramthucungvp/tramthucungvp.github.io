@@ -677,9 +677,11 @@
                         <option value="90">90 ngày gần nhất</option>
                         <option value="all">Tất cả thời gian</option>
                     </select>
-                    <input type="date" class="filter-input" id="dashDate" title="Loc theo ngay cu the">
+                    <input type="date" class="filter-input" id="dashDateFrom" title="Tu ngay">
+                    <span style="color:#999;align-self:center">→</span>
+                    <input type="date" class="filter-input" id="dashDateTo" title="Den ngay">
                     <button class="btn btn-ghost btn-sm" onclick="setDashboardToday()">Hom nay</button>
-                    <button class="btn btn-ghost btn-sm" onclick="clearDashboardDate()">Bo ngay</button>
+                    <button class="btn btn-ghost btn-sm" onclick="clearDashboardDate()">Bo khoang ngay</button>
                     <div id="dashFilterHint" style="font-size:.82rem;color:var(--gray);align-self:center"></div>
                     <div class="grow"></div>
                 </div>
@@ -1764,13 +1766,41 @@
         }));
 
         // =================== DASHBOARD ===================
-        function getRangeOrders() {
-            const range = document.getElementById('dashRange').value;
-            if (range === 'all') return DATA.orders;
+        function getDashboardFilter() {
+            let from = document.getElementById('dashDateFrom')?.value || '';
+            let to = document.getElementById('dashDateTo')?.value || '';
+            const range = document.getElementById('dashRange')?.value || '30';
+            if (from && to && from > to) [from, to] = [to, from];
+            if (from || to) {
+                const label = from && to ? `Tu ${from} den ${to}` : (from ? `Tu ${from}` : `Den ${to}`);
+                return { mode: 'custom', from, to, range, cutoffStr: from || null, label };
+            }
+            if (range === 'all') return { mode: 'range', from: '', to: '', range, cutoffStr: null, label: 'Tat ca thoi gian' };
             const days = +range;
             const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days + 1);
-            const cutoffStr = dateStr(cutoff);
-            return DATA.orders.filter(o => o.date >= cutoffStr);
+            return { mode: 'range', from: '', to: '', range, cutoffStr: dateStr(cutoff), label: range + ' ngay gan nhat' };
+        }
+
+        function getRangeOrders() {
+            const filter = getDashboardFilter();
+            if (filter.mode === 'custom') {
+                return DATA.orders.filter(o => (!filter.from || o.date >= filter.from) && (!filter.to || o.date <= filter.to));
+            }
+            if (!filter.cutoffStr) return DATA.orders;
+            return DATA.orders.filter(o => o.date >= filter.cutoffStr);
+        }
+
+        function setDashboardToday() {
+            const today = todayISO();
+            document.getElementById('dashDateFrom').value = today;
+            document.getElementById('dashDateTo').value = today;
+            renderDashboard();
+        }
+
+        function clearDashboardDate() {
+            document.getElementById('dashDateFrom').value = '';
+            document.getElementById('dashDateTo').value = '';
+            renderDashboard();
         }
 
         function renderDashboard() {
@@ -1811,16 +1841,15 @@
             });
 
             // Tổng Ads = sum của adsDaily trong range (KHÔNG dùng phần phân bổ trên đơn)
-            const range = document.getElementById('dashRange').value;
-            let cutoffStr = null;
-            if (range !== 'all') {
-                const days = +range;
-                const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days + 1);
-                cutoffStr = dateStr(cutoff);
-            }
+            const dashFilter = getDashboardFilter();
+            const cutoffStr = dashFilter.cutoffStr;
             const ads = (DATA.adsDaily || [])
-                .filter(a => !cutoffStr || a.date >= cutoffStr)
+                .filter(a => dashFilter.mode === 'custom'
+                    ? ((!dashFilter.from || a.date >= dashFilter.from) && (!dashFilter.to || a.date <= dashFilter.to))
+                    : (!cutoffStr || a.date >= cutoffStr))
                 .reduce((s, a) => s + (+a.amount || 0), 0);
+            const hint = document.getElementById('dashFilterHint');
+            if (hint) hint.textContent = 'Dang xem ' + dashFilter.label;
 
             const profit = revenue - cost - shipLoss - ads;
             const saleTotal = cntDelivered + cntPromo;
@@ -1923,9 +1952,30 @@
                     ${breakdown(partnerAdsRefund, partnerCapitalReturn, partnerTotal)}
                 </div>`;
 
-            // Daily chart - last 14 days
-            const days = 14;
+            // Daily chart - selected date range, or last 14 days
+            const chartFrom = dashFilter.mode === 'custom' ? (dashFilter.from || dashFilter.to) : '';
+            const chartTo = dashFilter.mode === 'custom' ? (dashFilter.to || (dashFilter.from ? todayISO() : '')) : '';
+            const days = chartFrom && chartTo ? null : 14;
             const arr = [];
+            if (chartFrom && chartTo) {
+                const start = new Date(chartFrom + 'T00:00:00');
+                const end = new Date(chartTo + 'T00:00:00');
+                for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                    const ds = dateStr(d);
+                    let dayRev = 0, dayCost = 0, dayShip = 0;
+                    DATA.orders.forEach(o => {
+                        if (o.date === ds) {
+                            const p = profitOf(o);
+                            dayRev += p.revenue; dayCost += p.cost; dayShip += p.ship;
+                        }
+                    });
+                    const dayAds = (DATA.adsDaily || [])
+                        .filter(a => a.date === ds)
+                        .reduce((s, a) => s + (+a.amount || 0), 0);
+                    const dayProfit = dayRev - dayCost - dayShip - dayAds;
+                    arr.push({ ds, label: d.getDate() + '/' + (d.getMonth() + 1), profit: dayProfit });
+                }
+            } else {
             for (let i = days - 1; i >= 0; i--) {
                 const d = new Date(); d.setDate(d.getDate() - i);
                 const ds = dateStr(d);
@@ -1941,6 +1991,7 @@
                     .reduce((s, a) => s + (+a.amount || 0), 0);
                 const dayProfit = dayRev - dayCost - dayShip - dayAds;
                 arr.push({ ds, label: d.getDate() + '/' + (d.getMonth() + 1), profit: dayProfit });
+            }
             }
             const maxAbs = Math.max(1, ...arr.map(x => Math.abs(x.profit)));
             document.getElementById('chartBars').innerHTML = arr.map(x => {
@@ -1990,6 +2041,8 @@
         }
 
         document.getElementById('dashRange').addEventListener('change', renderDashboard);
+        document.getElementById('dashDateFrom').addEventListener('change', renderDashboard);
+        document.getElementById('dashDateTo').addEventListener('change', renderDashboard);
 
         // =================== ORDERS ===================
         let editingOrderId = null;
