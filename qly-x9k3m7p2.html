@@ -677,6 +677,10 @@
                         <option value="90">90 ngày gần nhất</option>
                         <option value="all">Tất cả thời gian</option>
                     </select>
+                    <input type="date" class="filter-input" id="dashDate" title="Loc theo ngay cu the">
+                    <button class="btn btn-ghost btn-sm" onclick="setDashboardToday()">Hom nay</button>
+                    <button class="btn btn-ghost btn-sm" onclick="clearDashboardDate()">Bo ngay</button>
+                    <div id="dashFilterHint" style="font-size:.82rem;color:var(--gray);align-self:center"></div>
                     <div class="grow"></div>
                 </div>
                 <div class="kpi-grid" id="kpiGrid"></div>
