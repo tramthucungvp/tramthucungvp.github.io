@@ -875,6 +875,93 @@
         .pill {
             border-radius: 8px;
         }
+        #panel-ads .info-box {
+            background: #f8fafc;
+            border: 1px solid #d8dee8;
+            border-left: 4px solid #ff2d55;
+            color: #344054;
+            font-size: .88rem;
+        }
+        #adsKpi {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-bottom: 14px;
+        }
+        #adsKpi .kpi {
+            min-height: 92px;
+            padding: 16px;
+            gap: 14px;
+        }
+        #adsKpi .kpi-icon {
+            width: 44px;
+            height: 44px;
+            color: #344054;
+            background: #f2f4f7;
+            border: 1px solid #d8dee8;
+        }
+        #adsKpi .kpi-icon svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+        #adsKpi .kpi.is-filter .kpi-icon {
+            color: #0f766e;
+            background: #ecfdf3;
+            border-color: #bbf7d0;
+        }
+        #adsKpi .kpi.is-today .kpi-icon {
+            color: #155eef;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+        #adsKpi .kpi.is-week .kpi-icon {
+            color: #b54708;
+            background: #fffaeb;
+            border-color: #fedf89;
+        }
+        #adsKpi .kpi.is-month .kpi-icon {
+            color: #c11574;
+            background: #fdf2f8;
+            border-color: #fbcfe8;
+        }
+        #adsKpi .kpi-label {
+            font-size: .68rem;
+        }
+        #adsKpi .kpi-value {
+            color: #111827;
+            background: none;
+            -webkit-text-fill-color: currentColor;
+            font-size: 1.28rem;
+        }
+        #adsFilterHint {
+            margin-left: auto;
+            color: #475467 !important;
+            font-size: .82rem;
+            font-weight: 800;
+            background: #fff;
+            border: 1px solid #d8dee8;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+        @media (max-width: 900px) {
+            #adsKpi {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 560px) {
+            #adsKpi {
+                grid-template-columns: 1fr;
+            }
+            #adsFilterHint {
+                width: 100%;
+                margin-left: 0;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
@@ -1103,15 +1190,15 @@
                 <div class="info-box" style="margin-bottom:12px">
                     💡 Mỗi ngày chỉ cần nhập <strong>1 con số tổng tiền Ads</strong>. Hệ thống tự phân bổ đều cho các đơn trong ngày đó để tính lợi nhuận từng đơn.
                 </div>
-                <div class="kpi-grid" id="adsKpi" style="margin-bottom:12px"></div>
+                <div class="kpi-grid" id="adsKpi"></div>
                 <div class="toolbar">
-                    <button class="btn btn-primary" onclick="openAdsModal()">+ Them chi phi ngay</button>
-                    <input type="date" class="filter-input" id="adsFilterFrom" title="Tu ngay">
+                    <button class="btn btn-primary" onclick="openAdsModal()">+ Thêm chi phí ngày</button>
+                    <input type="date" class="filter-input" id="adsFilterFrom" title="Từ ngày">
                     <span style="color:#999;align-self:center">-&gt;</span>
-                    <input type="date" class="filter-input" id="adsFilterTo" title="Den ngay">
-                    <button class="btn btn-ghost btn-sm" onclick="setAdsToday()">Hom nay</button>
-                    <button class="btn btn-ghost btn-sm" onclick="clearAdsFilters()">Bo loc</button>
-                    <div id="adsFilterHint" style="font-size:.82rem;color:var(--gray);align-self:center"></div>
+                    <input type="date" class="filter-input" id="adsFilterTo" title="Đến ngày">
+                    <button class="btn btn-ghost btn-sm" onclick="setAdsToday()">Hôm nay</button>
+                    <button class="btn btn-ghost btn-sm" onclick="clearAdsFilters()">Bỏ lọc</button>
+                    <div id="adsFilterHint"></div>
                 </div>
                 <div class="table-wrap">
                     <table id="adsTable">
@@ -3145,7 +3232,7 @@
             let from = document.getElementById('adsFilterFrom')?.value || '';
             let to = document.getElementById('adsFilterTo')?.value || '';
             if (from && to && from > to) [from, to] = [to, from];
-            const label = from && to ? `Tu ${from} den ${to}` : (from ? `Tu ${from}` : (to ? `Den ${to}` : 'Tat ca thoi gian'));
+            const label = from && to ? `Từ ${from} đến ${to}` : (from ? `Từ ${from}` : (to ? `Đến ${to}` : 'Tất cả thời gian'));
             return { from, to, label };
         }
 
@@ -3171,7 +3258,7 @@
             const adsArr = filterAdsEntries(allAdsArr);
             const adsFilter = getAdsFilter();
             const hint = document.getElementById('adsFilterHint');
-            if (hint) hint.textContent = 'Dang xem ' + adsFilter.label;
+            if (hint) hint.textContent = 'Đang xem: ' + adsFilter.label;
 
             // KPI
             const today = todayISO();
@@ -3187,9 +3274,15 @@
             const weekTotal = sumWhere(a => a.date >= last7Cutoff);
             const monthTotal = sumWhere(a => a.date.startsWith(monthPrefix));
 
-            const kpi = (icon, label, val, sub) =>
-                `<div class="kpi info">
-                    <div class="kpi-icon">${icon}</div>
+            const adsIcons = {
+                filter: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7v5l-4 2v-7L4 5z"/></svg>',
+                today: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M9 15h6"/></svg>',
+                week: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16l3-4 3 2 5-7"/></svg>',
+                month: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>'
+            };
+            const kpi = (type, label, val, sub) =>
+                `<div class="kpi info is-${type}">
+                    <div class="kpi-icon">${adsIcons[type]}</div>
                     <div class="kpi-content">
                         <div class="kpi-label">${label}</div>
                         <div class="kpi-value">${fmt(val)}</div>
@@ -3197,10 +3290,10 @@
                     </div>
                 </div>`;
             document.getElementById('adsKpi').innerHTML = [
-                kpi('LOC', 'Dang loc', filteredTotal, `${adsArr.length} ngay - ${filteredOrderCount} don`),
-                kpi('HN', 'Hom nay', todayTotal, today),
-                kpi('7N', '7 ngay', weekTotal, ''),
-                kpi('TH', 'Thang nay', monthTotal, monthPrefix)
+                kpi('filter', 'Đang lọc', filteredTotal, `${adsArr.length} ngày - ${filteredOrderCount} đơn`),
+                kpi('today', 'Hôm nay', todayTotal, today),
+                kpi('week', '7 ngày', weekTotal, ''),
+                kpi('month', 'Tháng này', monthTotal, monthPrefix)
             ].join('');
 
             const tbody = document.querySelector('#adsTable tbody');
