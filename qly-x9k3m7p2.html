@@ -1105,7 +1105,13 @@
                 </div>
                 <div class="kpi-grid" id="adsKpi" style="margin-bottom:12px"></div>
                 <div class="toolbar">
-                    <button class="btn btn-primary" onclick="openAdsModal()">＋ Thêm chi phí ngày</button>
+                    <button class="btn btn-primary" onclick="openAdsModal()">+ Them chi phi ngay</button>
+                    <input type="date" class="filter-input" id="adsFilterFrom" title="Tu ngay">
+                    <span style="color:#999;align-self:center">-&gt;</span>
+                    <input type="date" class="filter-input" id="adsFilterTo" title="Den ngay">
+                    <button class="btn btn-ghost btn-sm" onclick="setAdsToday()">Hom nay</button>
+                    <button class="btn btn-ghost btn-sm" onclick="clearAdsFilters()">Bo loc</button>
+                    <div id="adsFilterHint" style="font-size:.82rem;color:var(--gray);align-self:center"></div>
                 </div>
                 <div class="table-wrap">
                     <table id="adsTable">
@@ -3135,8 +3141,37 @@
             save(); renderAll(); toast('🗑️ Đã xoá');
         }
 
+        function getAdsFilter() {
+            let from = document.getElementById('adsFilterFrom')?.value || '';
+            let to = document.getElementById('adsFilterTo')?.value || '';
+            if (from && to && from > to) [from, to] = [to, from];
+            const label = from && to ? `Tu ${from} den ${to}` : (from ? `Tu ${from}` : (to ? `Den ${to}` : 'Tat ca thoi gian'));
+            return { from, to, label };
+        }
+
+        function filterAdsEntries(arr) {
+            const f = getAdsFilter();
+            return arr.filter(a => (!f.from || a.date >= f.from) && (!f.to || a.date <= f.to));
+        }
+
+        function setAdsToday() {
+            const today = todayISO();
+            document.getElementById('adsFilterFrom').value = today;
+            document.getElementById('adsFilterTo').value = today;
+            renderAds();
+        }
+
+        function clearAdsFilters() {
+            document.getElementById('adsFilterFrom').value = '';
+            document.getElementById('adsFilterTo').value = '';
+            renderAds();
+        }
         function renderAds() {
-            const adsArr = (DATA.adsDaily || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+            const allAdsArr = (DATA.adsDaily || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+            const adsArr = filterAdsEntries(allAdsArr);
+            const adsFilter = getAdsFilter();
+            const hint = document.getElementById('adsFilterHint');
+            if (hint) hint.textContent = 'Dang xem ' + adsFilter.label;
 
             // KPI
             const today = todayISO();
@@ -3144,11 +3179,13 @@
             const monthPrefix = `${yyyy}-${mm}`;
             const last7Cutoff = (() => { const d = new Date(); d.setDate(d.getDate() - 6); return dateStr(d); })();
 
-            const sumWhere = fn => adsArr.filter(fn).reduce((s, a) => s + (+a.amount || 0), 0);
+            const sumWhere = fn => allAdsArr.filter(fn).reduce((s, a) => s + (+a.amount || 0), 0);
+            const filteredTotal = adsArr.reduce((s, a) => s + (+a.amount || 0), 0);
+            const filteredOrderDates = new Set(adsArr.map(a => a.date));
+            const filteredOrderCount = DATA.orders.filter(o => filteredOrderDates.has(o.date)).length;
             const todayTotal = sumWhere(a => a.date === today);
             const weekTotal = sumWhere(a => a.date >= last7Cutoff);
             const monthTotal = sumWhere(a => a.date.startsWith(monthPrefix));
-            const allTotal = sumWhere(_ => true);
 
             const kpi = (icon, label, val, sub) =>
                 `<div class="kpi info">
@@ -3160,10 +3197,10 @@
                     </div>
                 </div>`;
             document.getElementById('adsKpi').innerHTML = [
-                kpi('📅', 'Hôm nay', todayTotal, today),
-                kpi('📆', '7 ngày', weekTotal, ''),
-                kpi('🗓️', 'Tháng này', monthTotal, monthPrefix),
-                kpi('💸', 'Tất cả', allTotal, `${adsArr.length} ngày`)
+                kpi('LOC', 'Dang loc', filteredTotal, `${adsArr.length} ngay - ${filteredOrderCount} don`),
+                kpi('HN', 'Hom nay', todayTotal, today),
+                kpi('7N', '7 ngay', weekTotal, ''),
+                kpi('TH', 'Thang nay', monthTotal, monthPrefix)
             ].join('');
 
             const tbody = document.querySelector('#adsTable tbody');
@@ -3188,6 +3225,11 @@
         }
 
         // =================== MAIN ===================
+        ['adsFilterFrom', 'adsFilterTo'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', renderAds);
+        });
+
         function renderAll() { renderDashboard(); renderOrders(); renderProducts(); renderInventory(); renderAds(); }
 
         // Chỉ khởi tạo khi đã xác thực (auth guard ở trên gọi __initAdmin)
