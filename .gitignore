@@ -1,0 +1,17 @@
+﻿# Dependencies & build
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+
+# Tooling & cache
+.codegraph/
+.omo/
+.playwright-mcp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Archive
+_archive/

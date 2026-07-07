@@ -1,0 +1,10 @@
+name = "tramthucung-worker"
+main = "src/index.ts"
+compatibility_date = "2024-06-20"
+
+[vars]
+SHEET_URL = "https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec"
+
+# Secrets (set via wrangler secret put):
+# TELEGRAM_BOT_TOKEN
+# TELEGRAM_CHAT_ID
