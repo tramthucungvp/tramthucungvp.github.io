@@ -229,27 +229,54 @@
         <div class="section feedback-section">
             <div class="section-title">💬 Khách hàng chia sẻ thực tế</div>
             <div class="feedback-wrapper" id="feedbackWrapper">
-                <div class="feedback-scroll" id="feedbackScroll">
-                    <div class="feedback-card">
-                        <img src="./imges/feedback/feedback2.jpg" alt="Feedback Kim Ngân" loading="lazy" onclick="openFbLightbox(this.src)">
-                        <div class="feedback-caption">Kim Ngân</div>
-                        <div class="feedback-badge">✔ Đã mua hàng</div>
+                <div class="feedback-slider" id="feedbackSlider">
+                    <div class="feedback-track" id="feedbackTrack">
+                        <div class="feedback-slide active">
+                            <div class="feedback-card">
+                                <img src="./imges/feedback/feedback2.jpg" alt="Feedback Kim Ngân" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <div class="feedback-caption">Kim Ngân</div>
+                                <div class="feedback-badge">✔ Đã mua hàng</div>
+                            </div>
+                        </div>
+                        <div class="feedback-slide">
+                            <div class="feedback-card">
+                                <img src="./imges/feedback/feedback3.jpg" alt="Feedback Ngọc Trâm" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <div class="feedback-caption">Ngọc Trâm</div>
+                                <div class="feedback-badge">✔ Đã mua hàng</div>
+                            </div>
+                        </div>
+                        <div class="feedback-slide">
+                            <div class="feedback-card">
+                                <img src="./imges/feedback/feedback4.jpg" alt="Feedback Đức Anh" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <div class="feedback-caption">Đức Anh</div>
+                                <div class="feedback-badge">✔ Đã mua hàng</div>
+                            </div>
+                        </div>
+                        <div class="feedback-slide">
+                            <div class="feedback-card">
+                                <img src="./imges/feedback/feedback1.jpg" alt="Feedback Thanh Huyền" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <div class="feedback-caption">Thanh Huyền</div>
+                                <div class="feedback-badge">✔ Đã mua hàng</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="feedback-card">
-                        <img src="./imges/feedback/feedback3.jpg" alt="Feedback Ngọc Trâm" loading="lazy" onclick="openFbLightbox(this.src)">
-                        <div class="feedback-caption">Ngọc Trâm</div>
-                        <div class="feedback-badge">✔ Đã mua hàng</div>
-                    </div>
-                    <div class="feedback-card">
-                        <img src="./imges/feedback/feedback4.jpg" alt="Feedback Đức Anh" loading="lazy" onclick="openFbLightbox(this.src)">
-                        <div class="feedback-caption">Đức Anh</div>
-                        <div class="feedback-badge">✔ Đã mua hàng</div>
-                    </div>
-                    <div class="feedback-card">
-                        <img src="./imges/feedback/feedback1.jpg" alt="Feedback Thanh Huyền" loading="lazy" onclick="openFbLightbox(this.src)">
-                        <div class="feedback-caption">Thanh Huyền</div>
-                        <div class="feedback-badge">✔ Đã mua hàng</div>
-                    </div>
+                    <button class="feedback-arrow feedback-arrow-prev" aria-label="Trước">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
+                    <button class="feedback-arrow feedback-arrow-next" aria-label="Sau">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                    <div class="feedback-counter" id="feedbackCounter">1 / 4</div>
+                </div>
+                <div class="feedback-dots" id="feedbackDots">
+                    <div class="feedback-dot active"></div>
+                    <div class="feedback-dot"></div>
+                    <div class="feedback-dot"></div>
+                    <div class="feedback-dot"></div>
                 </div>
             </div>
         </div>
