@@ -5,14 +5,18 @@ export interface Env {
   SHEET_URL: string;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
+  ALLOWED_ORIGIN?: string;
 }
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Max-Age': '86400',
-};
+function getCorsHeaders(env: Env): Record<string, string> {
+  const origin = env.ALLOWED_ORIGIN?.trim() || '*';
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400',
+  };
+}
 
 interface OrderPayload {
   thoiGian: string;
@@ -29,11 +33,20 @@ interface OrderPayload {
   nguon: string;
 }
 
-function jsonResponse(data: unknown, status = 200): Response {
+function jsonResponse(env: Env, data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...getCorsHeaders(env) },
   });
+}
+
+function escapeTelegramHtml(value: unknown): string {
+  const s = String(value ?? '');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function validateOrder(body: Record<string, unknown>): { ok: false; error: string } | { ok: true; payload: OrderPayload } {
@@ -66,23 +79,23 @@ function validateOrder(body: Record<string, unknown>): { ok: false; error: strin
 
 async function sendTelegramAlert(token: string, chatId: string, payload: OrderPayload): Promise<void> {
   const text = [
-    `🛒 <b>Đơn hàng mới ${payload.maDon}</b>`,
+    `🛒 <b>Đơn hàng mới ${escapeTelegramHtml(payload.maDon)}</b>`,
     ``,
-    `👤 <b>${payload.hoTen}</b>`,
-    `📞 ${payload.sdt}`,
-    `📍 ${payload.diaChi}`,
+    `👤 <b>${escapeTelegramHtml(payload.hoTen)}</b>`,
+    `📞 ${escapeTelegramHtml(payload.sdt)}`,
+    `📍 ${escapeTelegramHtml(payload.diaChi)}`,
     ``,
-    `📦 ${payload.sanPham}`,
+    `📦 ${escapeTelegramHtml(payload.sanPham)}`,
     `💰 Tổng: ${payload.gia.toLocaleString('vi-VN')}₫`,
     `💵 COD: ${payload.cod.toLocaleString('vi-VN')}₫`,
     `🚚 Ship: ${payload.phiShip.toLocaleString('vi-VN')}₫`,
     ``,
-    `📝 ${payload.ghiChu || 'Không có ghi chú'}`,
-    payload.nguon ? `📊 Nguồn: ${payload.nguon}` : '',
-    `⏰ ${payload.thoiGian}`,
+    `📝 ${escapeTelegramHtml(payload.ghiChu) || 'Không có ghi chú'}`,
+    payload.nguon ? `📊 Nguồn: ${escapeTelegramHtml(payload.nguon)}` : '',
+    `⏰ ${escapeTelegramHtml(payload.thoiGian)}`,
   ].join('\n');
 
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -92,61 +105,73 @@ async function sendTelegramAlert(token: string, chatId: string, payload: OrderPa
       disable_web_page_preview: true,
     }),
   });
+
+  if (!res.ok) {
+    throw new Error(`Telegram API error: ${res.status}`);
+  }
 }
 
 async function forwardToSheet(sheetUrl: string, payload: OrderPayload): Promise<Response> {
   // Mirror the original frontend format: JSON POST with text/plain body
   return fetch(sheetUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload),
   });
 }
 
+async function handlePost(request: Request, env: Env): Promise<Response> {
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse(env, { success: false, error: 'Invalid JSON body' }, 400);
+  }
+
+  const validation = validateOrder(body);
+  if (!validation.ok) {
+    return jsonResponse(env, { success: false, error: validation.error }, 400);
+  }
+
+  const payload = validation.payload;
+
+  // 1. Forward to Google Sheet first
+  let sheetRes: Response;
+  try {
+    sheetRes = await forwardToSheet(env.SHEET_URL, payload);
+  } catch {
+    return jsonResponse(env, { success: false, error: 'Failed to forward to sheet' }, 502);
+  }
+
+  if (!sheetRes.ok) {
+    return jsonResponse(env, { success: false, error: 'Failed to forward to sheet' }, 502);
+  }
+
+  // 2. Send Telegram alert after Sheet success (non-blocking to response)
+  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+    // Fire-and-forget: log failure but don't fail the order
+    sendTelegramAlert(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID, payload).catch((err: unknown) => {
+      console.error('Telegram alert failed:', err instanceof Error ? err.message : String(err));
+    });
+  }
+
+  return jsonResponse(env, {
+    success: true,
+    message: 'Đơn hàng đã được ghi nhận',
+    maDon: payload.maDon,
+  });
+}
+
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: CORS_HEADERS });
+      return new Response(null, { status: 204, headers: getCorsHeaders(env) });
     }
 
     if (request.method !== 'POST') {
-      return jsonResponse({ success: false, error: 'Method not allowed' }, 405);
+      return jsonResponse(env, { success: false, error: 'Method not allowed' }, 405);
     }
 
-    let body: Record<string, unknown>;
-    try {
-      body = await request.json();
-    } catch {
-      return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
-    }
-
-    const validation = validateOrder(body);
-    if (!validation.ok) {
-      return jsonResponse({ success: false, error: validation.error }, 400);
-    }
-
-    const payload = validation.payload;
-
-    // Forward to Google Sheet
-    const sheetPromise = forwardToSheet(env.SHEET_URL, payload);
-
-    // Send Telegram alert if configured
-    const telegramPromise =
-      env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID
-        ? sendTelegramAlert(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID, payload)
-        : Promise.resolve();
-
-    // Wait for both (don't let Telegram block the response)
-    const [sheetRes] = await Promise.allSettled([sheetPromise, telegramPromise]);
-
-    if (sheetRes.status === 'rejected') {
-      return jsonResponse({ success: false, error: 'Failed to forward to sheet' }, 502);
-    }
-
-    return jsonResponse({
-      success: true,
-      message: 'Đơn hàng đã được ghi nhận',
-      maDon: payload.maDon,
-    });
+    return handlePost(request, env);
   },
 };

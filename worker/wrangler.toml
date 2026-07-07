@@ -5,6 +5,13 @@ compatibility_date = "2024-06-20"
 [vars]
 SHEET_URL = "https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec"
 
-# Secrets (set via wrangler secret put):
+# Optional: restrict CORS to your GitHub Pages domain for production.
+# Leave commented out to allow any origin (useful for local dev).
+# The repo serves two frontends: root landing page and SpayFly subpage.
+# Both share the same origin, so one ALLOWED_ORIGIN covers both.
+# [vars]
+# ALLOWED_ORIGIN = "https://tramthucungvp.github.io"
+
+# Secrets (set via wrangler secret put or pnpm wrangler secret put):
 # TELEGRAM_BOT_TOKEN
 # TELEGRAM_CHAT_ID

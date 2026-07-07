@@ -1,5 +1,5 @@
 // ===== API ENDPOINTS =====
-const ORDER_API_URL = 'https://your-worker.your-subdomain.workers.dev';
+const ORDER_API_URL = 'https://tramthucung-worker.tramthucung.workers.dev';
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec';
 
 // ===== TRACK NGUỒN ĐƠN (UTM / fbclid) =====

@@ -3,28 +3,59 @@
 ## Prerequisites
 
 - Node.js 18+
+- pnpm (or npm)
 - A Cloudflare account (free tier works)
 - A Google Apps Script webhook URL (already configured in `worker/wrangler.toml`)
 - Optional: Telegram bot for order alerts
 
 ---
 
-## Step 1: Deploy the Cloudflare Worker
+## Step 1: Local Development
 
-```bash
-cd worker
+```powershell
+cd "C:\Landing page\xit-ve-ran\worker"
+pnpm install
+pnpm run dev
+```
 
-# Install dependencies (if not already done)
-npm install   # or pnpm install
+The Worker will start on `http://localhost:8787`.
 
-# Log in to Cloudflare (one-time)
-npx wrangler login
+### Local secrets (`worker/.dev.vars`)
 
-# Deploy
-npx wrangler deploy
+Create `worker/.dev.vars` (never commit this file):
+
+```
+SHEET_URL="https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec"
+TELEGRAM_BOT_TOKEN="8983931047:AAFdU2EyKl7i6Js1VKhp0b8jcQ3iZNazbFw"
+TELEGRAM_CHAT_ID="-1004461167067"
+ALLOWED_ORIGIN="http://localhost:5500"
+```
+
+> ⚠️ `.dev.vars` is for local development only and must not be committed. It is already ignored in `.gitignore`.
+
+---
+
+## Step 2: Type-check before deploying
+
+```powershell
+cd "C:\Landing page\xit-ve-ran\worker"
+pnpm tsc --noEmit
+```
+
+Fix any TypeScript errors before deploying.
+
+---
+
+## Step 3: Deploy the Cloudflare Worker
+
+```powershell
+cd "C:\Landing page\xit-ve-ran\worker"
+pnpm wrangler login
+pnpm wrangler deploy
 ```
 
 After deploy, Wrangler prints your Worker URL:
+
 ```
 https://tramthucung-worker.<your-account>.workers.dev
 ```
@@ -33,31 +64,51 @@ Copy this URL — you will paste it into the frontend config.
 
 ---
 
-## Step 2: Configure Telegram Alerts (Optional)
+## Step 4: Configure Production Secrets
 
-1. Create a Telegram bot via [@BotFather](https://t.me/BotFather) and copy the bot token.
-2. Get your chat ID (message `@userinfobot` or use `@getidsbot`).
-3. Store them as Worker secrets:
+Set secrets via Wrangler (not via code or wrangler.toml):
 
-```bash
-cd worker
-npx wrangler secret put TELEGRAM_BOT_TOKEN
-# paste your bot token
-
-npx wrangler secret put TELEGRAM_CHAT_ID
-# paste your chat ID
+```powershell
+cd "C:\Landing page\xit-ve-ran\worker"
+pnpm wrangler secret put SHEET_URL
+pnpm wrangler secret put TELEGRAM_BOT_TOKEN
+pnpm wrangler secret put TELEGRAM_CHAT_ID
 ```
 
-Redeploy after setting secrets:
-```bash
-npx wrangler deploy
+If you want to restrict CORS to your GitHub Pages domain, add `ALLOWED_ORIGIN` as a plain variable in `wrangler.toml`:
+
+```toml
+[vars]
+ALLOWED_ORIGIN = "https://tramthucungvp.github.io"
+```
+
+This covers both frontends served from the same repo:
+- Root landing page: `https://tramthucungvp.github.io/`
+- SpayFly subpage: `https://tramthucungvp.github.io/SpayFly/`
+
+Then redeploy:
+
+```powershell
+pnpm wrangler deploy
 ```
 
 ---
 
-## Step 3: Wire Frontend to Worker
+## Step 5: Wire Frontend to Worker
 
-Edit `js/config.js` and replace the placeholder:
+There are two frontends in this repo. Update both `ORDER_API_URL` placeholders after deploying:
+
+### Root landing page (`js/config.js`)
+
+```javascript
+// Before:
+const ORDER_API_URL = 'https://your-worker.your-subdomain.workers.dev';
+
+// After (example):
+const ORDER_API_URL = 'https://tramthucung-worker.your-account.workers.dev';
+```
+
+### SpayFly subpage (`SpayFly/js/config.js`)
 
 ```javascript
 // Before:
@@ -71,7 +122,44 @@ Commit and push — GitHub Pages will pick up the change automatically.
 
 ---
 
-## Step 4: Verify End-to-End
+## Step 6: Verify End-to-End
+
+### Local test (PowerShell)
+
+```powershell
+$body = @{
+    thoiGian = "2026-07-07 21:30"
+    hoTen    = "Nguyễn Văn A"
+    sdt      = "0900000000"
+    diaChi   = "Hà Nội"
+    sanPham  = "Xịt ve rận Spay Fly"
+    gia      = 199000
+    canNang  = 1
+    cod      = 199000
+    phiShip  = 0
+    ghiChu   = "Test đơn hàng"
+    maDon    = "TEST001"
+    nguon    = "local"
+} | ConvertTo-Json -Compress
+
+Invoke-RestMethod -Uri "http://localhost:8787" `
+    -Method POST `
+    -ContentType "application/json; charset=utf-8" `
+    -Body $body
+```
+
+### Production test
+
+Replace the URL with your deployed Worker URL:
+
+```powershell
+Invoke-RestMethod -Uri "https://tramthucung-worker.your-account.workers.dev" `
+    -Method POST `
+    -ContentType "application/json; charset=utf-8" `
+    -Body $body
+```
+
+### Manual browser test
 
 1. Open the live GitHub Pages URL.
 2. Fill the order form with test data:
@@ -85,7 +173,7 @@ Commit and push — GitHub Pages will pick up the change automatically.
 
 ---
 
-## Step 5: (Optional) Cloudflare Turnstile Anti-Spam
+## Step 7: (Optional) Cloudflare Turnstile Anti-Spam
 
 If you want bot protection:
 
@@ -94,8 +182,8 @@ If you want bot protection:
 3. In `index.html`, add Turnstile widget inside the order form.
 4. In `worker/src/index.ts`, verify the Turnstile token before processing.
 5. Store the Turnstile **secret key** as a Worker secret:
-   ```bash
-   npx wrangler secret put TURNSTILE_SECRET_KEY
+   ```powershell
+   pnpm wrangler secret put TURNSTILE_SECRET_KEY
    ```
 
 > This step is optional. The current setup works without Turnstile.
@@ -105,7 +193,7 @@ If you want bot protection:
 ## Troubleshooting
 
 ### Worker deploy fails
-- Ensure you ran `npx wrangler login` first.
+- Ensure you ran `pnpm wrangler login` first.
 - Check `wrangler.toml` has a valid `compatibility_date`.
 
 ### Form submission shows "Không thể kết nối đến máy chủ"
@@ -125,13 +213,47 @@ If you want bot protection:
 
 ---
 
+## QA Checklist
+
+### Worker
+- [ ] `pnpm install` succeeds
+- [ ] `pnpm tsc --noEmit` passes with zero errors
+- [ ] `pnpm run dev` starts locally on `localhost:8787`
+- [ ] `OPTIONS` request returns `204` with CORS headers
+- [ ] `POST` valid order returns `{ success: true, message, maDon }`
+- [ ] Missing required fields return `400` with Vietnamese error message
+- [ ] Sheet failure returns `502` with safe public error
+- [ ] Valid order writes a new row to Google Sheet
+- [ ] Valid order sends Telegram alert (if configured)
+- [ ] Telegram failure does **not** lose the Sheet order
+
+### Frontend
+- [ ] GitHub Pages still loads static landing page
+- [ ] UI remains unchanged (no layout/color/spacing shifts)
+- [ ] Images load correctly
+- [ ] Form looks identical
+- [ ] Form calls Worker endpoint (`ORDER_API_URL`)
+- [ ] Frontend no longer exposes Google Apps Script URL in network requests
+- [ ] Success and error UX still works (redirects, alerts)
+
+### Security
+- [ ] No real secrets committed in the repo
+- [ ] `.dev.vars` is ignored by `.gitignore`
+- [ ] `node_modules/` is ignored
+- [ ] `.wrangler/` is ignored
+- [ ] Telegram token is not logged in console or returned to browser
+- [ ] `SHEET_URL` is not exposed in frontend code or browser requests
+
+---
+
 ## Updating the Worker
 
 After editing `worker/src/index.ts`:
 
-```bash
-cd worker
-npx wrangler deploy
+```powershell
+cd "C:\Landing page\xit-ve-ran\worker"
+pnpm tsc --noEmit
+pnpm wrangler deploy
 ```
 
 No need to touch the frontend unless you change the API shape.
@@ -140,12 +262,13 @@ No need to touch the frontend unless you change the API shape.
 
 ## Environment Summary
 
-| Variable | Location | How to set |
-|----------|----------|------------|
-| `SHEET_URL` | `worker/wrangler.toml` | Edit file, deploy |
-| `ORDER_API_URL` | `js/config.js` | Edit file, commit |
-| `TELEGRAM_BOT_TOKEN` | Cloudflare Worker secrets | `wrangler secret put` |
-| `TELEGRAM_CHAT_ID` | Cloudflare Worker secrets | `wrangler secret put` |
+| Variable | Location | How to set | Visibility |
+|----------|----------|------------|------------|
+| `SHEET_URL` | `wrangler.toml` or secret | Edit file / `wrangler secret put` | Server only |
+| `ORDER_API_URL` | `js/config.js` | Edit file, commit | Public (Worker URL only) |
+| `ALLOWED_ORIGIN` | `wrangler.toml` `[vars]` | Edit file, deploy | Public (CORS header) |
+| `TELEGRAM_BOT_TOKEN` | Cloudflare Worker secrets | `wrangler secret put` | Server only |
+| `TELEGRAM_CHAT_ID` | Cloudflare Worker secrets | `wrangler secret put` | Server only |
 
 ---
 
@@ -153,6 +276,6 @@ No need to touch the frontend unless you change the API shape.
 
 If something breaks:
 
-1. Revert `js/config.js` to use the old `SHEET_URL` directly (restore pre-Prompt-4 `submitOrder`).
+1. Revert `js/config.js` to use the old `SHEET_URL` directly (restore pre-Worker `submitOrder`).
 2. Or: in the Cloudflare dashboard, set the Worker to a previous version.
 3. Or: disable the Worker route temporarily.

@@ -1,6 +1,6 @@
 ﻿        // ===== API ENDPOINTS =====
         // ORDER_API_URL: Cloudflare Worker backend (Prompt 3). Replace with your deployed Worker URL.
-        const ORDER_API_URL = 'https://your-worker.your-subdomain.workers.dev';
+        const ORDER_API_URL = 'https://tramthucung-worker.tramthucung.workers.dev';
         // SHEET_URL: kept for reference; Worker forwards to this internally.
         const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwSFkBsMRkIOAao4bQON8o7p09vtntKE-zvXusebqMPS6NYfeaTYq0-Qa83c8sjB-YXtQ/exec';
 
