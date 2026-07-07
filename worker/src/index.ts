@@ -77,7 +77,18 @@ function validateOrder(body: Record<string, unknown>): { ok: false; error: strin
   };
 }
 
-async function sendTelegramAlert(token: string, chatId: string, payload: OrderPayload): Promise<void> {
+function isWhitelistedChatId(chatId: string, env: Env): boolean {
+  const configured = String(env.TELEGRAM_CHAT_ID ?? '').trim();
+  const incoming = String(chatId ?? '').trim();
+  return !!incoming && !!configured && incoming === configured;
+}
+
+async function sendTelegramAlert(token: string, chatId: string, payload: OrderPayload, env: Env): Promise<void> {
+  if (!isWhitelistedChatId(chatId, env)) {
+    console.warn('Blocked Telegram alert: chat_id not whitelisted');
+    return;
+  }
+
   const text = [
     `🛒 <b>Đơn hàng mới ${escapeTelegramHtml(payload.maDon)}</b>`,
     ``,
@@ -109,6 +120,7 @@ async function sendTelegramAlert(token: string, chatId: string, payload: OrderPa
   if (!res.ok) {
     throw new Error(`Telegram API error: ${res.status}`);
   }
+  console.log('Telegram alert sent successfully', { chatId, maDon: payload.maDon });
 }
 
 async function forwardToSheet(sheetUrl: string, payload: OrderPayload): Promise<Response> {
@@ -120,7 +132,7 @@ async function forwardToSheet(sheetUrl: string, payload: OrderPayload): Promise<
   });
 }
 
-async function handlePost(request: Request, env: Env): Promise<Response> {
+async function handlePost(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -148,11 +160,17 @@ async function handlePost(request: Request, env: Env): Promise<Response> {
   }
 
   // 2. Send Telegram alert after Sheet success (non-blocking to response)
-  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
-    // Fire-and-forget: log failure but don't fail the order
-    sendTelegramAlert(env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID, payload).catch((err: unknown) => {
-      console.error('Telegram alert failed:', err instanceof Error ? err.message : String(err));
-    });
+  const token = String(env.TELEGRAM_BOT_TOKEN ?? '').trim();
+  const chatId = String(env.TELEGRAM_CHAT_ID ?? '').trim();
+  if (token && chatId) {
+    // Use ctx.waitUntil so Cloudflare keeps the worker alive until the Telegram API call completes.
+    ctx.waitUntil(
+      sendTelegramAlert(token, chatId, payload, env)
+        .then(() => console.log('Telegram alert sent', { maDon: payload.maDon }))
+        .catch((err: unknown) => {
+          console.error('Telegram alert failed:', err instanceof Error ? err.message : String(err));
+        }),
+    );
   }
 
   return jsonResponse(env, {
@@ -163,7 +181,7 @@ async function handlePost(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: getCorsHeaders(env) });
     }
@@ -172,6 +190,6 @@ export default {
       return jsonResponse(env, { success: false, error: 'Method not allowed' }, 405);
     }
 
-    return handlePost(request, env);
+    return handlePost(request, env, ctx);
   },
 };

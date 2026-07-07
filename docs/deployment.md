@@ -1,5 +1,11 @@
 # Deployment Guide — Trạm Thú Cưng
 
+> **Current production environment**
+> - Worker: `https://tramthucung-worker.tramthucung.workers.dev`
+> - Frontend: `https://tramthucungvp.github.io`
+> - SpayFly subpage: `https://tramthucungvp.github.io/SpayFly/`
+> - Telegram secrets: configured via `wrangler secret put`
+
 ## Prerequisites
 
 - Node.js 18+
@@ -173,6 +179,45 @@ Invoke-RestMethod -Uri "https://tramthucung-worker.your-account.workers.dev" `
 
 ---
 
+## Step 6b: Automated E2E Tests (Playwright)
+
+Install (one-time):
+
+```powershell
+cd "C:\Landing page\xit-ve-ran"
+npm install -D @playwright/test
+npx playwright install chromium
+```
+
+### Test on production
+
+```powershell
+cd "C:\Landing page\xit-ve-ran"
+$env:TEST_ENV="production"
+npx playwright test
+```
+
+Or with UI:
+
+```powershell
+$env:TEST_ENV="production"
+npx playwright test --headed
+```
+
+### Test locally
+
+```powershell
+cd "C:\Landing page\xit-ve-ran\worker"
+pnpm run dev
+# Tab khác:
+cd "C:\Landing page\xit-ve-ran"
+npx playwright test
+```
+
+> ⚠️ Production tests gọi Worker thật và ghi dữ liệu thật vào Google Sheet. Dùng test data có `maDon` bắt đầu bằng `#E2E` để dễ nhận diện và xóa sau.
+
+---
+
 ## Step 7: (Optional) Cloudflare Turnstile Anti-Spam
 
 If you want bot protection:
@@ -269,6 +314,8 @@ No need to touch the frontend unless you change the API shape.
 | `ALLOWED_ORIGIN` | `wrangler.toml` `[vars]` | Edit file, deploy | Public (CORS header) |
 | `TELEGRAM_BOT_TOKEN` | Cloudflare Worker secrets | `wrangler secret put` | Server only |
 | `TELEGRAM_CHAT_ID` | Cloudflare Worker secrets | `wrangler secret put` | Server only |
+
+> 🔒 **Security**: Worker chỉ gửi Telegram alert đến `TELEGRAM_CHAT_ID` đã cấu hình. Nếu chat_id bị thay đổi hoặc không khớp whitelist, Worker sẽ bỏ qua và ghi log warning.
 
 ---
 
