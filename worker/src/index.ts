@@ -148,31 +148,27 @@ async function handlePost(request: Request, env: Env, ctx: ExecutionContext): Pr
 
   const payload = validation.payload;
 
-  // 1. Forward to Google Sheet first
-  let sheetRes: Response;
-  try {
-    sheetRes = await forwardToSheet(env.SHEET_URL, payload);
-  } catch {
-    return jsonResponse(env, { success: false, error: 'Failed to forward to sheet' }, 502);
-  }
-
-  if (!sheetRes.ok) {
-    return jsonResponse(env, { success: false, error: 'Failed to forward to sheet' }, 502);
-  }
-
-  // 2. Send Telegram alert after Sheet success (non-blocking to response)
-  const token = String(env.TELEGRAM_BOT_TOKEN ?? '').trim();
-  const chatId = String(env.TELEGRAM_CHAT_ID ?? '').trim();
-  if (token && chatId) {
-    // Use ctx.waitUntil so Cloudflare keeps the worker alive until the Telegram API call completes.
-    ctx.waitUntil(
-      sendTelegramAlert(token, chatId, payload, env)
-        .then(() => console.log('Telegram alert sent', { maDon: payload.maDon }))
-        .catch((err: unknown) => {
-          console.error('Telegram alert failed:', err instanceof Error ? err.message : String(err));
-        }),
-    );
-  }
+  // Return success immediately so the browser redirects to thank-you page without waiting.
+  // Sheet + Telegram are processed in the background via ctx.waitUntil().
+  ctx.waitUntil(
+    (async () => {
+      try {
+        const sheetRes = await forwardToSheet(env.SHEET_URL, payload);
+        if (!sheetRes.ok) {
+          console.error('Sheet forward failed', { maDon: payload.maDon, status: sheetRes.status });
+          return;
+        }
+        const token = String(env.TELEGRAM_BOT_TOKEN ?? '').trim();
+        const chatId = String(env.TELEGRAM_CHAT_ID ?? '').trim();
+        if (token && chatId) {
+          await sendTelegramAlert(token, chatId, payload, env);
+          console.log('Telegram alert sent', { maDon: payload.maDon });
+        }
+      } catch (err: unknown) {
+        console.error('Background order processing failed:', err instanceof Error ? err.message : String(err));
+      }
+    })(),
+  );
 
   return jsonResponse(env, {
     success: true,
