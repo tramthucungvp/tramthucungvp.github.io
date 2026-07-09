@@ -2452,8 +2452,8 @@
 
             /* ORDER POPUP countdown banner */
             .order-flash-bar { padding: 9px 11px; border-radius: 11px; margin-bottom: 10px; gap: 8px; }
-            .ofb-title { font-size: .82rem; }
-            .ofb-sub { font-size: .64rem; }
+            .ofb-title { font-size: 1rem; }
+            .ofb-sub { font-size: .82rem; }
             .ofb-time { padding: 4px 8px; min-width: 60px; }
             .ofb-time-num { font-size: 1.1rem; }
 
