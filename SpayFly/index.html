@@ -11,6 +11,10 @@
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="apple-touch-icon" href="../favicon.svg">
     <meta name="theme-color" content="#ff2d55">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="../img/ud3.jpeg" fetchpriority="high">
+    <link rel="preload" as="image" href="./imges/feedback/feedback2.png" fetchpriority="high">
     <link
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
         rel="stylesheet">
@@ -76,13 +80,13 @@
         <!-- GALLERY -->
         <div class="gallery">
             <div class="gallery-main" id="mainImgs">
-                <img src="../img/ud3.jpeg" class="active" alt="1">
-                <img src="../img/2.jpeg" alt="2">
-                <img src="../img/3.jpeg" alt="3">
-                <img src="../img/4.jpeg" alt="4">
-                <img src="../img/5.jpeg" alt="5">
-                <img src="../img/6.jpeg" alt="6">
-                <img src="../img/7.jpeg" alt="7">
+                <img src="../img/ud3.jpeg" class="active" alt="1" fetchpriority="high" decoding="sync">
+                <img src="../img/2.jpeg" alt="2" loading="lazy" decoding="async">
+                <img src="../img/3.jpeg" alt="3" loading="lazy" decoding="async">
+                <img src="../img/4.jpeg" alt="4" loading="lazy" decoding="async">
+                <img src="../img/5.jpeg" alt="5" loading="lazy" decoding="async">
+                <img src="../img/6.jpeg" alt="6" loading="lazy" decoding="async">
+                <img src="../img/7.jpeg" alt="7" loading="lazy" decoding="async">
                 <button class="gal-arrow gal-arrow-prev" onclick="prevImg()" aria-label="Ảnh trước">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -108,12 +112,12 @@
             </div>
             <div class="gallery-thumbs" id="thumbRow">
                 <img src="../img/ud3.jpeg" class="active" onclick="setImg(0)">
-                <img src="../img/2.jpeg" onclick="setImg(1)">
-                <img src="../img/3.jpeg" onclick="setImg(2)">
-                <img src="../img/4.jpeg" onclick="setImg(3)">
-                <img src="../img/5.jpeg" onclick="setImg(4)">
-                <img src="../img/6.jpeg" onclick="setImg(5)">
-                <img src="../img/7.jpeg" onclick="setImg(6)">
+                <img src="../img/2.jpeg" onclick="setImg(1)" loading="lazy" decoding="async">
+                <img src="../img/3.jpeg" onclick="setImg(2)" loading="lazy" decoding="async">
+                <img src="../img/4.jpeg" onclick="setImg(3)" loading="lazy" decoding="async">
+                <img src="../img/5.jpeg" onclick="setImg(4)" loading="lazy" decoding="async">
+                <img src="../img/6.jpeg" onclick="setImg(5)" loading="lazy" decoding="async">
+                <img src="../img/7.jpeg" onclick="setImg(6)" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -233,28 +237,28 @@
                     <div class="feedback-track" id="feedbackTrack">
                         <div class="feedback-slide active">
                             <div class="feedback-card">
-                                <img src="./imges/feedback/feedback2.png" alt="Feedback Minh Ngọc" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <img src="./imges/feedback/feedback2.png" alt="Feedback Minh Ngọc" fetchpriority="high" decoding="sync" onclick="openFbLightbox(this.src)">
                                 <div class="feedback-caption">Minh Ngọc</div>
                                 <div class="feedback-badge">✔ Đã mua hàng</div>
                             </div>
                         </div>
                         <div class="feedback-slide">
                             <div class="feedback-card">
-                                <img src="./imges/feedback/feedback3.png" alt="Feedback Huyền Trang" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <img src="./imges/feedback/feedback3.png" alt="Feedback Huyền Trang" loading="lazy" decoding="async" onclick="openFbLightbox(this.src)">
                                 <div class="feedback-caption">Huyền Trang</div>
                                 <div class="feedback-badge">✔ Đã mua hàng</div>
                             </div>
                         </div>
                         <div class="feedback-slide">
                             <div class="feedback-card">
-                                <img src="./imges/feedback/feedback1.png" alt="Feedback Thu Hà" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <img src="./imges/feedback/feedback1.png" alt="Feedback Thu Hà" loading="lazy" decoding="async" onclick="openFbLightbox(this.src)">
                                 <div class="feedback-caption">Thu Hà</div>
                                 <div class="feedback-badge">✔ Đã mua hàng</div>
                             </div>
                         </div>
                         <div class="feedback-slide">
                             <div class="feedback-card">
-                                <img src="./imges/feedback/feedback2.jpg" alt="Feedback Kim Ngân" loading="lazy" onclick="openFbLightbox(this.src)">
+                                <img src="./imges/feedback/feedback2.jpg" alt="Feedback Kim Ngân" loading="lazy" decoding="async" onclick="openFbLightbox(this.src)">
                                 <div class="feedback-caption">Kim Ngân</div>
                                 <div class="feedback-badge">✔ Đã mua hàng</div>
                             </div>
@@ -349,21 +353,21 @@
         <div class="section">
             <div class="section-title">THÔNG TIN SẢN PHẨM</div>
             <div class="desc-img-grid">
-                <img src="../img/ud2.jpeg" alt="SP 8"
+                <img src="../img/ud2.jpeg" alt="SP 8" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f0fff4/00c853?text=🌿'" onclick="setImg(1)">
-                <img src="../img/2.jpeg" alt="SP 1"
+                <img src="../img/2.jpeg" alt="SP 1" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f0fff4/00c853?text=🌿'" onclick="setImg(1)">
-                <img src="../img/rận.jpeg" alt="SP 2"
+                <img src="../img/rận.jpeg" alt="SP 2" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fff5ee/ff6b35?text=🌿'">
-                <img src="../img/bọ chét.jpeg" alt="SP 3"
+                <img src="../img/bọ chét.jpeg" alt="SP 3" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f0f4ff/5b6af5?text=🐾'">
-                <img src="../img/muỗi.jpeg" alt="SP 4"
+                <img src="../img/muỗi.jpeg" alt="SP 4" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fff3e0/ff6d00?text=🐶'">
-                <img src="../img/gián.jpeg" alt="SP 5"
+                <img src="../img/gián.jpeg" alt="SP 5" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fff0f3/ff2d55?text=🌿'">
-                <img src="../img/4.jpeg" alt="SP 6"
+                <img src="../img/4.jpeg" alt="SP 6" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f5fff0/00c853?text=✅'" onclick="setImg(3)">
-                <img src="../img/7.jpeg" alt="SP 7"
+                <img src="../img/7.jpeg" alt="SP 7" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fce4ec/ff2d55?text=🐱'" onclick="setImg(6)">
             </div>
         </div>

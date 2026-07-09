@@ -11,6 +11,9 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <link rel="apple-touch-icon" href="./favicon.svg">
     <meta name="theme-color" content="#ff2d55">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="./img/ud3.jpeg" fetchpriority="high">
     <link
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
         rel="stylesheet">
@@ -75,13 +78,13 @@
         <!-- GALLERY -->
         <div class="gallery">
             <div class="gallery-main" id="mainImgs">
-                <img src="./img/ud3.jpeg" class="active" alt="1">
-                <img src="./img/2.jpeg" alt="2">
-                <img src="./img/3.jpeg" alt="3">
-                <img src="./img/4.jpeg" alt="4">
-                <img src="./img/5.jpeg" alt="5">
-                <img src="./img/6.jpeg" alt="6">
-                <img src="./img/7.jpeg" alt="7">
+                <img src="./img/ud3.jpeg" class="active" alt="1" fetchpriority="high" decoding="sync">
+                <img src="./img/2.jpeg" alt="2" loading="lazy" decoding="async">
+                <img src="./img/3.jpeg" alt="3" loading="lazy" decoding="async">
+                <img src="./img/4.jpeg" alt="4" loading="lazy" decoding="async">
+                <img src="./img/5.jpeg" alt="5" loading="lazy" decoding="async">
+                <img src="./img/6.jpeg" alt="6" loading="lazy" decoding="async">
+                <img src="./img/7.jpeg" alt="7" loading="lazy" decoding="async">
                 <button class="gal-arrow gal-arrow-prev" onclick="prevImg()" aria-label="Ảnh trước">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -107,12 +110,12 @@
             </div>
             <div class="gallery-thumbs" id="thumbRow">
                 <img src="./img/ud3.jpeg" class="active" onclick="setImg(0)">
-                <img src="./img/2.jpeg" onclick="setImg(1)">
-                <img src="./img/3.jpeg" onclick="setImg(2)">
-                <img src="./img/4.jpeg" onclick="setImg(3)">
-                <img src="./img/5.jpeg" onclick="setImg(4)">
-                <img src="./img/6.jpeg" onclick="setImg(5)">
-                <img src="./img/7.jpeg" onclick="setImg(6)">
+                <img src="./img/2.jpeg" onclick="setImg(1)" loading="lazy" decoding="async">
+                <img src="./img/3.jpeg" onclick="setImg(2)" loading="lazy" decoding="async">
+                <img src="./img/4.jpeg" onclick="setImg(3)" loading="lazy" decoding="async">
+                <img src="./img/5.jpeg" onclick="setImg(4)" loading="lazy" decoding="async">
+                <img src="./img/6.jpeg" onclick="setImg(5)" loading="lazy" decoding="async">
+                <img src="./img/7.jpeg" onclick="setImg(6)" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -168,8 +171,8 @@
                     <div class="rc-text">Xịt xong thấy bọ chét giảm hẳn, mèo không còn gãi liên tục nữa. Mùi thơm nhẹ,
                         không hắc. Chai xịt mịn, dễ dùng. 5⭐ cho shop nhé!</div>
                     <div class="rc-images">
-                        <img src="./img/fb4.jpg" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
-                        <img src="./img/fb 41.jpg"
+                        <img src="./img/fb4.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
+                        <img src="./img/fb 41.jpg" loading="lazy" decoding="async"
                             onerror="this.src='https://placehold.co/72x72/f0fff4/00c853?text=🐾'">
                     </div>
                     <div class="rc-verified">✔ Đã mua hàng</div>
@@ -182,8 +185,8 @@
                         mình bị ve rận khá nhiều, xịt vào sau 2 ngày thấy ve rụng hết. Mùi thơm thoang thoảng, không khó
                         chịu. Sẽ mua lại!</div>
                     <div class="rc-images">
-                        <img src="./img/fb3.jpg" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐶'">
-                        <img src="./img/fb5.jpg" onerror="this.src='https://placehold.co/72x72/f0f4ff/5b6af5?text=🐈'">
+                        <img src="./img/fb3.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐶'">
+                        <img src="./img/fb5.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/f0f4ff/5b6af5?text=🐈'">
                     </div>
                     <div class="rc-verified">✔ Đã mua hàng</div>
                 </div>
@@ -194,8 +197,8 @@
                     <div class="rc-text">Giao hàng nhanh, đóng gói cẩn thận. Mèo nhà mình hay bị bọ chét, dùng xong thấy
                         hiệu quả rõ ràng. Thành phần thảo mộc nên an tâm cho bé dùng.</div>
                     <div class="rc-images">
-                        <img src="./img/fb6.jpg" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
-                        <img src="./img/fb7.jpg" onerror="this.src='https://placehold.co/72x72/f0fff4/00c853?text=🐾'">
+                        <img src="./img/fb6.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
+                        <img src="./img/fb7.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/f0fff4/00c853?text=🐾'">
                     </div>
                     <div class="rc-verified">✔ Đã mua hàng</div>
                 </div>
@@ -206,7 +209,7 @@
                     <div class="rc-text">Mua 2 lọ được tặng lược chải ve rận rất tiện. Xịt xong chải nhẹ, ve và bọ chét
                         rụng ra nhiều lắm. Hàng thật, chất lượng tốt. Cảm ơn shop!</div>
                     <div class="rc-images">
-                        <img src="./img/fb8.jpg" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
+                        <img src="./img/fb8.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
                     </div>
                     <div class="rc-verified">✔ Đã mua hàng</div>
                 </div>
@@ -217,7 +220,7 @@
                     <div class="rc-text">Hàng giao nhanh lắm, đúng như mô tả. Xịt vào thấy mùi thơm thảo dược dễ chịu,
                         không lo độc hại cho bé. Sẽ ủng hộ shop dài dài!</div>
                     <div class="rc-images">
-                        <img src="./img/fb9.jpg" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
+                        <img src="./img/fb9.jpg" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/72x72/fff5ee/ff6b35?text=🐱'">
                     </div>
                     <div class="rc-verified">✔ Đã mua hàng</div>
                 </div>
@@ -286,21 +289,21 @@
         <div class="section">
             <div class="section-title">THÔNG TIN SẢN PHẨM</div>
             <div class="desc-img-grid">
-                <img src="./img/ud2.jpeg" alt="SP 8"
+                <img src="./img/ud2.jpeg" alt="SP 8" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f0fff4/00c853?text=🌿'" onclick="setImg(1)">
-                <img src="./img/2.jpeg" alt="SP 1"
+                <img src="./img/2.jpeg" alt="SP 1" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f0fff4/00c853?text=🌿'" onclick="setImg(1)">
-                <img src="./img/rận.jpeg" alt="SP 2"
+                <img src="./img/rận.jpeg" alt="SP 2" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fff5ee/ff6b35?text=🌿'">
-                <img src="./img/bọ chét.jpeg" alt="SP 3"
+                <img src="./img/bọ chét.jpeg" alt="SP 3" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f0f4ff/5b6af5?text=🐾'">
-                <img src="./img/muỗi.jpeg" alt="SP 4"
+                <img src="./img/muỗi.jpeg" alt="SP 4" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fff3e0/ff6d00?text=🐶'">
-                <img src="./img/gián.jpeg" alt="SP 5"
+                <img src="./img/gián.jpeg" alt="SP 5" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fff0f3/ff2d55?text=🌿'">
-                <img src="./img/4.jpeg" alt="SP 6"
+                <img src="./img/4.jpeg" alt="SP 6" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/f5fff0/00c853?text=✅'" onclick="setImg(3)">
-                <img src="./img/7.jpeg" alt="SP 7"
+                <img src="./img/7.jpeg" alt="SP 7" loading="lazy" decoding="async"
                     onerror="this.src='https://placehold.co/480x480/fce4ec/ff2d55?text=🐱'" onclick="setImg(6)">
             </div>
         </div>
