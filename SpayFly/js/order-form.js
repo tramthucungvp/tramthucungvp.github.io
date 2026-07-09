@@ -79,7 +79,20 @@ function closeOrder() {
     if (bn) bn.classList.remove('in-popup');
 }
 
+let isSubmitting = false;
 function submitOrder() {
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    const btn = document.querySelector('button.btn-order');
+    const originalText = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Đang gửi...'; btn.style.opacity = '0.7'; }
+
+    function resetBtn() {
+        isSubmitting = false;
+        if (btn) { btn.disabled = false; btn.textContent = originalText; btn.style.opacity = ''; }
+    }
+
     const name = document.getElementById('fname').value.trim();
     const phone = document.getElementById('fphone').value.trim();
     const detail = document.getElementById('faddress').value.trim();
@@ -94,29 +107,29 @@ function submitOrder() {
 
     if (!name || name.length < 2) {
         alert('⚠️ Vui lòng nhập Họ và tên đầy đủ (ít nhất 2 ký tự)');
-        document.getElementById('fname').focus(); return;
+        document.getElementById('fname').focus(); resetBtn(); return;
     }
     if (/^\d+$/.test(name)) {
         alert('⚠️ Họ tên không hợp lệ — không được chỉ là số');
-        document.getElementById('fname').focus(); return;
+        document.getElementById('fname').focus(); resetBtn(); return;
     }
 
     if (!phone) {
         alert('⚠️ Vui lòng nhập Số điện thoại');
-        document.getElementById('fphone').focus(); return;
+        document.getElementById('fphone').focus(); resetBtn(); return;
     }
     if (!/^0[235789]\d{8}$/.test(phone)) {
         alert('⚠️ Số điện thoại không hợp lệ!\n\nĐịnh dạng đúng: 10 chữ số, bắt đầu bằng 0\nVí dụ: 0901234567');
-        document.getElementById('fphone').focus(); return;
+        document.getElementById('fphone').focus(); resetBtn(); return;
     }
     if (/^0(\d)\1{8}$/.test(phone) || phone === '0123456789' || phone === '0987654321') {
         alert('⚠️ Số điện thoại có vẻ không hợp lệ. Vui lòng nhập đúng số bạn dùng để shop liên hệ giao hàng.');
-        document.getElementById('fphone').focus(); return;
+        document.getElementById('fphone').focus(); resetBtn(); return;
     }
 
-    if (!provName) { alert('⚠️ Vui lòng chọn Tỉnh / Thành phố'); provSel.focus(); return; }
-    if (!distName) { alert('⚠️ Vui lòng chọn Quận / Huyện'); distSel.focus(); return; }
-    if (!wardName) { alert('⚠️ Vui lòng chọn Phường / Xã'); wardSel.focus(); return; }
+    if (!provName) { alert('⚠️ Vui lòng chọn Tỉnh / Thành phố'); provSel.focus(); resetBtn(); return; }
+    if (!distName) { alert('⚠️ Vui lòng chọn Quận / Huyện'); distSel.focus(); resetBtn(); return; }
+    if (!wardName) { alert('⚠️ Vui lòng chọn Phường / Xã'); wardSel.focus(); resetBtn(); return; }
 
     const address = [detail, wardName, distName, provName].filter(Boolean).join(', ');
 
@@ -159,9 +172,11 @@ function submitOrder() {
             } else {
                 const msg = (data && data.error) ? data.error : 'Không thể gửi đơn hàng. Vui lòng thử lại sau.';
                 alert('⚠️ ' + msg);
+                resetBtn();
             }
         })
         .catch(() => {
             alert('⚠️ Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng và thử lại.');
+            resetBtn();
         });
 }

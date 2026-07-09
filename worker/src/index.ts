@@ -51,7 +51,8 @@ function escapeTelegramHtml(value: unknown): string {
 
 function validateOrder(body: Record<string, unknown>): { ok: false; error: string } | { ok: true; payload: OrderPayload } {
   const hoTen = String(body.hoTen || '').trim();
-  const sdt = String(body.sdt || '').trim().replace(/^'+/, ''); // strip leading quote
+  const sdtRaw = String(body.sdt || '').trim();
+  const sdtClean = sdtRaw.replace(/^'+/, ''); // strip leading quote for validation only
   const diaChi = String(body.diaChi || '').trim();
   const sanPham = String(body.sanPham || '').trim();
   const gia = Number(body.gia);
@@ -65,15 +66,15 @@ function validateOrder(body: Record<string, unknown>): { ok: false; error: strin
 
   if (!hoTen || hoTen.length < 2) return { ok: false, error: 'Họ tên phải có ít nhất 2 ký tự' };
   if (/^\d+$/.test(hoTen)) return { ok: false, error: 'Họ tên không hợp lệ' };
-  if (!sdt) return { ok: false, error: 'Vui lòng nhập số điện thoại' };
-  if (!/^0[235789]\d{8}$/.test(sdt)) return { ok: false, error: 'Số điện thoại không hợp lệ (10 chữ số, bắt đầu bằng 0)' };
+  if (!sdtClean) return { ok: false, error: 'Vui lòng nhập số điện thoại' };
+  if (!/^0[235789]\d{8}$/.test(sdtClean)) return { ok: false, error: 'Số điện thoại không hợp lệ (10 chữ số, bắt đầu bằng 0)' };
   if (!diaChi) return { ok: false, error: 'Vui lòng nhập địa chỉ' };
   if (!sanPham) return { ok: false, error: 'Thiếu thông tin sản phẩm' };
   if (!maDon) return { ok: false, error: 'Thiếu mã đơn hàng' };
 
   return {
     ok: true,
-    payload: { thoiGian, hoTen, sdt, diaChi, sanPham, gia, canNang, cod, phiShip, ghiChu, maDon, nguon },
+    payload: { thoiGian, hoTen, sdt: sdtRaw, diaChi, sanPham, gia, canNang, cod, phiShip, ghiChu, maDon, nguon },
   };
 }
 
