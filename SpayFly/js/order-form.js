@@ -14,6 +14,7 @@ function syncOrderSummary() {
     } else {
         const v = getVariant(selectedVariantKey), lt = v.displayPrice * qty;
         rows += `<div class="os-row"><span>Xịt ve rận (${v.label}) x${qty}</span><span>${lt.toLocaleString('vi-VN')}₫</span></div>`;
+        rows += `<div class="os-row" style="margin-top:2px"><span style="font-size:.82rem;color:#aaa;text-decoration:line-through">${v.oldPrice.toLocaleString('vi-VN')}₫</span><span style="background:linear-gradient(135deg,#ff2d55,#ff6b35);color:#fff;font-size:.72rem;font-weight:900;padding:3px 8px;border-radius:8px">-${Math.round((1-v.displayPrice/v.oldPrice)*100)}%</span></div>`;
         if (v.ship > 0) rows += `<div class="os-row" style="color:#ff6d00;font-weight:800"><span>🚚 Phí vận chuyển</span><span>${v.ship.toLocaleString('vi-VN')}₫</span></div>`;
         else rows += `<div class="os-row" style="color:#00c853;font-weight:800"><span>🚚 Vận chuyển</span><span>Miễn phí</span></div>`;
         if (v.giftLabel) rows += `<div class="os-row" style="color:#00796b;font-weight:800"><span>${v.giftLabel}</span><span>Miễn phí</span></div>`;
