@@ -85,12 +85,17 @@ function submitOrder() {
     isSubmitting = true;
 
     const btn = document.querySelector('button.btn-order');
+    const overlay = document.getElementById('submitOverlay');
     const originalText = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Đang gửi...'; btn.style.opacity = '0.7'; }
 
     function resetBtn() {
         isSubmitting = false;
         if (btn) { btn.disabled = false; btn.textContent = originalText; btn.style.opacity = ''; }
+        if (overlay) overlay.style.display = 'none';
+    }
+    function showOverlay() {
+        if (overlay) overlay.style.display = 'flex';
     }
 
     const name = document.getElementById('fname').value.trim();
@@ -158,6 +163,7 @@ function submitOrder() {
 
     const nguon = getOrderSource();
     const payload = { thoiGian, hoTen: name, sdt: "'" + phone, diaChi: address, sanPham: sanPhamStr, gia: totalCustomer, canNang: totalWeight, cod: totalCod, phiShip: SHOP_SHIP_FEE, ghiChu: note, maDon: '#' + orderCode, nguon };
+    showOverlay();
 
     fetch(ORDER_API_URL, {
         method: 'POST',

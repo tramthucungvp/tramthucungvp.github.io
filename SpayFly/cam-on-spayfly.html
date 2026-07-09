@@ -7,9 +7,10 @@
     <title>🎉 Đặt hàng thành công — Trạm Thú Cưng</title>
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <meta name="theme-color" content="#ff2d55">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap"
-        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap">
     <style>
         :root {
             --primary: #ff2d55;
@@ -364,7 +365,7 @@
         (function () {
             const colors = ['#ff2d55', '#ff6b35', '#00c853', '#fbc02d', '#2979ff', '#ec407a'];
             const wrap = document.getElementById('confetti');
-            for (let i = 0; i < 32; i++) {
+            for (let i = 0; i < 12; i++) {
                 const s = document.createElement('span');
                 const left = (Math.random() - 0.5) * 100;
                 const drift = (Math.random() - 0.5) * 80;
