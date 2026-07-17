@@ -2256,10 +2256,10 @@
             .price-main { font-size: 1.5rem; }
             .prod-name { font-size: 1.05rem; }
             .variant-options { gap: 5px; }
-            .variant-btn { padding: 7px 3px; min-height: 54px; }
-            .variant-btn .v-weight { font-size: .85rem; }
-            .variant-btn .v-price { font-size: .82rem; }
-            .variant-btn .v-gift { font-size: .56rem; }
+            .variant-btn { padding: 9px 5px; min-height: 58px; }
+            .variant-btn .v-weight { font-size: 1.05rem; }
+            .variant-btn .v-price { font-size: .95rem; }
+            .variant-btn .v-gift { font-size: .72rem; }
             .guarantee-grid { grid-template-columns: 1fr; }
             .btn-buy-text { font-size: .92rem; }
             .topnav-order-btn { font-size: .72rem; padding: 7px 10px; }
