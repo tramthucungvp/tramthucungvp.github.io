@@ -2258,8 +2258,8 @@
             .variant-options { gap: 5px; }
             .variant-btn { padding: 7px 3px; min-height: 54px; }
             .variant-btn .v-weight { font-size: .85rem; }
-            .variant-btn .v-price { font-size: .64rem; }
-            .variant-btn .v-gift { font-size: .54rem; }
+            .variant-btn .v-price { font-size: .82rem; }
+            .variant-btn .v-gift { font-size: .56rem; }
             .guarantee-grid { grid-template-columns: 1fr; }
             .btn-buy-text { font-size: .92rem; }
             .topnav-order-btn { font-size: .72rem; padding: 7px 10px; }
