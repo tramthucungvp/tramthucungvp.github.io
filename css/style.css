@@ -2094,21 +2094,6 @@
         .tag:active { transform: scale(.97); transition: transform .08s; }
 
         /* ===== MOBILE OPTIMIZATION ≤480px (chuẩn Shopee/TikTok Shop) ===== */
-        .product-headline { margin-bottom: 16px; }
-        .product-title { font-size: 1.15rem; font-weight: 800; line-height: 1.4; margin-bottom: 8px; color: var(--dark); }
-        .ph-icon { font-size: 1.3rem; }
-        .product-subtitle { font-size: .9rem; color: #666; margin-bottom: 12px; }
-        .product-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
-        .product-rating { display: flex; align-items: center; gap: 6px; }
-        .stars { color: #ff9800; font-size: 1rem; letter-spacing: -1px; }
-        .rating-num { font-weight: 800; font-size: .9rem; }
-        .rating-count { font-size: .85rem; color: #888; }
-        .product-sold { display: flex; align-items: center; gap: 5px; background: #f5f5f5; padding: 4px 12px; border-radius: 14px; }
-        .sold-fire { font-size: .9rem; }
-        .sold-num { font-size: .85rem; font-weight: 700; color: #333; }
-        .product-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-        .product-tag { display: flex; align-items: center; gap: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 7px 12px; border-radius: 8px; font-size: .85rem; font-weight: 600; }
-
         @media (max-width: 480px) {
             .main { padding: 6px 6px calc(86px + env(safe-area-inset-bottom)); }
 
@@ -2270,20 +2255,6 @@
             .gallery-main { height: 78vw; }
             .price-main { font-size: 1.5rem; }
             .prod-name { font-size: 1.05rem; }
-            .product-headline { margin-bottom: 12px; }
-            .product-title { font-size: 1.05rem; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
-            .ph-icon { font-size: 1.2rem; }
-            .product-subtitle { font-size: .85rem; color: #666; margin-bottom: 10px; }
-            .product-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-            .product-rating { display: flex; align-items: center; gap: 4px; }
-            .stars { color: #ff9800; font-size: .9rem; letter-spacing: -1px; }
-            .rating-num { font-weight: 800; font-size: .85rem; }
-            .rating-count { font-size: .78rem; color: #888; }
-            .product-sold { display: flex; align-items: center; gap: 4px; background: #f5f5f5; padding: 3px 10px; border-radius: 12px; }
-            .sold-fire { font-size: .85rem; }
-            .sold-num { font-size: .78rem; font-weight: 700; color: #333; }
-            .product-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-            .product-tag { display: flex; align-items: center; gap: 5px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 6px 10px; border-radius: 8px; font-size: .8rem; font-weight: 600; }
             .variant-options { gap: 5px; }
             .variant-btn { padding: 9px 5px; min-height: 58px; }
             .variant-btn .v-weight { font-size: 1.05rem; }
