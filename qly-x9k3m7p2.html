@@ -1839,7 +1839,7 @@
 
         function inferProductFromSanPham(sanPham) {
             const s = String(sanPham || '');
-            // Match số lượng lọ
+            // Match số lượng lọ lọ
             if (/3\s*L[ọo]/i.test(s)) return DATA.products.find(p => /3\s*L[ọo]/i.test(p.name)) || DATA.products[2];
             if (/2\s*L[ọo]/i.test(s)) return DATA.products.find(p => /2\s*L[ọo]/i.test(p.name)) || DATA.products[1];
             return DATA.products.find(p => /1\s*L[ọo]/i.test(p.name)) || DATA.products[0];
