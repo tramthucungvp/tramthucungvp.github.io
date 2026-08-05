@@ -6,8 +6,6 @@
             if (!provSel) return;
             const API = 'https://provinces.open-api.vn/api';
             let addressData = [];
-            const searchInput = document.getElementById('faddressSearch');
-            const resultsBox = document.getElementById('faddressResults');
 
             // Rút gọn tên tỉnh/huyện/xã để fit khung hẹp
             function shorten(name) {
@@ -138,7 +136,6 @@
                     }));
                     fillSelect(provSel, addressData, 'Tỉnh/TP');
                     provinceDD.setItems(addressData.map(p => ({ value: p.code, label: shorten(p.name), norm: normSearch(p.name) })));
-                    buildFlatWards();
                 } catch (e) {
                     console.error('Load address data failed', e);
                     provSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
@@ -181,75 +178,6 @@
                     wardSel.innerHTML = '<option value="">⚠️ Lỗi tải</option>';
                 }
             });
-
-            function buildFlatWards() {
-                flatWards = [];
-                addressData.forEach(p => {
-                    p.districts.forEach(d => {
-                        d.wards.forEach(w => {
-                            flatWards.push({
-                                wardCode: w.code, wardName: w.name,
-                                districtCode: d.code, districtName: d.name,
-                                provinceCode: p.code, provinceName: p.name,
-                                search: sortKey(`${w.name} ${d.name} ${p.name}`)
-                            });
-                        });
-                    });
-                });
-            }
-
-            let flatWards = [];
-
-            if (searchInput && resultsBox) {
-                let activeIdx = -1;
-
-                function renderResults(matches) {
-                    if (!matches.length) { resultsBox.style.display = 'none'; return; }
-                    resultsBox.innerHTML = matches.slice(0, 8).map((m, i) =>
-                        `<div class="addr-result-item" data-idx="${i}" data-wc="${m.wardCode}" data-dc="${m.districtCode}" data-pc="${m.provinceCode}">
-                            <strong>${shorten(m.wardName)}</strong>, ${shorten(m.districtName)}, ${shorten(m.provinceName)}
-                        </div>`
-                    ).join('');
-                    resultsBox.style.display = 'block';
-                    activeIdx = -1;
-                }
-
-                searchInput.addEventListener('input', () => {
-                    const q = sortKey(searchInput.value.trim());
-                    if (!q || q.length < 1) { resultsBox.style.display = 'none'; return; }
-                    const matches = flatWards.filter(f => f.search.includes(q));
-                    renderResults(matches);
-                });
-
-                searchInput.addEventListener('keydown', e => {
-                    const items = resultsBox.querySelectorAll('.addr-result-item');
-                    if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx + 1, items.length - 1); items.forEach((it, i) => it.style.background = i === activeIdx ? '#fff5f7' : ''); }
-                    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx - 1, 0); items.forEach((it, i) => it.style.background = i === activeIdx ? '#fff5f7' : ''); }
-                    else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); items[activeIdx]?.click(); }
-                });
-
-                resultsBox.addEventListener('click', e => {
-                    const item = e.target.closest('.addr-result-item');
-                    if (!item) return;
-                    const wc = item.dataset.wc, dc = item.dataset.dc, pc = item.dataset.pc;
-                    const hit = flatWards.find(f => f.wardCode === wc && f.districtCode === dc && f.provinceCode === pc);
-                    if (!hit) return;
-
-                    provSel.value = hit.provinceCode;
-                    provSel.dispatchEvent(new Event('change', { bubbles: true }));
-                    distSel.value = hit.districtCode;
-                    distSel.dispatchEvent(new Event('change', { bubbles: true }));
-                    wardSel.value = hit.wardCode;
-
-                    searchInput.value = `${shorten(hit.wardName)}, ${shorten(hit.districtName)}, ${shorten(hit.provinceName)}`;
-                    resultsBox.style.display = 'none';
-                    document.getElementById('faddress').focus();
-                });
-
-                document.addEventListener('click', e => {
-                    if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) resultsBox.style.display = 'none';
-                });
-            }
 
             loadAll();
         })();
