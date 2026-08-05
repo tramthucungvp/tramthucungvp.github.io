@@ -36,7 +36,7 @@
         // Flash Sale countdown — đồng hồ duy nhất chạy chung cho banner trang chính
         // và banner trong popup đặt hàng. Vẫn chạy khi popup mở để tạo áp lực mua hàng.
         (function () {
-            let remaining = 20 * 60; // 20 phút
+            let remaining = 15 * 60; // 15 phút
             const minEl = document.getElementById('cdMin'),
                 secEl = document.getElementById('cdSec'),
                 ofbMinEl = document.getElementById('ofbMin'),

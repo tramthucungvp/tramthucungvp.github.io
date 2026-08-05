@@ -36,7 +36,7 @@ function closeCart() { document.getElementById('cartOverlay').classList.remove('
 
 // Flash Sale countdown
 (function () {
-    let remaining = 20 * 60; // 20 phút
+    let remaining = 15 * 60; // 15 phút
     const minEl = document.getElementById('cdMin'),
         secEl = document.getElementById('cdSec'),
         ofbMinEl = document.getElementById('ofbMin'),
