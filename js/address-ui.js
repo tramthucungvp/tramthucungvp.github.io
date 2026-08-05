@@ -51,11 +51,23 @@
                 const display = wrap.querySelector('.cs-display');
                 const dropdown = wrap.querySelector('.cs-dropdown');
                 const search = wrap.querySelector('.cs-search');
+                const closeBtn = wrap.querySelector('.cs-close');
                 const list = document.getElementById(listId);
                 const hidden = document.getElementById(hiddenSelectId);
                 let items = [];
                 let activeIdx = -1;
                 let isOpen = false;
+
+                // Overlay backdrop
+                let overlay = null;
+                function ensureOverlay() {
+                    if (overlay) return overlay;
+                    overlay = document.createElement('div');
+                    overlay.className = 'cs-overlay';
+                    document.body.appendChild(overlay);
+                    overlay.addEventListener('click', () => close());
+                    return overlay;
+                }
 
                 function render(filter) {
                     const q = normSearch(filter || '');
@@ -75,28 +87,18 @@
                     }).join('');
                     activeIdx = -1;
                 }
-        function open() {
-            isOpen = true; dropdown.classList.add('open');
-            // Mobile portal: move dropdown to body for full viewport (escapes transformed/overflow parents)
-            if (window.innerWidth <= 480) {
-                dropdown.style.position = 'fixed';
-                dropdown.style.left = '0'; dropdown.style.right = '0';
-                dropdown.style.bottom = '0'; dropdown.style.top = 'auto';
-                dropdown.style.borderRadius = '16px 16px 0 0';
-                dropdown.style.maxHeight = '65vh';
-                document.body.appendChild(dropdown);
-            }
-            if (search) { search.value = ''; render(); search.focus(); }
-        }
-        function close() {
-            isOpen = false; dropdown.classList.remove('open');
-            if (window.innerWidth <= 480 && dropdown.parentNode !== wrap) {
-                dropdown.style.position = ''; dropdown.style.left = ''; dropdown.style.right = '';
-                dropdown.style.bottom = ''; dropdown.style.top = ''; dropdown.style.borderRadius = '';
-                dropdown.style.maxHeight = '';
-                wrap.appendChild(dropdown);
-            }
-        }
+                function open() {
+                    isOpen = true;
+                    dropdown.classList.add('open');
+                    ensureOverlay().classList.add('open');
+                    if (search) { search.value = ''; render(); }
+                }
+                function close() {
+                    if (!isOpen) return;
+                    isOpen = false;
+                    dropdown.classList.remove('open');
+                    if (overlay) overlay.classList.remove('open');
+                }
                 function selectValue(value, label) {
                     if (display) { display.value = label || ''; }
                     if (hidden) { hidden.value = value || ''; hidden.dispatchEvent(new Event('change', { bubbles: true })); }
@@ -109,6 +111,9 @@
 
                 if (display) {
                     display.addEventListener('click', () => { if (display.disabled) return; isOpen ? close() : open(); });
+                }
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); close(); });
                 }
                 if (search) {
                     search.addEventListener('input', () => render(search.value));
@@ -129,7 +134,6 @@
                         selectValue(value, label);
                     });
                 }
-                document.addEventListener('click', e => { if (wrap && !wrap.contains(e.target)) close(); });
 
                 return { setItems(newItems) { items = newItems; render(); }, selectValue, reset, enable, disable };
             }

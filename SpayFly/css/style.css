@@ -2546,6 +2546,20 @@
             z-index:200; display:none; max-height:320px; overflow:hidden; flex-direction:column;
         }
         .cs-dropdown.open { display:flex; }
+        .cs-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:12px 14px; border-bottom:1px solid #ffe0b2;
+        }
+        .cs-title { font-weight:800; font-size:.95rem; color:var(--dark); }
+        .cs-close {
+            width:32px; height:32px; border:none; background:#fff3e0; color:#e65100;
+            border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+        }
+        .cs-close:active { background:#ffe0b2; }
+        .cs-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:199; display:none;
+        }
+        .cs-overlay.open { display:block; }
         .cs-search {
             margin:10px 10px 6px; padding:10px 16px;
             border:1.5px solid #ffcc80; border-radius:999px;
