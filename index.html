@@ -438,9 +438,30 @@
                         <input type="text" id="faddressSearch" class="addr-sel" placeholder="🔍 Nhập Phường/Xã, Quận, Tỉnh..." autocomplete="off">
                         <div id="faddressResults" class="addr-results"></div>
                     </div>
-                    <select id="fProvince" class="addr-sel"><option value="">Tỉnh/TP</option></select>
-                    <select id="fDistrict" class="addr-sel" disabled><option value="">Quận/Huyện</option></select>
-                    <select id="fWard" class="addr-sel" disabled><option value="">Phường/Xã</option></select>
+                    <div class="custom-select" id="fProvinceWrap">
+                        <input type="text" class="cs-display" readonly placeholder="Tỉnh/TP" value="">
+                        <div class="cs-dropdown">
+                            <input type="text" class="cs-search" placeholder="🔍 Tìm Tỉnh/TP...">
+                            <div class="cs-list" id="fProvinceList"></div>
+                        </div>
+                        <select id="fProvince" style="display:none"><option value="">Tỉnh/TP</option></select>
+                    </div>
+                    <div class="custom-select" id="fDistrictWrap">
+                        <input type="text" class="cs-display" readonly placeholder="Quận/Huyện" value="" disabled>
+                        <div class="cs-dropdown">
+                            <input type="text" class="cs-search" placeholder="🔍 Tìm Quận/Huyện...">
+                            <div class="cs-list" id="fDistrictList"></div>
+                        </div>
+                        <select id="fDistrict" style="display:none" disabled><option value="">Quận/Huyện</option></select>
+                    </div>
+                    <div class="custom-select" id="fWardWrap">
+                        <input type="text" class="cs-display" readonly placeholder="Phường/Xã" value="" disabled>
+                        <div class="cs-dropdown">
+                            <input type="text" class="cs-search" placeholder="🔍 Tìm Phường/Xã...">
+                            <div class="cs-list" id="fWardList"></div>
+                        </div>
+                        <select id="fWard" style="display:none" disabled><option value="">Phường/Xã</option></select>
+                    </div>
                     <textarea id="faddress" autocomplete="off" rows="2"
                         placeholder="Số nhà, tên đường, thôn/xóm"></textarea>
                 </div>
