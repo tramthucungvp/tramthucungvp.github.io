@@ -498,9 +498,13 @@
             <div class="form-group">
                 <label>🏠 Địa chỉ giao hàng *</label>
                 <div class="addr-grid">
-                    <select id="fProvince" class="addr-sel"><option value="">Tỉnh/TP</option></select>
-                    <select id="fDistrict" class="addr-sel" disabled><option value="">Quận/Huyện</option></select>
-                    <select id="fWard" class="addr-sel" disabled><option value="">Phường/Xã</option></select>
+                    <div class="addr-autocomplete-wrap" style="grid-column:1/-1;position:relative;">
+                        <input type="text" id="faddressSearch" class="addr-sel" placeholder="🔍 Nhập Phường/Xã, Quận, Tỉnh..." autocomplete="off">
+                        <div id="faddressResults" class="addr-results"></div>
+                    </div>
+                    <select id="fProvince" class="addr-sel" style="display:none"><option value="">Tỉnh/TP</option></select>
+                    <select id="fDistrict" class="addr-sel" disabled style="display:none"><option value="">Quận/Huyện</option></select>
+                    <select id="fWard" class="addr-sel" disabled style="display:none"><option value="">Phường/Xã</option></select>
                     <textarea id="faddress" autocomplete="off" rows="2"
                         placeholder="Số nhà, tên đường, thôn/xóm"></textarea>
                 </div>
