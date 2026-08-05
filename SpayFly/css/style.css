@@ -2541,6 +2541,47 @@
             .gallery-main { height: 480px; }
         }
 
+        /* VARIANT CARDS: package, price, promotion, product image */
+        .variant-options { gap: 12px; }
+        .variant-btn { position: relative; display: flex; align-items: center; gap: 11px; padding: 14px; border: 2px solid #ffd0b0; border-radius: 18px; background: #fff; color: #e65100; text-align: left; overflow: visible; }
+        .variant-btn.active { border-color: #ff6d00; background: #fff7ed; box-shadow: 0 4px 12px rgba(255,109,0,.14); transform: none; }
+        .variant-btn:hover:not(.active) { border-color: #ffab76; background: #fffaf5; }
+        .variant-btn .v-radio { width: 20px; height: 20px; flex: 0 0 20px; border: 2px solid #cbd5ce; border-radius: 50%; position: relative; }
+        .variant-btn.active .v-radio { border-color: #ff6d00; background: #ff6d00; }
+        .variant-btn.active .v-radio::after { content: ''; position: absolute; width: 8px; height: 8px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; background: #fff; }
+        .variant-btn .v-content { min-width: 0; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+        .variant-btn .v-header { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+        .variant-btn .v-title { font-size: 1.05rem; font-weight: 900; color: #222; white-space: nowrap; }
+        .variant-btn .v-price-block { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+        .variant-btn .v-price { font-size: 1.35rem; color: #ef3e43; font-weight: 900; }
+        .variant-btn .v-old-price { font-size: .72rem; color: #718078; text-decoration: line-through; font-weight: 700; }
+        .variant-btn .v-detail { font-size: .82rem; color: #222; font-weight: 800; }
+        .variant-btn .v-ship { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 999px; background: #fff0e0; color: #e65100; font-size: .68rem; font-weight: 900; }
+        .variant-btn .v-save, .variant-btn .v-gift { display: inline-flex; align-items: center; max-width: 100%; padding: 4px 9px; border-radius: 999px; color: #fff; font-size: .68rem; line-height: 1.2; font-weight: 900; background: #ff2d55; }
+        .variant-btn .v-gift { background: linear-gradient(135deg, #ff6d00, #ff2d55); padding: 5px 10px; font-size: .72rem; box-shadow: 0 3px 8px rgba(255,45,85,.22); }
+        .variant-btn.active .v-gift { background: linear-gradient(135deg, #ff6d00, #ff2d55); color: #fff; }
+        .variant-btn .v-img { width: 68px; height: 68px; flex: 0 0 68px; object-fit: contain; border-radius: 10px; background: #fff; padding: 3px; }
+        .variant-btn .v-badge { position: absolute; top: -10px; left: 12px; z-index: 2; padding: 3px 9px; border-radius: 999px; background: #ff6d00; color: #fff; font-size: .62rem; line-height: 1.1; font-weight: 900; text-transform: uppercase; }
+        @media (max-width: 480px) {
+            .variant-options { gap: 10px; }
+            .variant-btn { gap: 9px; padding: 12px 11px; border-radius: 16px; }
+            .variant-btn .v-radio { width: 18px; height: 18px; flex-basis: 18px; }
+            .variant-btn .v-title { font-size: .95rem; }
+            .variant-btn .v-price { font-size: 1.15rem; }
+            .variant-btn .v-old-price { font-size: .66rem; }
+            .variant-btn .v-detail { font-size: .75rem; }
+            .variant-btn .v-ship, .variant-btn .v-save, .variant-btn .v-gift { font-size: .62rem; padding: 3px 7px; }
+            .variant-btn .v-img { width: 58px; height: 58px; flex-basis: 58px; }
+        }
+        @media (max-width: 360px) {
+            .variant-btn { gap: 7px; padding: 10px 9px; }
+            .variant-btn .v-title { font-size: .88rem; }
+            .variant-btn .v-price { font-size: 1.02rem; }
+            .variant-btn .v-old-price { display: none; }
+            .variant-btn .v-detail { font-size: .7rem; }
+            .variant-btn .v-img { width: 50px; height: 50px; flex-basis: 50px; }
+        }
+
         /* ===== TOUCH-FRIENDLY HOVER (chỉ áp khi thiết bị có hover thật) ===== */
         @media (hover: hover) and (pointer: fine) {
             .variant-btn:hover:not(.active) { border-color: #bbb; background: #f9f9f9; }
@@ -2611,3 +2652,35 @@
         .cs-item:hover, .cs-item.active { background:#fff3e0; }
         .cs-item .hl { color:#e65100; font-weight:800; }
         .cs-empty { padding:16px; text-align:center; color:#ffcc80; font-size:.9rem; }
+
+        /* Final variant-card emphasis */
+        .variant-label { color: #222; }
+        .variant-label .selected-variant { color: #222 !important; }
+        .variant-btn .v-title, .variant-btn .v-detail { color: #222; }
+        .variant-btn .v-gift, .variant-btn.active .v-gift {
+            background: linear-gradient(135deg, #ff6d00 0%, #ef234c 100%);
+            border: 1px solid rgba(190,35,0,.18);
+            box-shadow: 0 4px 10px rgba(239,35,76,.28);
+            color: #fff;
+            font-size: .75rem;
+            padding: 6px 11px;
+            font-weight: 900;
+        }
+        @media (max-width: 480px) {
+            .variant-btn .v-gift, .variant-btn.active .v-gift { font-size: .68rem; padding: 5px 8px; }
+        }
+
+        /* Compact variants inside the order form only */
+        #orderVariantGroup .variant-options { gap: 7px; }
+        #orderVariantGroup .variant-btn { gap: 8px; padding: 9px 10px; border-radius: 13px; }
+        #orderVariantGroup .variant-btn .v-radio { width: 16px; height: 16px; flex-basis: 16px; }
+        #orderVariantGroup .variant-btn .v-img { width: 48px; height: 48px; flex-basis: 48px; }
+        #orderVariantGroup .variant-btn .v-content { gap: 3px; }
+        #orderVariantGroup .variant-btn .v-title { font-size: .86rem; }
+        #orderVariantGroup .variant-btn .v-price { font-size: 1rem; }
+        #orderVariantGroup .variant-btn .v-old-price { font-size: .6rem; }
+        #orderVariantGroup .variant-btn .v-detail { font-size: .68rem; }
+        #orderVariantGroup .variant-btn .v-ship,
+        #orderVariantGroup .variant-btn .v-save,
+        #orderVariantGroup .variant-btn .v-gift { font-size: .58rem; padding: 3px 6px; }
+        #orderVariantGroup .variant-btn .v-badge { top: -8px; left: 8px; font-size: .55rem; padding: 2px 6px; }
