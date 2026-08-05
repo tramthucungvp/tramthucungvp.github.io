@@ -68,7 +68,7 @@
     <div class="instant-offer" onclick="openOrder()">
         <div class="instant-offer-main">
             <span class="instant-offer-label">Giá chỉ</span>
-            <span class="instant-offer-price" id="instantOfferPrice">168.000₫</span>
+        <span class="instant-offer-price" id="instantOfferPrice">199.000₫</span>
         </div>
         <div class="instant-offer-ship">FREESHIP toàn quốc</div>
     </div>
@@ -145,7 +145,7 @@
             </div>
 
             <div class="prod-price">
-                <span class="price-main" id="priceMain">168.000₫</span>
+                <span class="price-main" id="priceMain">199.000₫</span>
                 <span class="price-old" id="priceOld">349.000₫</span>
                 <span class="price-discount" id="priceDiscount">-52%</span>
             </div>
@@ -165,37 +165,16 @@
             <div class="section-title">Chọn phân loại</div>
             <div class="variant-section" style="margin-top:0">
                 <div class="variant-label">⚖️ Đang chọn: <span class="selected-variant" id="selectedVariantLabel">1 Lọ —
-                        168.000₫</span></div>
+                        199.000₫</span></div>
                 <div class="variant-options">
                     <button class="variant-btn active" onclick="selectVariant(this,'1lo')">
-                        <img src="./img/pl1.png" alt="1 Lọ" class="v-img">
-                        <div class="v-info">
-                            <div class="v-row">
-                                <span class="v-weight">1 Lọ</span>
-                                <span class="v-price">168.000₫</span>
-                            </div>
-                            <span class="v-gift">🚚 Miễn phí ship</span>
-                        </div>
+                        <div class="v-radio"></div><div class="v-content"><div class="v-header"><span class="v-title">Gói 1 chai</span><div class="v-price-block"><span class="v-price">199.000₫</span><span class="v-old-price">383.000₫</span></div></div><span class="v-detail">1 chai SPAY FLY 300ml</span><span class="v-ship">🚚 Miễn phí vận chuyển</span><span class="v-save">-48% • Tiết kiệm 184.000₫</span></div><img src="./img/pl1.png" alt="1 Lọ" class="v-img">
                     </button>
                     <button class="variant-btn" onclick="selectVariant(this,'2lo')">
-                        <img src="./img/pl2.png" alt="2 Lọ" class="v-img">
-                        <div class="v-info">
-                            <div class="v-row">
-                                <span class="v-weight">2 Lọ</span>
-                                <span class="v-price">299.000₫</span>
-                            </div>
-                            <span class="v-gift">🎁 Tặng 1 chai sữa tắm 80k</span>
-                        </div>
+                        <div class="v-badge">Bán chạy nhất</div><div class="v-radio"></div><div class="v-content"><div class="v-header"><span class="v-title">Gói 2 chai</span><div class="v-price-block"><span class="v-price">369.000₫</span><span class="v-old-price">698.000₫</span></div></div><span class="v-detail">2 chai SPAY FLY 300ml</span><span class="v-ship">🚚 Miễn phí vận chuyển</span><span class="v-save">-47% • Tiết kiệm 329.000₫</span><span class="v-gift">🎁 Tặng 1 chai sữa tắm 80k</span></div><img src="./img/pl2.png" alt="2 Lọ" class="v-img">
                     </button>
                     <button class="variant-btn" onclick="selectVariant(this,'3lo')">
-                        <img src="./img/pl3.png" alt="3 Lọ" class="v-img">
-                        <div class="v-info">
-                            <div class="v-row">
-                                <span class="v-weight">3 Lọ</span>
-                                <span class="v-price">429.000₫</span>
-                            </div>
-                            <span class="v-gift">🎁 Tặng 2 chai sữa tắm 80k/chai</span>
-                        </div>
+                        <div class="v-badge">Giảm sâu</div><div class="v-radio"></div><div class="v-content"><div class="v-header"><span class="v-title">Gói 3 chai</span><div class="v-price-block"><span class="v-price">499.000₫</span><span class="v-old-price">1.047.000₫</span></div></div><span class="v-detail">3 chai SPAY FLY 300ml</span><span class="v-ship">🚚 Miễn phí vận chuyển</span><span class="v-save">-52% • Tiết kiệm 548.000₫</span><span class="v-gift">🎁 Tặng 2 chai sữa tắm 80k/chai</span></div><img src="./img/pl3.png" alt="3 Lọ" class="v-img">
                     </button>
                 </div>
             </div>
@@ -402,7 +381,7 @@
     <!-- BOTTOM BAR — nút ĐẶT HÀNG NGAY + countdown -->
     <div class="bottom-bar">
         <button class="btn-buy" onclick="openOrder()">
-            <span class="btn-buy-text" id="bottomBuyText">⚡ MUA 168.000₫ - FREESHIP</span>
+        <span class="btn-buy-text" id="bottomBuyText">⚡ MUA 199.000₫ - FREESHIP</span>
             <span class="btn-buy-cd" id="btnBuyCd">
                 <span class="bbc-label">Còn</span>
                 <span class="bbc-time"><span id="bbcMin">15</span>:<span id="bbcSec">00</span></span>
@@ -488,34 +467,13 @@
                         style="color:var(--primary);font-weight:800"></span></label>
                 <div class="variant-options" style="margin-top:8px">
                     <button class="variant-btn" id="ovBtn1lo" onclick="selectOrderVariant(this,'1lo')">
-                        <img src="./img/pl1.png" alt="1 Lọ" class="v-img">
-                        <div class="v-info">
-                            <div class="v-row">
-                                <span class="v-weight">1 Lọ</span>
-                                <span class="v-price">168.000₫</span>
-                            </div>
-                            <span class="v-gift">🚚 Miễn phí ship</span>
-                        </div>
+                        <div class="v-radio"></div><div class="v-content"><div class="v-header"><span class="v-title">Gói 1 chai</span><div class="v-price-block"><span class="v-price">199.000₫</span><span class="v-old-price">383.000₫</span></div></div><span class="v-detail">1 chai SPAY FLY 300ml</span><span class="v-ship">🚚 Miễn phí vận chuyển</span><span class="v-save">-48% • Tiết kiệm 184.000₫</span></div><img src="./img/pl1.png" alt="1 Lọ" class="v-img">
                     </button>
                     <button class="variant-btn" id="ovBtn2lo" onclick="selectOrderVariant(this,'2lo')">
-                        <img src="./img/pl2.png" alt="2 Lọ" class="v-img">
-                        <div class="v-info">
-                            <div class="v-row">
-                                <span class="v-weight">2 Lọ</span>
-                                <span class="v-price">299.000₫</span>
-                            </div>
-                            <span class="v-gift">🎁 Tặng 1 chai sữa tắm 80k</span>
-                        </div>
+                        <div class="v-badge">Bán chạy nhất</div><div class="v-radio"></div><div class="v-content"><div class="v-header"><span class="v-title">Gói 2 chai</span><div class="v-price-block"><span class="v-price">369.000₫</span><span class="v-old-price">698.000₫</span></div></div><span class="v-detail">2 chai SPAY FLY 300ml</span><span class="v-ship">🚚 Miễn phí vận chuyển</span><span class="v-save">-47% • Tiết kiệm 329.000₫</span><span class="v-gift">🎁 Tặng 1 chai sữa tắm 80k</span></div><img src="./img/pl2.png" alt="2 Lọ" class="v-img">
                     </button>
                     <button class="variant-btn" id="ovBtn3lo" onclick="selectOrderVariant(this,'3lo')">
-                        <img src="./img/pl3.png" alt="3 Lọ" class="v-img">
-                        <div class="v-info">
-                            <div class="v-row">
-                                <span class="v-weight">3 Lọ</span>
-                                <span class="v-price">429.000₫</span>
-                            </div>
-                            <span class="v-gift">🎁 Tặng 2 chai sữa tắm 80k/chai</span>
-                        </div>
+                        <div class="v-badge">Giảm sâu</div><div class="v-radio"></div><div class="v-content"><div class="v-header"><span class="v-title">Gói 3 chai</span><div class="v-price-block"><span class="v-price">499.000₫</span><span class="v-old-price">1.047.000₫</span></div></div><span class="v-detail">3 chai SPAY FLY 300ml</span><span class="v-ship">🚚 Miễn phí vận chuyển</span><span class="v-save">-52% • Tiết kiệm 548.000₫</span><span class="v-gift">🎁 Tặng 2 chai sữa tắm 80k/chai</span></div><img src="./img/pl3.png" alt="3 Lọ" class="v-img">
                     </button>
                 </div>
             </div>
@@ -551,11 +509,12 @@
         <span class="bn-close" onclick="document.getElementById('buyer-notif').classList.remove('show')">✕</span>
     </div>
 
-    <script src="js/config.js"></script>
+    <script src="js/config.js?v=20260805"></script>
     <script src="js/gallery.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/order-form.js"></script>
     <script src="js/address-ui.js"></script>
+    <script src="SpayFly/js/feedback.js"></script>
 
 </body>
 
