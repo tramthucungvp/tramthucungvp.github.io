@@ -70,8 +70,28 @@
             }).join('');
             activeIdx = -1;
         }
-        function open() { isOpen = true; dropdown.classList.add('open'); if (search) { search.value = ''; render(); search.focus(); } }
-        function close() { isOpen = false; dropdown.classList.remove('open'); }
+        function open() {
+            isOpen = true; dropdown.classList.add('open');
+            // Mobile portal: move dropdown to body for full viewport (escapes transformed/overflow parents)
+            if (window.innerWidth <= 480) {
+                dropdown.style.position = 'fixed';
+                dropdown.style.left = '0'; dropdown.style.right = '0';
+                dropdown.style.bottom = '0'; dropdown.style.top = 'auto';
+                dropdown.style.borderRadius = '16px 16px 0 0';
+                dropdown.style.maxHeight = '65vh';
+                document.body.appendChild(dropdown);
+            }
+            if (search) { search.value = ''; render(); search.focus(); }
+        }
+        function close() {
+            isOpen = false; dropdown.classList.remove('open');
+            if (window.innerWidth <= 480 && dropdown.parentNode !== wrap) {
+                dropdown.style.position = ''; dropdown.style.left = ''; dropdown.style.right = '';
+                dropdown.style.bottom = ''; dropdown.style.top = ''; dropdown.style.borderRadius = '';
+                dropdown.style.maxHeight = '';
+                wrap.appendChild(dropdown);
+            }
+        }
         function selectValue(value, label) {
             if (display) { display.value = label || ''; }
             if (hidden) { hidden.value = value || ''; hidden.dispatchEvent(new Event('change', { bubbles: true })); }

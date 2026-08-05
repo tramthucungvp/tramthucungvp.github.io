@@ -2424,20 +2424,11 @@
                 padding: 9px 12px !important;
             }
             /* Custom dropdown mobile */
-            .custom-select .cs-dropdown {
-                position:fixed; top:auto; bottom:0; left:0; right:0;
-                border-radius:16px 16px 0 0; max-height:65vh;
-                box-shadow:0 -4px 24px rgba(0,0,0,.15);
-                animation:csSlideUp .25s ease;
-            }
+            .cs-dropdown { animation:csSlideUp .25s ease; }
             @keyframes csSlideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
             .cs-search { margin:12px 12px 8px; padding:12px 16px; font-size:16px; }
             .cs-item { padding:14px 16px; min-height:48px; font-size:16px; }
             .cs-item:active { background:#ffe0b2; }
-            /* Overlay backdrop when dropdown open */
-            .custom-select:has(.cs-dropdown.open)::before {
-                content:''; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:199;
-            }
             /* Thu gọn form-group margin */
             .order-drawer .form-group { margin-bottom: 9px; }
 
