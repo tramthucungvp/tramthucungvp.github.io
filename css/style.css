@@ -652,13 +652,13 @@
         }
 
         .variant-btn .v-weight {
-            font-size: 1.35rem;
+            font-size: 1.2rem;
             font-weight: 900;
             letter-spacing: -.3px;
         }
 
         .variant-btn .v-price {
-            font-size: 1.1rem;
+            font-size: 1.45rem;
             color: var(--primary);
             font-weight: 900;
         }
@@ -2284,8 +2284,8 @@
             .variant-btn { padding: 8px 10px; min-height: 58px; }
             .variant-btn .v-img { width: 20px; height: 20px; }
             .variant-btn .v-info { gap: 3px; }
-            .variant-btn .v-weight { font-size: 1.25rem; }
-            .variant-btn .v-price { font-size: 1rem; }
+            .variant-btn .v-weight { font-size: 1.15rem; }
+            .variant-btn .v-price { font-size: 1.35rem; }
             .variant-btn .v-gift { font-size: .85rem; padding: 3px 8px; }
             .guarantee-grid { grid-template-columns: 1fr; }
             .btn-buy-text { font-size: .92rem; }
