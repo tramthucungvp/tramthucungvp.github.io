@@ -2184,12 +2184,11 @@
             .form-group textarea { padding: 9px 12px; font-size: 16px; border-radius: 10px; }
             .form-group textarea { min-height: 54px; height: auto; }
 
-            /* ADDRESS: 3 dropdown trên 1 hàng, ô chi tiết full-width bên dưới */
+            /* ADDRESS: mỗi dropdown 1 dòng */
             .addr-grid {
-                gap: 5px;
-                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
+                grid-template-columns: 1fr;
             }
-            .addr-grid #faddress { grid-column: 1 / -1; }
             .addr-sel {
                 padding: 9px 22px 9px 9px;
                 font-size: 16px; /* giữ 16px chống zoom iOS */
