@@ -44,9 +44,9 @@
         const SHOP_SHIP_FEE = 14000;
 
         const VARIANTS = {
-            '1lo': { label: '1 Lọ', displayPrice: 168000, oldPrice: 349000, ship: 0, cod: 75000, giftLabel: '' },
-            '2lo': { label: '2 Lọ', displayPrice: 299000, oldPrice: 698000, ship: 0, cod: 180000, giftLabel: '🎁 Tặng: 1 chai sữa tắm 80k' },
-            '3lo': { label: '3 Lọ', displayPrice: 429000, oldPrice: 1047000, ship: 0, cod: 285000, giftLabel: '🎁 Tặng: 2 chai sữa tắm 80k/chai' },
+            '1lo': { label: '1 Lọ', displayPrice: 199000, oldPrice: 383000, ship: 0, cod: 75000, giftLabel: '' },
+            '2lo': { label: '2 Lọ', displayPrice: 369000, oldPrice: 698000, ship: 0, cod: 180000, giftLabel: '🎁 Tặng: 1 chai sữa tắm 80k' },
+            '3lo': { label: '3 Lọ', displayPrice: 499000, oldPrice: 1047000, ship: 0, cod: 285000, giftLabel: '🎁 Tặng: 2 chai sữa tắm 80k/chai' },
         };
 
         function getVariant(k) { return VARIANTS[k]; }
