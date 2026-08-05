@@ -612,15 +612,15 @@
 
         .variant-options {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .variant-btn {
             border: 2px solid #e6e6ec;
             background: white;
             border-radius: 14px;
-            padding: 8px 12px;
+            padding: 14px 16px;
             font-size: .88rem;
             font-weight: 800;
             cursor: pointer;
@@ -630,14 +630,14 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 10px;
-            min-width: 88px;
+            gap: 14px;
+            width: 100%;
             box-shadow: 0 2px 6px rgba(20, 20, 40, .04);
             text-align: left;
         }
         .variant-btn .v-img {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             object-fit: contain;
             border-radius: 4px;
             flex-shrink: 0;
@@ -647,18 +647,18 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 4px;
+            gap: 6px;
             flex: 1;
         }
 
         .variant-btn .v-weight {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 900;
             letter-spacing: -.3px;
         }
 
         .variant-btn .v-price {
-            font-size: 1.45rem;
+            font-size: 1.7rem;
             color: var(--primary);
             font-weight: 900;
         }
@@ -2165,18 +2165,18 @@
             .section-title { font-size: 1rem; gap: 7px; margin-bottom: 11px; }
             .section-title::before { width: 4px; height: 18px; }
 
-            /* VARIANT buttons — full width, 3 cột đều */
+            /* VARIANT buttons — mỗi nút 1 hàng */
             .variant-section { margin-top: 11px; }
             .variant-label { font-size: .8rem; margin-bottom: 7px; }
-            .variant-options { gap: 7px; }
+            .variant-options { gap: 8px; }
             .variant-btn {
-                min-width: 0; flex: 1;
-                padding: 8px 4px; border-radius: 11px;
-                min-height: 56px;
+                width: 100%;
+                padding: 12px 14px; border-radius: 12px;
+                min-height: 64px;
             }
-            .variant-btn .v-weight { font-size: .9rem; }
-            .variant-btn .v-price { font-size: .68rem; }
-            .variant-btn .v-gift { font-size: .56rem; line-height: 1.3; padding: 1px 4px; }
+            .variant-btn .v-weight { font-size: 1.25rem; }
+            .variant-btn .v-price { font-size: 1.5rem; }
+            .variant-btn .v-gift { font-size: .8rem; line-height: 1.3; padding: 2px 8px; }
 
             /* HIGHLIGHTS + TAGS compact */
             .highlights { gap: 6px; }
@@ -2280,13 +2280,13 @@
             .gallery-main { height: 78vw; }
             .price-main { font-size: 1.5rem; }
             .prod-name { font-size: 1.05rem; }
-            .variant-options { gap: 5px; }
-            .variant-btn { padding: 8px 10px; min-height: 58px; }
-            .variant-btn .v-img { width: 20px; height: 20px; }
-            .variant-btn .v-info { gap: 3px; }
-            .variant-btn .v-weight { font-size: 1.15rem; }
-            .variant-btn .v-price { font-size: 1.35rem; }
-            .variant-btn .v-gift { font-size: .85rem; padding: 3px 8px; }
+            .variant-options { gap: 6px; }
+            .variant-btn { padding: 10px 12px; min-height: 60px; }
+            .variant-btn .v-img { width: 22px; height: 22px; }
+            .variant-btn .v-info { gap: 4px; }
+            .variant-btn .v-weight { font-size: 1.2rem; }
+            .variant-btn .v-price { font-size: 1.4rem; }
+            .variant-btn .v-gift { font-size: .78rem; padding: 2px 8px; }
             .guarantee-grid { grid-template-columns: 1fr; }
             .btn-buy-text { font-size: .92rem; }
             .topnav-order-btn { font-size: .72rem; padding: 7px 10px; }
