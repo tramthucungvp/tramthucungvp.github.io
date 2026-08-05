@@ -636,12 +636,14 @@
             text-align: left;
         }
         .variant-btn .v-img {
-            width: 28px;
-            height: 28px;
+            width: 56px;
+            height: 56px;
             object-fit: contain;
-            border-radius: 4px;
+            border-radius: 10px;
             flex-shrink: 0;
-            opacity: .7;
+            background: #fff;
+            padding: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
         }
         .variant-btn .v-info {
             display: flex;
@@ -649,16 +651,23 @@
             align-items: flex-start;
             gap: 6px;
             flex: 1;
+            justify-content: center;
+        }
+        .v-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            width: 100%;
         }
 
         .variant-btn .v-weight {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 900;
             letter-spacing: -.3px;
         }
 
         .variant-btn .v-price {
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             color: var(--primary);
             font-weight: 900;
         }
@@ -681,16 +690,16 @@
         }
 
         .v-gift {
-            font-size: .92rem;
+            font-size: .95rem;
             color: #fff;
             font-weight: 800;
             background: linear-gradient(135deg, #00c853, #00bfa5);
-            border-radius: 6px;
-            padding: 3px 10px;
-            margin-top: 2px;
+            border-radius: 20px;
+            padding: 4px 14px;
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.3;
             box-shadow: 0 2px 8px rgba(0, 200, 83, .25);
+            align-self: flex-start;
         }
 
         .variant-btn.active .v-gift {
@@ -2280,13 +2289,14 @@
             .gallery-main { height: 78vw; }
             .price-main { font-size: 1.5rem; }
             .prod-name { font-size: 1.05rem; }
-            .variant-options { gap: 6px; }
-            .variant-btn { padding: 10px 12px; min-height: 60px; }
-            .variant-btn .v-img { width: 22px; height: 22px; }
-            .variant-btn .v-info { gap: 4px; }
+            .variant-options { gap: 8px; }
+            .variant-btn { padding: 12px 14px; min-height: 72px; }
+            .variant-btn .v-img { width: 44px; height: 44px; border-radius: 8px; padding: 3px; }
+            .variant-btn .v-info { gap: 5px; }
+            .variant-btn .v-row { gap: 8px; }
             .variant-btn .v-weight { font-size: 1.2rem; }
             .variant-btn .v-price { font-size: 1.4rem; }
-            .variant-btn .v-gift { font-size: .78rem; padding: 2px 8px; }
+            .variant-btn .v-gift { font-size: .82rem; padding: 3px 10px; border-radius: 16px; }
             .guarantee-grid { grid-template-columns: 1fr; }
             .btn-buy-text { font-size: .92rem; }
             .topnav-order-btn { font-size: .72rem; padding: 7px 10px; }
