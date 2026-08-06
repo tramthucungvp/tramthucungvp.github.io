@@ -3,6 +3,9 @@
 
 export interface Env {
   SHEET_URL: string;
+  META_PIXEL_ID: string;
+  META_CAPI_ACCESS_TOKEN?: string;
+  META_CAPI_TEST_EVENT_CODE?: string;
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
   ALLOWED_ORIGIN?: string;
@@ -124,6 +127,55 @@ async function sendTelegramAlert(token: string, chatId: string, payload: OrderPa
   console.log('Telegram alert sent successfully', { chatId, maDon: payload.maDon });
 }
 
+async function sha256(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function normalizeVietnamesePhone(value: string): string {
+  const digits = value.replace(/\D/g, '');
+  return digits.startsWith('0') ? `84${digits.slice(1)}` : digits;
+}
+
+async function sendMetaPurchase(payload: OrderPayload, request: Request, env: Env): Promise<void> {
+  const accessToken = String(env.META_CAPI_ACCESS_TOKEN ?? '').trim();
+  const pixelId = String(env.META_PIXEL_ID ?? '').trim();
+  if (!accessToken || !pixelId) return;
+
+  const phone = normalizeVietnamesePhone(payload.sdt);
+  const userData: Record<string, unknown> = {
+    client_ip_address: request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || undefined,
+    client_user_agent: request.headers.get('User-Agent') || undefined,
+  };
+  if (phone) userData.ph = [await sha256(phone)];
+
+  const event: Record<string, unknown> = {
+    event_name: 'Purchase',
+    event_time: Math.floor(Date.now() / 1000),
+    event_id: payload.maDon,
+    action_source: 'website',
+    event_source_url: request.headers.get('Origin') || request.headers.get('Referer') || undefined,
+    user_data: userData,
+    custom_data: {
+      value: payload.gia,
+      currency: 'VND',
+      order_id: payload.maDon,
+      content_name: payload.sanPham,
+    },
+  };
+  const testEventCode = String(env.META_CAPI_TEST_EVENT_CODE ?? '').trim();
+  const body: Record<string, unknown> = { data: [event] };
+  if (testEventCode) body.test_event_code = testEventCode;
+
+  const response = await fetch(`https://graph.facebook.com/v20.0/${encodeURIComponent(pixelId)}/events?access_token=${encodeURIComponent(accessToken)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error(`Meta CAPI error: ${response.status}`);
+}
+
 async function forwardToSheet(sheetUrl: string, payload: OrderPayload): Promise<Response> {
   // Mirror the original frontend format: JSON POST with text/plain body
   return fetch(sheetUrl, {
@@ -164,6 +216,8 @@ async function handlePost(request: Request, env: Env, ctx: ExecutionContext): Pr
           await sendTelegramAlert(token, chatId, payload, env);
           console.log('Telegram alert sent', { maDon: payload.maDon });
         }
+        await sendMetaPurchase(payload, request, env);
+        console.log('Meta Purchase sent', { maDon: payload.maDon });
       } catch (err: unknown) {
         console.error('Background order processing failed:', err instanceof Error ? err.message : String(err));
       }
