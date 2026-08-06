@@ -198,7 +198,7 @@
                     if (data && data.success) {
                         // Worker confirmed — proceed to thank-you page
                         cart = []; updateCartUI();
-                        window.location.href = './cam-on.html?ma=' + encodeURIComponent(orderCode);
+                        window.location.href = './cam-on.html?ma=' + encodeURIComponent(orderCode) + '&value=' + encodeURIComponent(totalCustomer) + '&currency=VND';
                     } else {
                         // Worker returned an error — show it
                         const msg = (data && data.error) ? data.error : 'Không thể gửi đơn hàng. Vui lòng thử lại sau.';

@@ -192,7 +192,7 @@ function submitOrder() {
         .then(data => {
             if (data && data.success) {
                 cart = []; updateCartUI();
-                window.location.href = 'cam-on-spayfly.html?ma=' + encodeURIComponent(orderCode);
+            window.location.href = 'cam-on-spayfly.html?ma=' + encodeURIComponent(orderCode) + '&value=' + encodeURIComponent(totalCustomer) + '&currency=VND';
             } else {
                 const msg = (data && data.error) ? data.error : 'Không thể gửi đơn hàng. Vui lòng thử lại sau.';
                 alert('⚠️ ' + msg);

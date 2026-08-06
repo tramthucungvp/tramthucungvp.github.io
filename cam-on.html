@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎉 Đặt hàng thành công — Trạm Thú Cưng</title>
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1365173222118358');
+        fbq('track', 'PageView');
+    </script>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <meta name="theme-color" content="#ff2d55">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -356,9 +366,17 @@
             const params = new URLSearchParams(location.search);
             const ma = params.get('ma') || '------';
             const txt = '#' + ma;
-            document.getElementById('orderCode').textContent = txt;
-            document.getElementById('orderCodeNote').textContent = txt;
-        })();
+        document.getElementById('orderCode').textContent = txt;
+        document.getElementById('orderCodeNote').textContent = txt;
+
+        const value = Number(params.get('value') || 0);
+        const eventId = '#' + ma;
+        const eventKey = 'purchase_sent_' + eventId;
+        if (value > 0 && ma !== '------' && !sessionStorage.getItem(eventKey)) {
+            fbq('track', 'Purchase', { value, currency: params.get('currency') || 'VND' }, { eventID: eventId });
+            sessionStorage.setItem(eventKey, '1');
+        }
+    })();
 
         // Confetti effect
         (function () {
